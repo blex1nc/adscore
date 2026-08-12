@@ -27,6 +27,14 @@ export const COPY_LANGUAGES = [
   { code: "ar", label: "Arapça" },
 ] as const;
 
+// CLAUDE.md §9 — rakip kategorileri
+export const COMPETITOR_TYPE_LABELS: Record<string, string> = {
+  DIRECT: "Doğrudan",
+  INDIRECT: "Dolaylı",
+  ASPIRATIONAL: "Aspirasyonel",
+  CREATIVE: "Creative",
+};
+
 export const MARKET_CODES = MARKETS.map((m) => m.code);
 export const CURRENCY_CODES = CURRENCIES.map((c) => c.code);
 export const COPY_LANGUAGE_CODES = COPY_LANGUAGES.map((l) => l.code);

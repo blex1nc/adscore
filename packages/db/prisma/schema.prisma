@@ -53,6 +53,8 @@ model Brand {
   // Üretilecek reklam copy dili (BCP 47)
   copyLanguage String?
   researchRuns ResearchRun[]
+  competitors  Competitor[]
+  patternAnalyses PatternAnalysis[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -82,6 +84,77 @@ model ResearchRun {
   finishedAt   DateTime?
   createdAt    DateTime        @default(now())
   sources      ResearchSource[]
+
+  @@index([brandId, createdAt])
+}
+
+// Phase 3 — Competitor Intelligence v1 (pazar-bazlı hibrit, HANDOFF 21.5).
+// v1 yolu: manuel girdi + AI analizi. Ad Library API yolu Meta bağlantısıyla (Phase 5+) gelecek.
+
+enum CompetitorType {
+  DIRECT
+  INDIRECT
+  ASPIRATIONAL
+  CREATIVE
+}
+
+enum AnalysisStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model Competitor {
+  id        String         @id @default(cuid())
+  brand     Brand          @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId   String
+  name      String
+  website   String?
+  type      CompetitorType
+  note      String?
+  // "user" (elle eklendi) | "research" (araştırma adayından eklendi)
+  addedFrom String         @default("user")
+  ads       CompetitorAd[]
+  createdAt DateTime       @default(now())
+
+  @@index([brandId])
+}
+
+model CompetitorAd {
+  id           String         @id @default(cuid())
+  competitor   Competitor     @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  competitorId String
+  // Kullanıcının yapıştırdığı reklam metni/tarifi (v1 girdisi)
+  inputText    String
+  // Ad Library veya reklam linki — kaynak referansı olarak saklanır, içerik kopyalanmaz (karar: 2026-08-12)
+  inputUrl     String?
+  status       AnalysisStatus @default(QUEUED)
+  analysis     Json?
+  error        String?
+  model        String?
+  promptTokens Int?
+  outputTokens Int?
+  createdAt    DateTime       @default(now())
+  finishedAt   DateTime?
+
+  @@index([competitorId])
+}
+
+// CLAUDE.md §12 — pattern tek reklamdan değil, birden çok analizden çıkar
+model PatternAnalysis {
+  id           String         @id @default(cuid())
+  brand        Brand          @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId      String
+  status       AnalysisStatus @default(QUEUED)
+  adCount      Int
+  result       Json?
+  error        String?
+  model        String?
+  promptTokens Int?
+  outputTokens Int?
+  createdAt    DateTime       @default(now())
+  finishedAt   DateTime?
 
   @@index([brandId, createdAt])
 }

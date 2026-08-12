@@ -1,6 +1,7 @@
 import { prisma } from "@adscore/db";
 import type { ResearchResult } from "@/lib/research/prompt";
 import { cn } from "@/components/ui";
+import { AddCandidateButton } from "@/components/competitors/competitor-forms";
 import { ResearchPoller } from "./research-poller";
 import { ResearchStartForm } from "./research-start-form";
 
@@ -29,7 +30,13 @@ const COMPETITOR_TYPES: Record<string, string> = {
   creative: "Creative",
 };
 
-function ResultView({ result }: { result: ResearchResult }) {
+function ResultView({
+  result,
+  brandId,
+}: {
+  result: ResearchResult;
+  brandId: string;
+}) {
   return (
     <div className="space-y-5">
       {result.brand_identity ? (
@@ -137,6 +144,16 @@ function ResultView({ result }: { result: ResearchResult }) {
                 <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
                   {COMPETITOR_TYPES[c.type ?? ""] ?? c.type}
                 </span>
+                {c.name ? (
+                  <span className="ml-3">
+                    <AddCandidateButton
+                      brandId={brandId}
+                      name={c.name}
+                      type={c.type ?? "DIRECT"}
+                      reason={c.reason}
+                    />
+                  </span>
+                ) : null}
                 {c.reason ? (
                   <p className="mt-0.5 text-muted-foreground">{c.reason}</p>
                 ) : null}
@@ -249,7 +266,10 @@ export async function ResearchSection({ brandId }: { brandId: string }) {
 
           {latest.status === "COMPLETED" && latest.result ? (
             <div className="mt-4">
-              <ResultView result={latest.result as ResearchResult} />
+              <ResultView
+                result={latest.result as ResearchResult}
+                brandId={brandId}
+              />
               {latest.sources.length ? (
                 <div className="mt-5 border-t border-border pt-3 text-xs text-muted-foreground">
                   Kaynaklar:{" "}

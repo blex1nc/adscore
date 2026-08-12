@@ -441,7 +441,18 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
-**PHASE 2 (Research Engine v1) İSKELETİ TAMAM (2026-08-12).** Mimari onaylı; implementation sürüyor.
+**PHASE 3 (Competitor Intelligence v1) İSKELETİ TAMAM (2026-08-12).** Mimari onaylı; implementation sürüyor.
+
+**Phase 3'te kurulanlar:**
+
+- Şema: `Competitor` (tip: direct/indirect/aspirational/creative; addedFrom: user/research), `CompetitorAd` (inputText + opsiyonel kaynak URL — içerik kopyalanmaz, referans+analiz saklanır), `PatternAnalysis`.
+- v1 yolu (pazar-bazlı hibrit kararının manuel tarafı): kullanıcı reklam metnini/tarifini yapıştırır → AI yapılandırılmış analiz (CLAUDE.md §11 şeması: hook/offer/cta/format/funnel + confidence'lı hipotezler + data_gaps). Ad Library API yolu Meta bağlantısıyla (Phase 5+) eklenecek.
+- Pattern analizi (CLAUDE.md §12): **en az 3 analiz edilmiş reklam** şartı hem action'da hem executor'da; observed (kanıt sayılı, "X/Y reklamda") ile hypothesis (confidence'lı) ayrık; çıktıda markaya uyarlama notları (kopya değil).
+- UI: `/app/brands/[id]/competitors` — rakip ekleme (elle veya araştırma adayından tek tık), reklam ekleme + analiz görünümü, pattern bölümü; marka sayfasından "Rakipler →" linki.
+- Doğrulanan: rakip ekleme, reklam ekleme, keysiz koşuda dürüst BLOCKED, pattern kapısı (0/3 gösterimi). Gerçek AI çağrıları hâlâ kullanıcı key'ini bekliyor.
+- Yakalanan operasyonel not: migration sonrası çalışan dev server'da Prisma client bellekte eski kalıyor — **her migration'dan sonra dev server yeniden başlatılmalı.**
+
+**PHASE 2 (Research Engine v1) İSKELETİ TAMAM (2026-08-12).**
 
 **Phase 2'de kurulanlar:**
 

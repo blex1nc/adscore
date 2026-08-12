@@ -42,7 +42,9 @@
   --shadow-dashboard: 0 25px 80px -12px rgb(0 0 0 / 0.5), 0 0 0 1px hsl(0 0% 100% / 0.06);
 }
 
-/* Landing skin: tema seçiminden bağımsız hep dark (kullanıcı kararı, 2026-08-12) */
+/* Landing skin: tema seçiminden bağımsız hep dark (kullanıcı kararı, 2026-08-12).
+   Renk yönü: yeni hero referansı (2026-08-12 akşam) — mor #7b39fc / koyu mor #2b2344,
+   ham hex component'e yazılmaz, buradaki token katmanından gelir (HANDOFF 21.3). */
 .skin-landing {
   --background: hsl(0 0% 4%);
   --foreground: hsl(0 0% 100%);
@@ -50,10 +52,17 @@
   --card-foreground: hsl(0 0% 100%);
   --muted: hsl(0 0% 100% / 0.1);
   --muted-foreground: hsl(0 0% 100% / 0.7);
-  --accent: hsl(0 0% 100%);
-  --accent-foreground: hsl(0 0% 4%);
+  --accent: hsl(262 97% 61%);            /* #7b39fc */
+  --accent-foreground: hsl(0 0% 98%);    /* #fafafa */
+  --cta-dark: hsl(252 32% 20%);          /* #2b2344 */
+  --cta-dark-foreground: hsl(220 20% 97%); /* #f6f7f9 */
+  --surface: hsl(0 0% 100%);             /* Sign In beyaz buton */
+  --surface-foreground: hsl(0 0% 9%);    /* #171717 */
+  --surface-border: hsl(0 0% 83%);       /* #d4d4d4 */
+  --glass: hsl(248 16% 37% / 0.4);       /* rgba(85,80,110,.4) pill */
+  --glass-border: hsl(263 51% 68% / 0.5);/* rgba(164,132,215,.5) */
   --border: hsl(0 0% 100% / 0.15);
-  --ring: hsl(0 0% 100% / 0.5);
+  --ring: hsl(262 97% 61%);
 }
 
 @theme inline {
@@ -72,8 +81,15 @@
   --color-glass: var(--glass);
   --color-glass-soft: var(--glass-soft);
   --color-glass-border: var(--glass-border);
+  --color-cta-dark: var(--cta-dark);
+  --color-cta-dark-foreground: var(--cta-dark-foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-surface-border: var(--surface-border);
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-instrument-serif), serif;
+  --font-manrope: var(--font-manrope), system-ui, sans-serif;
+  --font-cabin: var(--font-cabin), system-ui, sans-serif;
   --font-mono: var(--font-inter), system-ui, sans-serif;
   --shadow-dashboard: var(--shadow-dashboard);
   --radius-md: var(--radius);

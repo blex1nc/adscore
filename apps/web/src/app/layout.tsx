@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Cabin, Inter, Instrument_Serif, Manrope } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -10,8 +10,20 @@ const inter = Inter({
 const instrumentSerif = Instrument_Serif({
   weight: "400",
   style: ["normal", "italic"],
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-instrument-serif",
+});
+
+const manrope = Manrope({
+  weight: ["500", "600"],
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-manrope",
+});
+
+const cabin = Cabin({
+  weight: ["500"],
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-cabin",
 });
 
 export const metadata: Metadata = {
@@ -32,7 +44,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body
+        className={`${inter.variable} ${instrumentSerif.variable} ${manrope.variable} ${cabin.variable}`}
+      >
         {children}
       </body>
     </html>

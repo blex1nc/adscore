@@ -10,6 +10,21 @@ Uyarlama sırasında geçerli kurallar için bkz. `HANDOFF.md` Bölüm 22 — **
 
 ---
 
+## GÜNCELLEME — 2026-08-12 (akşam)
+
+**REFERENCE A (NovaAI scroll-scrub) landing hero olarak KALDIRILDI.** Kullanıcı yeni bir hero referansı gönderdi ve "buna çevir" dedi. Yeni yön:
+
+- Tam ekran **autoplay loop** video (scroll-scrub yok — kullanıcı geri bildirimi: "video oynatılmıyor bile"), overlay'siz.
+- Video: `d8j0ntlcm91z4.cloudfront.net/.../hf_20260210_031346_d87182fb....mp4` (üçüncü taraf yer tutucu, §22.2 hâlâ geçerli).
+- Fontlar: Manrope (nav/UI), Cabin (buton/etiket), Instrument Serif (başlık, italik vurgu), Inter (gövde).
+- Renkler: mor `#7b39fc`, koyu mor `#2b2344`, beyaz Sign In butonu (`#d4d4d4` border, `#171717` metin), glass pill `rgba(85,80,110,.4)` + `rgba(164,132,215,.5)` border → hepsi `.skin-landing` token'larına çevrildi.
+- Yapı: transparan navbar (logo + linkler + Giriş yap/Panele gir), ortalanmış hero (pill rozet + 96px serif başlık + 662px alt metin + 2 CTA), mobilde tam ekran hamburger menü.
+- Uyarlanan copy: "Datacore/otel" metinleri AdScore'a çevrildi; "Reviews" linki kaldırıldı (henüz gerçek review yok); logo SVG path'i kesik geldiği için hexagon+wordmark yer tutucu.
+
+Aşağıdaki REFERENCE A metni tarihçe olarak korunuyor; **hero için artık geçerli değil.** B (panel) ve C (hesaplayıcı) kararları değişmedi.
+
+---
+
 ## KULLANIM HARİTASI
 
 Kullanıcının her referans için belirttiği kullanım yeri:

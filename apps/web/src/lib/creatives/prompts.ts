@@ -11,7 +11,8 @@ Kesin kurallar:
 4. Her varyant için strateji, hook, hedef notu, gerekçe (why) ve confidence ("low"|"medium"|"high") zorunlu.
 5. Meta pratikleri: primary_text için ilk 125 karakter kritik (öncesinde kancayı ver), headline kısa ve net (yaklaşık 40 karakteri aşma), description opsiyonel ve kısa.
 6. Varyantlar birbirinden gerçekten farklı stratejiler denemeli (ör. problem hook / sosyal bağlam / ürün odaklı).
-7. Çıktı dili: istenen copy dili. Çıktı SADECE geçerli JSON.`;
+7. MARKA ÖĞRENMELERİ verilmişse dikkate al: bunlar geçmiş kampanya analizlerinden çıkan HİPOTEZLERDİR; verilen confidence ve örneklem notuyla tart, kesin gerçek sayma. Bir varyant bir öğrenmeye dayanıyorsa "why" alanında ona referans ver.
+8. Çıktı dili: istenen copy dili. Çıktı SADECE geçerli JSON.`;
 
 export function buildCreativePrompt(input: {
   brandName: string;
@@ -22,6 +23,7 @@ export function buildCreativePrompt(input: {
   patternResult: unknown | null;
   instruction: string | null;
   offer: string | null;
+  learnings: Array<{ text: string; confidence: string; sampleNote: string }>;
   variantCount: number;
 }): string {
   return `MARKA: ${input.brandName}
@@ -34,6 +36,9 @@ ${input.researchResult ? JSON.stringify(input.researchResult) : "yok"}
 
 PAZAR PATTERN ANALİZİ (rakip reklamlarından, yoksa null):
 ${input.patternResult ? JSON.stringify(input.patternResult) : "yok"}
+
+MARKA ÖĞRENMELERİ (bu markanın geçmiş kampanya analizlerinden; hipotez muamelesi yap):
+${input.learnings.length > 0 ? JSON.stringify(input.learnings) : "yok"}
 
 KULLANICININ VERDİĞİ GERÇEK TEKLİF: ${input.offer ?? "YOK — hiçbir varyantta teklif/indirim kullanma"}
 KULLANICI YÖNLENDİRMESİ: ${input.instruction ?? "yok"}

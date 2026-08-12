@@ -441,6 +441,19 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
+**PHASE 8 (Optimizasyon Motoru + AdScore Algoritması — Meta'sız) TAMAM VE CANLI TEST EDİLDİ (2026-08-13).**
+
+Kullanıcı kararı: "developer hesabı açamıyorum onu atla sistemi ve algoritmayı kodla" → Meta fazları atlandı, Meta'sız çalışan zeka katmanı tamamlandı.
+
+- **AdScore algoritması** (`lib/optimization/adscore.ts`, saf kod, AI'sız, deterministik): sonuç skoru markanın KENDİ geçmişine göre görelidir (50 = marka medyanı; sektör benchmark'ı YOK — CLAUDE.md §6). Bileşenler: CTR/CPC/CVR/CPA/ROAS, ağırlıklar 1/1/2/2/3 (dönüşüm metrikleri ağır basar), yalnız mevcut bileşenler arasında normalize. Kapılar: sonuç başına ≥1000 gösterim + ≥20 tıklama; kıyas için ≥2 yeterli-veri sonucu; eksik dönüşüm verisi kapsam notunda açıkça yazar; <3 kıyas sonucu → küçük örneklem uyarısı.
+- **Sinyal tespiti** (`lib/optimization/signals.ts`, saf kod): aynı planın kronolojik son iki YETERLİ-VERİ dönemi kıyaslanır. Creative yorgunluğu (frekans ≥+%10 VE CTR ≤-%15), CTR düşüşü / CPA artışı / ROAS düşüşü (≥%20). Çıktı gerçek sayılarla "observed"; "neden" yorumu AI'a bırakılır.
+- **Optimizasyon koşusu**: `OptimizationRun` (kod hesabı snapshot `input`ta saklanır — açıklanabilirlik) + `Recommendation` (observation/causes/evidence/action/confidence, kind: optimization|test). AI'a skor+sinyal+öğrenmeler verilir; şema gereği en fazla 1 "test" önerisi (tek değişkenli, §27). Kapı: ≥1 yeterli-veri sonucu yoksa Insufficient Data, koşu açılmaz.
+- **Human override (§30)**: öneriler PROPOSED → kullanıcı kabul/reddet (audit'li, decidedAt); kabul dahi hiçbir şeyi otomatik uygulamaz.
+- **Öğrenme döngüsü KAPANDI (§26)**: `Learning` kayıtları artık creative üretimi + kampanya planı + optimizasyon promptlarına "hipotez muamelesi yap (confidence + örneklem notuyla)" talimatıyla giriyor.
+- UI: `/app/brands/[id]/optimization` (marka sayfasından link) — skor kartları bileşen dökümü + medyan kıyası + kapsam notuyla, gözlenen sinyaller, AI koşusu + öneri kartları.
+- **Canlı test (dev, gerçek Gemini)**: 2 yeterli sonuç → skorlar 47/55 (el hesabıyla doğrulandı), 300 gösterimlik sonuca dürüst Insufficient Data, yorgunluk sinyali (frekans +36% / CTR -27%) yakalandı; AI koşusu gemini-flash-latest ile tamamlandı — tüm sayılar snapshot'tan, kanıtlar sinyal/skor referanslı, "yalnızca 3 satın alma" küçük örneklem uyarıları geldi, test önerisi tek değişkenliydi; kabul akışı + audit doğrulandı. Sinyal tespitine yetersiz-veri dönemlerini kıyasa almama düzeltmesi test sırasında eklendi.
+- Not: dev DB'de test kullanıcısının (test@ornek.dev) şifresi bilinen dev değerine sıfırlandı; "Örnek Kahve"ye 3. sonuç satırı eklendi (test verisi).
+
 **CANLI DEPLOY TAMAM (2026-08-12 gece): https://adscore-dwyy.vercel.app** — Vercel projesi `adscore-incord` (team: e-bike-shop-tuerkiye), Neon DB'ye 10 migration uygulandı, landing + login + /setup canlıda doğrulandı.
 
 Deploy sırasında çözülenler (API üzerinden, kullanıcı token'ı ile):

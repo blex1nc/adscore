@@ -34,7 +34,7 @@ export async function executeCreativeGeneration(
 
   try {
     const ai = getAiProvider();
-    const [research, pattern] = await Promise.all([
+    const [research, pattern, learnings] = await Promise.all([
       prisma.researchRun.findFirst({
         where: { brandId: generation.brandId, status: "COMPLETED" },
         orderBy: { createdAt: "desc" },
@@ -42,6 +42,12 @@ export async function executeCreativeGeneration(
       prisma.patternAnalysis.findFirst({
         where: { brandId: generation.brandId, status: "COMPLETED" },
         orderBy: { createdAt: "desc" },
+      }),
+      // CLAUDE.md §26 — öğrenme döngüsü: geçmiş bulgular yeni üretime hipotez olarak girer
+      prisma.learning.findMany({
+        where: { brandId: generation.brandId },
+        orderBy: { createdAt: "desc" },
+        take: 10,
       }),
     ]);
 
@@ -56,6 +62,11 @@ export async function executeCreativeGeneration(
         patternResult: pattern?.result ?? null,
         instruction: generation.instruction,
         offer: generation.offer,
+        learnings: learnings.map((l) => ({
+          text: l.text,
+          confidence: l.confidence,
+          sampleNote: l.sampleNote,
+        })),
         variantCount: VARIANT_COUNT,
       }),
     });

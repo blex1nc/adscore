@@ -62,6 +62,7 @@ model Brand {
   creatives    Creative[]
   campaignPlans CampaignPlan[]
   learnings    Learning[]
+  optimizationRuns OptimizationRun[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -312,6 +313,57 @@ model Learning {
   sampleNote     String
   sourceResultId String?
   createdAt      DateTime @default(now())
+
+  @@index([brandId, createdAt])
+}
+
+// Phase 8 — Optimizasyon Motoru (Meta'sız). Skorlar/sinyaller KODDAN hesaplanır
+// ve `input` alanında snapshot olarak saklanır; AI yalnız yorum + öneri üretir.
+// Öneriler otomatik uygulanmaz (CLAUDE.md §30) — kullanıcı kabul/reddet eder.
+
+enum RecommendationStatus {
+  PROPOSED
+  ACCEPTED
+  DISMISSED
+}
+
+model OptimizationRun {
+  id              String           @id @default(cuid())
+  brand           Brand            @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId         String
+  status          AnalysisStatus   @default(QUEUED)
+  // Analize giren yeterli-veri sonuç sayısı (CLAUDE.md §28 — sample size kaydı)
+  resultCount     Int
+  // Kod hesabı snapshot: AdScore'lar + sinyaller + metrikler (AI'a verilen veri)
+  input           Json?
+  result          Json?
+  error           String?
+  model           String?
+  promptTokens    Int?
+  outputTokens    Int?
+  recommendations Recommendation[]
+  createdAt       DateTime         @default(now())
+  finishedAt      DateTime?
+
+  @@index([brandId, createdAt])
+}
+
+model Recommendation {
+  id          String               @id @default(cuid())
+  run         OptimizationRun      @relation(fields: [runId], references: [id], onDelete: Cascade)
+  runId       String
+  // Listeleme için denormalize; tenant kontrolü run.brand üzerinden yapılır
+  brandId     String
+  // "optimization" | "test" (test = tek değişkenli sonraki deney önerisi, §27)
+  kind        String
+  observation String
+  causes      String?
+  evidence    String
+  action      String
+  confidence  String
+  status      RecommendationStatus @default(PROPOSED)
+  decidedAt   DateTime?
+  createdAt   DateTime             @default(now())
 
   @@index([brandId, createdAt])
 }

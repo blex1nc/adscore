@@ -29,7 +29,7 @@ export async function executeCampaignPlan(planId: string): Promise<void> {
 
   try {
     const ai = getAiProvider();
-    const [research, pattern] = await Promise.all([
+    const [research, pattern, learnings] = await Promise.all([
       prisma.researchRun.findFirst({
         where: { brandId: plan.brandId, status: "COMPLETED" },
         orderBy: { createdAt: "desc" },
@@ -37,6 +37,12 @@ export async function executeCampaignPlan(planId: string): Promise<void> {
       prisma.patternAnalysis.findFirst({
         where: { brandId: plan.brandId, status: "COMPLETED" },
         orderBy: { createdAt: "desc" },
+      }),
+      // CLAUDE.md §26 — öğrenme döngüsü: geçmiş bulgular yeni plana hipotez olarak girer
+      prisma.learning.findMany({
+        where: { brandId: plan.brandId },
+        orderBy: { createdAt: "desc" },
+        take: 10,
       }),
     ]);
 
@@ -54,6 +60,11 @@ export async function executeCampaignPlan(planId: string): Promise<void> {
         notes: plan.notes,
         researchResult: research?.result ?? null,
         patternResult: pattern?.result ?? null,
+        learnings: learnings.map((l) => ({
+          text: l.text,
+          confidence: l.confidence,
+          sampleNote: l.sampleNote,
+        })),
         creatives: plan.creatives.map((c) => ({
           headline: c.headline,
           primaryText: c.primaryText,

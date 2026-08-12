@@ -11,7 +11,8 @@ Kesin kurallar:
 4. Kullanıcının Pixel/CAPI kurulumu OLMAYABİLİR; dönüşüm optimizasyonu önerirken bunu açıkça koşula bağla ve pixel yoksa güvenli alternatifi söyle.
 5. Test yapısında aynı anda tek ana değişken test edilir.
 6. Ads Manager adımlarını genel akış olarak yaz (menü adları değişebilir; "yaklaşık olarak" dili kullan).
-7. Çıktı dili Türkçe; çıktı SADECE geçerli JSON.`;
+7. MARKA ÖĞRENMELERİ verilmişse önerilerde dikkate al: bunlar geçmiş kampanya analizlerinden çıkan HİPOTEZLERDİR; verilen confidence ve örneklem notuyla tart, kesin gerçek sayma. Bir öneri bir öğrenmeye dayanıyorsa gerekçesinde ona referans ver.
+8. Çıktı dili Türkçe; çıktı SADECE geçerli JSON.`;
 
 export function buildCampaignPlanPrompt(input: {
   brandName: string;
@@ -25,6 +26,7 @@ export function buildCampaignPlanPrompt(input: {
   notes: string | null;
   researchResult: unknown | null;
   patternResult: unknown | null;
+  learnings: Array<{ text: string; confidence: string; sampleNote: string }>;
   creatives: Array<{
     headline: string;
     primaryText: string;
@@ -47,6 +49,7 @@ ${JSON.stringify(input.creatives)}
 
 MARKA ARAŞTIRMASI: ${input.researchResult ? JSON.stringify(input.researchResult) : "yok"}
 PAZAR PATTERN ANALİZİ: ${input.patternResult ? JSON.stringify(input.patternResult) : "yok"}
+MARKA ÖĞRENMELERİ (geçmiş kampanya analizlerinden; hipotez muamelesi yap): ${input.learnings.length > 0 ? JSON.stringify(input.learnings) : "yok"}
 
 Şu JSON şemasına birebir uy:
 

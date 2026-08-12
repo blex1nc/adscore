@@ -23,9 +23,12 @@ if (existsSync(envPath)) {
   }
 }
 
-const raw = process.env.DIRECT_URL || process.env.DATABASE_URL;
+const raw =
+  process.env.DIRECT_URL || process.env.DATABASE_URL || process.env.neon;
 if (!raw) {
-  console.error("migrate-deploy: DATABASE_URL tanımlı değil.");
+  console.error(
+    "migrate-deploy: DATABASE_URL (veya 'neon') tanımlı değil.",
+  );
   process.exit(1);
 }
 

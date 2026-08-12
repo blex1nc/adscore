@@ -441,7 +441,14 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
-**PHASE 3 (Competitor Intelligence v1) İSKELETİ TAMAM (2026-08-12).** Mimari onaylı; implementation sürüyor.
+**PHASE 2 + 3 GERÇEK AI ÇAĞRILARIYLA DOĞRULANDI (2026-08-12).** Kullanıcı Gemini key'ini `.env.local`e ekledi; tüm zincir canlı test edildi:
+
+- **Marka araştırması:** kronotrop.com.tr (gerçek site) → kaynak kaydı + yapılandırılmış profil (gerçek site verileri: kargo eşiği, ürün serileri; confidence'lı hipotezler; dürüst data_gaps). Model: gemini-flash-latest, ~1.6K+1.2K token.
+- **Reklam analizi:** 3 reklam analiz edildi (format/funnel/hook doğru çıkarıldı; UGC tarifi UGC olarak etiketlendi).
+- **Pattern analizi:** 3 reklamdan kanıt sayılı observed pattern'ler ("3/3 reklamda ilk alıma özel teklif"), confidence'lı hipotezler, markaya özel uyarlama notları.
+- **Adapter dayanıklılığı kanıtlandı:** `gemini-2.5-flash` yeni kullanıcılara kapanmış (404) → varsayılan `gemini-flash-latest` alias'ına çevrildi; 503 yoğunlukta retry/backoff + model fallback eklendi ve canlıda çalıştı (bir analiz fallback ile `gemini-3.6-flash`te tamamlandı). Sabitlemek için `GEMINI_MODEL` env override mevcut.
+
+**PHASE 3 (Competitor Intelligence v1) İSKELETİ TAMAM (2026-08-12).**
 
 **Phase 3'te kurulanlar:**
 

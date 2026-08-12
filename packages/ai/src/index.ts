@@ -40,7 +40,17 @@ export interface AiProvider {
   generateJson(options: GenerateJsonOptions): Promise<AiTextResult>;
 }
 
-const GEMINI_DEFAULT_MODEL = "gemini-2.5-flash";
+// Alias: her zaman güncel flash modelini izler (sabit sürüm adları
+// yeni kullanıcılara kapanabiliyor — 2026-08-12'de gemini-2.5-flash kapandı).
+// Sabitlemek istersen .env'de GEMINI_MODEL ile override et.
+const GEMINI_MODEL_CANDIDATES = [
+  "gemini-flash-latest",
+  "gemini-3.6-flash",
+  "gemini-3.5-flash",
+  "gemini-flash-lite-latest",
+];
+const RETRYABLE_STATUS = new Set([429, 500, 503]);
+const RETRY_DELAYS_MS = [2000, 8000];
 
 type GeminiResponse = {
   candidates?: Array<{
@@ -56,14 +66,66 @@ type GeminiResponse = {
 
 class GeminiProvider implements AiProvider {
   readonly name = "gemini";
+  // Çalıştığı bilinen model süreç ömrünce hatırlanır
+  private static workingModel: string | null = null;
 
   constructor(
     private readonly apiKey: string,
-    private readonly model: string,
+    private readonly modelOverride: string | null,
   ) {}
 
   async generateJson(options: GenerateJsonOptions): Promise<AiTextResult> {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent`;
+    const models = this.modelOverride
+      ? [this.modelOverride]
+      : GeminiProvider.workingModel
+        ? [
+            GeminiProvider.workingModel,
+            ...GEMINI_MODEL_CANDIDATES.filter(
+              (m) => m !== GeminiProvider.workingModel,
+            ),
+          ]
+        : GEMINI_MODEL_CANDIDATES;
+
+    let lastError: AiProviderError | null = null;
+    for (const model of models) {
+      // Geçici hatalarda (429/500/503) backoff ile tekrar dene;
+      // 404 (model kapanmış) ise sıradaki adaya geç.
+      for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+        try {
+          const result = await this.callModel(model, options);
+          GeminiProvider.workingModel = model;
+          return result;
+        } catch (error) {
+          if (!(error instanceof AiProviderError)) throw error;
+          lastError = error;
+          if (error.status === 404) break;
+          if (
+            error.status !== undefined &&
+            RETRYABLE_STATUS.has(error.status) &&
+            attempt < RETRY_DELAYS_MS.length
+          ) {
+            await new Promise((r) => setTimeout(r, RETRY_DELAYS_MS[attempt]));
+            continue;
+          }
+          if (
+            error.status !== undefined &&
+            RETRYABLE_STATUS.has(error.status)
+          ) {
+            break; // bu model için denemeler bitti, sıradakine geç
+          }
+          throw error;
+        }
+      }
+    }
+    throw lastError ??
+      new AiProviderError("Hiçbir Gemini modeline erişilemedi.");
+  }
+
+  private async callModel(
+    model: string,
+    options: GenerateJsonOptions,
+  ): Promise<AiTextResult> {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -108,7 +170,7 @@ class GeminiProvider implements AiProvider {
     }
     return {
       text,
-      model: this.model,
+      model,
       promptTokens: body.usageMetadata?.promptTokenCount ?? null,
       outputTokens: body.usageMetadata?.candidatesTokenCount ?? null,
     };
@@ -123,10 +185,7 @@ class GeminiProvider implements AiProvider {
 export function getAiProvider(): AiProvider {
   const geminiKey = process.env.GEMINI_API_KEY;
   if (geminiKey) {
-    return new GeminiProvider(
-      geminiKey,
-      process.env.GEMINI_MODEL ?? GEMINI_DEFAULT_MODEL,
-    );
+    return new GeminiProvider(geminiKey, process.env.GEMINI_MODEL ?? null);
   }
   throw new AiBlockedError(
     "GEMINI_API_KEY tanımlı değil. apps/web/.env.local dosyasına key'i ekleyip dev server'ı yeniden başlat.",

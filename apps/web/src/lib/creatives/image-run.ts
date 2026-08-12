@@ -1,12 +1,7 @@
 import "server-only";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { prisma } from "@adscore/db";
 import { AiBlockedError, generateImage } from "@adscore/ai";
 import { audit } from "@/lib/audit";
-
-// Lokal depolama (dev). Production'da S3'e taşınacak.
-export const IMAGE_DIR = path.join(process.cwd(), ".data", "creative-images");
 
 export function buildImagePrompt(input: {
   brandName: string;
@@ -42,19 +37,13 @@ export async function executeImageGeneration(imageId: string): Promise<void> {
 
   try {
     const result = await generateImage(image.prompt);
-    await mkdir(IMAGE_DIR, { recursive: true });
-    const ext = result.mimeType === "image/jpeg" ? "jpg" : "png";
-    const fileName = `${imageId}.${ext}`;
-    await writeFile(
-      path.join(IMAGE_DIR, fileName),
-      Buffer.from(result.imageBase64, "base64"),
-    );
+    // Baytlar DB'de: Vercel'de kalıcı disk yok; S3 geçişi production ölçeğinde
     await prisma.creativeImage.update({
       where: { id: imageId },
       data: {
         status: "COMPLETED",
         finishedAt: new Date(),
-        filePath: fileName,
+        data: Buffer.from(result.imageBase64, "base64"),
         mimeType: result.mimeType,
         model: result.model,
       },

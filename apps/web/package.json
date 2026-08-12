@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "deploy-build": "pnpm --filter @adscore/db migrate:deploy && next build",
     "start": "next start",
     "lint": "eslint"
   },

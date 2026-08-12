@@ -20,6 +20,7 @@ import {
 import { ResearchPoller } from "@/components/research/research-poller";
 
 export const metadata = { title: "Rakipler | AdScore" };
+export const maxDuration = 60;
 
 const STATUS_LABELS: Record<string, string> = {
   QUEUED: "Sırada",

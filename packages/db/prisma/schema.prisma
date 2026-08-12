@@ -7,8 +7,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // Neon pooled bağlantı için: migrate/işlem dışı sorgular pooled URL'den,
+  // migration'lar direct URL'den gider. Lokalde ikisi aynı değere işaret eder.
+  directUrl = env("DIRECT_URL")
 }
 
 enum PlatformRole {
@@ -257,7 +260,9 @@ model CreativeImage {
   creativeId String
   status     AnalysisStatus @default(QUEUED)
   prompt     String
-  filePath   String?
+  // Görsel baytları DB'de tutulur: Vercel'de kalıcı disk yok; S3'e geçiş
+  // production ölçeğinde yapılacak (HANDOFF notu).
+  data       Bytes?
   mimeType   String?
   error      String?
   model      String?

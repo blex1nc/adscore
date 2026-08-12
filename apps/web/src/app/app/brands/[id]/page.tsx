@@ -9,6 +9,8 @@ import { ResearchSection } from "@/components/research/research-section";
 import { DeleteBrandButton } from "./delete-brand-button";
 
 export const metadata = { title: "Marka | AdScore" };
+// Bu sayfanın server action'ları (araştırma) arka planda AI çağrısı koşturur
+export const maxDuration = 60;
 
 export default async function BrandDetailPage({
   params,

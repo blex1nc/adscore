@@ -18,6 +18,7 @@ import { GenerateImageButton } from "@/components/creatives/image-button";
 import { ResearchPoller } from "@/components/research/research-poller";
 
 export const metadata = { title: "Creative Studio | AdScore" };
+export const maxDuration = 60;
 
 const APPROVAL_LABELS: Record<string, string> = {
   PENDING: "Onay bekliyor",

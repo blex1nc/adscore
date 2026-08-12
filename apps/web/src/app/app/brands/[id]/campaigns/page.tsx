@@ -18,6 +18,7 @@ import { computeMetrics, formatMetric } from "@/lib/results/metrics";
 import type { ResultAnalysis } from "@/lib/results/run";
 
 export const metadata = { title: "Kampanya kiti | AdScore" };
+export const maxDuration = 60;
 
 const STATUS_LABELS: Record<string, string> = {
   QUEUED: "Sırada",

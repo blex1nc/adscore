@@ -1,11 +1,8 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@adscore/db";
 import { getCurrentUser } from "@/lib/auth";
-import { IMAGE_DIR } from "@/lib/creatives/image-run";
 
-// Görseller auth + tenant kontrolüyle servis edilir (public dizinde değil)
+// Görseller auth + tenant kontrolüyle DB'den servis edilir
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -20,20 +17,14 @@ export async function GET(
       creative: { brand: { workspace: { ownerId: user.id } } },
       status: "COMPLETED",
     },
+    select: { data: true, mimeType: true },
   });
-  if (!image?.filePath) return new NextResponse("Not found", { status: 404 });
+  if (!image?.data) return new NextResponse("Not found", { status: 404 });
 
-  // Path traversal önlemi: yalnızca kayıtta duran dosya adı, dizin sabit
-  const safeName = path.basename(image.filePath);
-  try {
-    const data = await readFile(path.join(IMAGE_DIR, safeName));
-    return new NextResponse(new Uint8Array(data), {
-      headers: {
-        "content-type": image.mimeType ?? "image/png",
-        "cache-control": "private, max-age=3600",
-      },
-    });
-  } catch {
-    return new NextResponse("Not found", { status: 404 });
-  }
+  return new NextResponse(new Uint8Array(image.data), {
+    headers: {
+      "content-type": image.mimeType ?? "image/png",
+      "cache-control": "private, max-age=3600",
+    },
+  });
 }

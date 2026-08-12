@@ -441,6 +441,8 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
+**DEPLOY HAZIRLIĞI TAMAM (2026-08-12 gece).** Kod Vercel + Neon uyumlu: görseller DB'de (bytea), Prisma `directUrl`, `deploy-build` (migrate deploy + build), `vercel.json`, AI sayfalarında `maxDuration=60`. Kullanıcı adımları: `DEPLOY.md` (Neon + GitHub private repo + Vercel + prod admin seed). Bilinen sınırlar orada kayıtlı (60 sn fonksiyon limiti → worker/queue sonraki altyapı fazı).
+
 **GÖRSEL ÜRETİM + LANDING ZENGİNLEŞTİRME (2026-08-12 gece).**
 
 - Landing aynı hero yapısıyla uzatıldı: count-up'lı istatistik bandı (yalnız ürünün GERÇEK mekanik sayıları — uydurma kullanıcı/performans istatistiği bilinçli olarak YOK), 6 adımlı süreç, ilke kartları, SSS, final CTA, footer; reveal + hover animasyonları, reduced-motion destekli.

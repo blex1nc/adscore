@@ -441,6 +441,13 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
+**PHASE 4 (Creative Studio v1) TAMAM VE CANLI TEST EDİLDİ (2026-08-12).**
+
+- Şema: `CreativeGeneration` (instruction + kullanıcının GERÇEK teklifi) + `Creative` (strategy/hook/primaryText/headline/description/cta/targetNote/why/confidence, approval: PENDING/APPROVED/REJECTED).
+- Üretim: tek çağrıda 3 farklı stratejili varyant; girdiler = marka profili + son COMPLETED research + son COMPLETED pattern. **Araştırma yoksa üretim reddedilir** (veri temelsiz copy yok). Teklif kullanıcı girmediyse copy'de hiçbir indirim/vaat kullanılmaz — canlı testte doğrulandı: yalnız verilen teklif kullanıldı, uydurma iddia yok, "why" alanları araştırma/pattern bulgularına referans verdi.
+- Onay akışı (CLAUDE.md §16): approve / reject / geri al / düzenle — düzenlenen creative otomatik yeniden onaya düşer (`editedAt` işlenir). Hepsi audit log'lu ve canlı test edildi.
+- UI: `/app/brands/[id]/creatives`; marka sayfasından link. Onaysız creative'in kampanyada kullanılamayacağı kuralı Phase 6'da campaign builder'a bağlanacak.
+
 **PHASE 2 + 3 GERÇEK AI ÇAĞRILARIYLA DOĞRULANDI (2026-08-12).** Kullanıcı Gemini key'ini `.env.local`e ekledi; tüm zincir canlı test edildi:
 
 - **Marka araştırması:** kronotrop.com.tr (gerçek site) → kaynak kaydı + yapılandırılmış profil (gerçek site verileri: kargo eşiği, ürün serileri; confidence'lı hipotezler; dürüst data_gaps). Model: gemini-flash-latest, ~1.6K+1.2K token.

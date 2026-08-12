@@ -37,12 +37,20 @@ export default async function BrandDetailPage({
       </Link>
       <div className="mt-3 flex items-center justify-between gap-4">
         <h1 className="font-display text-3xl">{brand.name}</h1>
-        <Link
-          href={`/app/brands/${brand.id}/competitors`}
-          className="rounded-full border border-border bg-card px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
-        >
-          Rakipler →
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/app/brands/${brand.id}/competitors`}
+            className="rounded-full border border-border bg-card px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
+          >
+            Rakipler →
+          </Link>
+          <Link
+            href={`/app/brands/${brand.id}/creatives`}
+            className="rounded-full border border-border bg-card px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
+          >
+            Creative Studio →
+          </Link>
+        </div>
       </div>
       <div className="mt-6 rounded-2xl border border-border bg-card p-6">
         <BrandForm

@@ -55,6 +55,8 @@ model Brand {
   researchRuns ResearchRun[]
   competitors  Competitor[]
   patternAnalyses PatternAnalysis[]
+  creativeGenerations CreativeGeneration[]
+  creatives    Creative[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -155,6 +157,57 @@ model PatternAnalysis {
   outputTokens Int?
   createdAt    DateTime       @default(now())
   finishedAt   DateTime?
+
+  @@index([brandId, createdAt])
+}
+
+// Phase 4 — Creative Studio v1 (yalnız copy; görsel/video sonraki aşama).
+// Onaysız creative hiçbir kampanyada kullanılamaz (CLAUDE.md §16).
+
+enum CreativeApproval {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model CreativeGeneration {
+  id           String         @id @default(cuid())
+  brand        Brand          @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId      String
+  status       AnalysisStatus @default(QUEUED)
+  // Kullanıcı yönlendirmesi (opsiyonel) ve kullanıcının verdiği GERÇEK teklif.
+  // Teklif kullanıcıdan gelmediyse üretimde teklif kullanılmaz (uydurma yasak).
+  instruction  String?
+  offer        String?
+  error        String?
+  model        String?
+  promptTokens Int?
+  outputTokens Int?
+  creatives    Creative[]
+  createdAt    DateTime       @default(now())
+  finishedAt   DateTime?
+
+  @@index([brandId, createdAt])
+}
+
+model Creative {
+  id           String             @id @default(cuid())
+  brand        Brand              @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId      String
+  generation   CreativeGeneration @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  generationId String
+  approval     CreativeApproval   @default(PENDING)
+  strategy     String
+  hook         String
+  primaryText  String
+  headline     String
+  description  String?
+  cta          String
+  targetNote   String?
+  why          String
+  confidence   String
+  editedAt     DateTime?
+  createdAt    DateTime           @default(now())
 
   @@index([brandId, createdAt])
 }

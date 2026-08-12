@@ -209,6 +209,7 @@ model Creative {
   why          String
   confidence   String
   editedAt     DateTime?
+  images       CreativeImage[]
   campaignPlans CampaignPlan[]    @relation("PlanCreatives")
   createdAt    DateTime           @default(now())
 
@@ -246,6 +247,24 @@ model CampaignPlan {
   finishedAt   DateTime?
 
   @@index([brandId, createdAt])
+}
+
+// Görsel üretim (Creative Studio uzantısı). Dosyalar lokal .data dizininde;
+// production'da S3'e taşınacak (HANDOFF mimari kararı).
+model CreativeImage {
+  id         String         @id @default(cuid())
+  creative   Creative       @relation(fields: [creativeId], references: [id], onDelete: Cascade)
+  creativeId String
+  status     AnalysisStatus @default(QUEUED)
+  prompt     String
+  filePath   String?
+  mimeType   String?
+  error      String?
+  model      String?
+  createdAt  DateTime       @default(now())
+  finishedAt DateTime?
+
+  @@index([creativeId])
 }
 
 // Phase 7' — Manuel sonuç girişi + analiz + öğrenme döngüsü.

@@ -14,6 +14,7 @@ import {
   EditCreativeForm,
   GenerateForm,
 } from "@/components/creatives/creative-forms";
+import { GenerateImageButton } from "@/components/creatives/image-button";
 import { ResearchPoller } from "@/components/research/research-poller";
 
 export const metadata = { title: "Creative Studio | AdScore" };
@@ -38,7 +39,10 @@ export default async function CreativesPage({
     include: {
       creatives: {
         orderBy: { createdAt: "desc" },
-        include: { generation: { select: { offer: true, model: true } } },
+        include: {
+          generation: { select: { offer: true, model: true } },
+          images: { orderBy: { createdAt: "desc" }, take: 1 },
+        },
       },
       creativeGenerations: { orderBy: { createdAt: "desc" }, take: 1 },
     },
@@ -48,7 +52,12 @@ export default async function CreativesPage({
   const latestGeneration = brand.creativeGenerations[0];
   const hasActive =
     latestGeneration?.status === "QUEUED" ||
-    latestGeneration?.status === "RUNNING";
+    latestGeneration?.status === "RUNNING" ||
+    brand.creatives.some((c) =>
+      c.images.some(
+        (img) => img.status === "QUEUED" || img.status === "RUNNING",
+      ),
+    );
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -197,6 +206,30 @@ export default async function CreativesPage({
             {creative.generation.offer ? (
               <p>Teklif (kullanıcı girdisi): {creative.generation.offer}</p>
             ) : null}
+          </div>
+
+          <div className="mt-4 border-t border-border pt-3">
+            {creative.images[0]?.status === "COMPLETED" ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`/api/creative-images/${creative.images[0].id}`}
+                alt={`${creative.headline} için üretilen reklam görseli`}
+                className="mb-3 w-full max-w-sm rounded-xl border border-border"
+              />
+            ) : null}
+            {creative.images[0]?.status === "FAILED" &&
+            creative.images[0].error ? (
+              <div className="mb-3 rounded-md border border-destructive/40 p-2 text-xs">
+                Görsel üretilemedi: {creative.images[0].error}
+              </div>
+            ) : null}
+            <GenerateImageButton
+              creativeId={creative.id}
+              hasActive={
+                creative.images[0]?.status === "QUEUED" ||
+                creative.images[0]?.status === "RUNNING"
+              }
+            />
           </div>
 
           <details className="mt-4">

@@ -18,3 +18,6 @@ coverage/
 .claude/settings.local.json
 .agents/
 .claude/skills/
+
+# Lokal uretim dosyalari (gorsel creative vb.)
+.data/

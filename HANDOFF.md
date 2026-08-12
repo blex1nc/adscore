@@ -441,6 +441,12 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
+**GÖRSEL ÜRETİM + LANDING ZENGİNLEŞTİRME (2026-08-12 gece).**
+
+- Landing aynı hero yapısıyla uzatıldı: count-up'lı istatistik bandı (yalnız ürünün GERÇEK mekanik sayıları — uydurma kullanıcı/performans istatistiği bilinçli olarak YOK), 6 adımlı süreç, ilke kartları, SSS, final CTA, footer; reveal + hover animasyonları, reduced-motion destekli.
+- Creative Studio görsel üretimi: `CreativeImage` modeli, `generateImage` (aday model listesi + retry/fallback), lokal `.data/creative-images` depolama (prod'da S3'e taşınacak), auth+tenant korumalı `/api/creative-images/[id]` servisi, creative kartında üret/görüntüle.
+- **Görsel üretim canlı testi 429 verdi:** free tier görsel kotası dolu. Kod yolu doğru çalışıyor (dürüst hata UI'da). Kota yenilenince veya `GEMINI_IMAGE_MODEL` override/ücretli planla çalışacak; yeniden test edilmeli.
+
 **PHASE 7' (Manuel Sonuç + Analiz + Öğrenme) TAMAM VE CANLI TEST EDİLDİ (2026-08-12 akşam).**
 
 - `CampaignResult`: Ads Manager raporundan elle veri girişi (harcama/gösterim/tıklama + opsiyonel erişim/satın alma/ciro). Türetilmiş metrikler (CTR/CPC/CPM/CVR/CPA/ROAS/frekans) **koddan** hesaplanır; AI sayı üretmez, hazır verilen metrikleri yorumlar.

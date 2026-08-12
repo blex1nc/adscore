@@ -102,6 +102,40 @@ export async function signupWithInvite(
   redirect("/app");
 }
 
+const setupSchema = z.object({
+  name: z.string().min(2, "İsim en az 2 karakter olmalı."),
+  email: z.email("Geçerli bir e-posta gir."),
+  password: z.string().min(10, "Şifre en az 10 karakter olmalı."),
+});
+
+// İlk kurulum: yalnızca hiç kullanıcı yokken çalışır; ilk hesap ADMIN olur.
+// Kullanıcı oluştuğu anda bu yol kalıcı olarak kapanır.
+export async function createFirstAdmin(
+  _prev: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  const userCount = await prisma.user.count();
+  if (userCount > 0) {
+    return { error: "Kurulum zaten tamamlanmış. Giriş sayfasını kullan." };
+  }
+  const parsed = setupSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Form hatalı." };
+  }
+  const user = await prisma.user.create({
+    data: {
+      email: parsed.data.email.toLowerCase(),
+      name: parsed.data.name,
+      passwordHash: await bcrypt.hash(parsed.data.password, 12),
+      platformRole: "ADMIN",
+      workspace: { create: { name: `${parsed.data.name} Workspace` } },
+    },
+  });
+  await audit({ userId: user.id, action: "user.first_admin_setup" });
+  await createSessionCookie({ sub: user.id, role: "ADMIN" });
+  redirect("/admin");
+}
+
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Mevcut şifre gerekli."),
   newPassword: z.string().min(10, "Yeni şifre en az 10 karakter olmalı."),

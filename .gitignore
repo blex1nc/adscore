@@ -1,0 +1,20 @@
+node_modules/
+.next/
+out/
+dist/
+build/
+
+# env — secrets asla commit edilmez (CLAUDE.md §32)
+.env
+.env.*
+!.env.example
+
+*.log
+.DS_Store
+.turbo/
+coverage/
+
+# Claude Code lokal ayarlari ve kurulu skill kopyalari
+.claude/settings.local.json
+.agents/
+.claude/skills/

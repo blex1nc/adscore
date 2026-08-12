@@ -1,0 +1,86 @@
+// PHASE 1 MINIMUM ŞEMASI — finalize DEĞİL (HANDOFF §16).
+// Research/Competitor/Creative/Campaign/Meta modelleri ilgili fazlarda,
+// kullanıcı onayıyla eklenecek.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PlatformRole {
+  ADMIN // internal admin panel erişimi (biz)
+  USER  // müşteri
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String
+  passwordHash String
+  platformRole PlatformRole @default(USER)
+  workspace    Workspace?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+// MVP: tek kullanıcı = tek workspace (HANDOFF 21.5). Ekip/roller sonraki faz;
+// ownerId unique kaldırılarak membership tablosuna geçilecek.
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String   @unique
+  brands    Brand[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id           String   @id @default(cuid())
+  workspace    Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId  String
+  name         String
+  website      String?
+  description  String?
+  // Hedef pazar kullanıcı tarafından seçilir (HANDOFF 21.5) — ISO 3166-1 alpha-2
+  targetMarket String?
+  // Panel para birimi tercihi (ISO 4217); Meta faturalaması ad account cinsinden kalır
+  currency     String?
+  // Üretilecek reklam copy dili (BCP 47)
+  copyLanguage String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([workspaceId])
+}
+
+// Davetli onboarding (HANDOFF 21.5) — davetler internal admin panelden açılır
+model Invitation {
+  id        String    @id @default(cuid())
+  email     String?
+  token     String    @unique
+  invitedBy String
+  usedAt    DateTime?
+  usedById  String?
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+}
+
+// CLAUDE.md §41 — önemli işlemler loglanır
+model AuditLog {
+  id            String   @id @default(cuid())
+  workspaceId   String?
+  userId        String?
+  action        String
+  entity        String?
+  entityId      String?
+  previousState Json?
+  newState      Json?
+  createdAt     DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+}

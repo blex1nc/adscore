@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/*
+ * SEMANTIC TOKEN KATMANI (HANDOFF 21.3)
+ * Component'lerde ham renk kullanılmaz; her renk bu katmandan gelir.
+ * Panel: dark + light (data-theme). Landing: .skin-landing ile dark kilitli (HANDOFF 21.5).
+ */
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(210 14% 17%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(210 14% 17%);
+  --muted: hsl(0 0% 96%);
+  --muted-foreground: hsl(200 6% 42%);
+  --accent: hsl(239 84% 67%);
+  --accent-foreground: hsl(0 0% 100%);
+  --border: hsl(0 0% 90%);
+  --ring: hsl(239 84% 67%);
+  --destructive: hsl(0 72% 45%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --glass: hsl(0 0% 100% / 0.15);
+  --glass-soft: hsl(0 0% 100% / 0.1);
+  --glass-border: hsl(0 0% 100% / 0.2);
+  --shadow-dashboard: 0 25px 80px -12px rgb(0 0 0 / 0.08), 0 0 0 1px rgb(0 0 0 / 0.06);
+  --radius: 0.5rem;
+}
+
+[data-theme="dark"] {
+  --background: hsl(220 14% 7%);
+  --foreground: hsl(210 10% 92%);
+  --card: hsl(220 13% 9%);
+  --card-foreground: hsl(210 10% 92%);
+  --muted: hsl(220 12% 13%);
+  --muted-foreground: hsl(215 8% 64%);
+  --accent: hsl(239 84% 70%);
+  --accent-foreground: hsl(0 0% 100%);
+  --border: hsl(220 10% 17%);
+  --ring: hsl(239 84% 70%);
+  --destructive: hsl(0 72% 58%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --shadow-dashboard: 0 25px 80px -12px rgb(0 0 0 / 0.5), 0 0 0 1px hsl(0 0% 100% / 0.06);
+}
+
+/* Landing skin: tema seçiminden bağımsız hep dark (kullanıcı kararı, 2026-08-12) */
+.skin-landing {
+  --background: hsl(0 0% 4%);
+  --foreground: hsl(0 0% 100%);
+  --card: hsl(0 0% 7%);
+  --card-foreground: hsl(0 0% 100%);
+  --muted: hsl(0 0% 100% / 0.1);
+  --muted-foreground: hsl(0 0% 100% / 0.7);
+  --accent: hsl(0 0% 100%);
+  --accent-foreground: hsl(0 0% 4%);
+  --border: hsl(0 0% 100% / 0.15);
+  --ring: hsl(0 0% 100% / 0.5);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-glass: var(--glass);
+  --color-glass-soft: var(--glass-soft);
+  --color-glass-border: var(--glass-border);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), serif;
+  --font-mono: var(--font-inter), system-ui, sans-serif;
+  --shadow-dashboard: var(--shadow-dashboard);
+  --radius-md: var(--radius);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.skin-landing ::selection {
+  background: hsl(0 0% 100% / 0.2);
+}

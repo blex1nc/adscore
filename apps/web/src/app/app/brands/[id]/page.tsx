@@ -5,6 +5,7 @@ import { prisma } from "@adscore/db";
 import { getCurrentUser } from "@/lib/auth";
 import { deleteBrand, updateBrand } from "@/actions/brands";
 import { BrandForm } from "@/components/brand-form";
+import { ResearchSection } from "@/components/research/research-section";
 import { DeleteBrandButton } from "./delete-brand-button";
 
 export const metadata = { title: "Marka | AdScore" };
@@ -43,6 +44,8 @@ export default async function BrandDetailPage({
           successMessage="Kaydedildi."
         />
       </div>
+      <ResearchSection brandId={brand.id} />
+
       <div className="mt-6 rounded-2xl border border-destructive/30 p-6">
         <h2 className="text-sm font-medium">Markayı sil</h2>
         <p className="mt-1 text-sm text-muted-foreground">

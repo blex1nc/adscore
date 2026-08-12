@@ -441,7 +441,19 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
-**PHASE 1 TAMAMLANDI (2026-08-12).** Mimari onaylı; implementation başladı.
+**PHASE 2 (Research Engine v1) İSKELETİ TAMAM (2026-08-12).** Mimari onaylı; implementation sürüyor.
+
+**Phase 2'de kurulanlar:**
+
+- Şema: `ResearchRun` (status/result/model/token sayıları) + `ResearchSource` (url, reliability, retrieved_at — CLAUDE.md §37). Marka silinince cascade.
+- `packages/ai`: provider abstraction (CLAUDE.md §36) + Gemini adapter (key header'da taşınır, URL'de değil; `GEMINI_MODEL` env ile model override). Key yoksa `AiBlockedError` → UI'da dürüst `BLOCKED` (CLAUDE.md §33, fake fallback yok — doğrulandı).
+- Pipeline: website fetch (SSRF korumalı: private IP/localhost/port engelleri; 15s timeout; 1.5MB sınır; HTML→metin), yapılandırılmış TR prompt (yalnız verilen içerikten çıkarım, observed/hypothesis ayrımı, confidence, data_gaps), `after()` ile arka plan koşusu, audit log.
+- UI: marka sayfasında araştırma bölümü — başlat/yeniden araştır, durum çipi + 3sn poller, sonuç görünümü (kimlik/konumlanma/ürünler/kitle hipotezleri + confidence rozetleri/rakip adayları/eksik veri), kaynak listesi, önceki koşular.
+- **Henüz test edilmedi:** gerçek Gemini çağrısı (kullanıcı key'i bekleniyor — sohbete yapıştırılan key ifşa sayıldı, yenilenmesi istendi). BLOCKED/FAILED yolları test edildi.
+- **Sınır:** JS-render edilen siteler okunamıyor (dürüst hata mesajı var); headless fetch Phase 2 devamında değerlendirilecek. Gerçek queue/worker hâlâ yok (`after()` geçici çözüm).
+- Ürün adı kesinleşti: **AdScore**. Repo git'e alındı (ilk commit: Phase 1).
+
+**PHASE 1 TAMAMLANDI (2026-08-12).** Detay:
 
 Dokümanlar: `CLAUDE.md`, `HANDOFF.md`, `DESIGN-REFERENCES.md`, `ARCHITECTURE-REPORT.md`, `PHASE0-META-VERIFICATION.md`.
 

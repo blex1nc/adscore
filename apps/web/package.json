@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@adscore/ai": "workspace:*",
     "@adscore/db": "workspace:*",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.8",

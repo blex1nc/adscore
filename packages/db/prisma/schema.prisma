@@ -52,10 +52,51 @@ model Brand {
   currency     String?
   // Üretilecek reklam copy dili (BCP 47)
   copyLanguage String?
+  researchRuns ResearchRun[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   @@index([workspaceId])
+}
+
+enum ResearchStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+// Phase 2 — Research Engine v1. `result` yapısı henüz finalize değil;
+// normalize edilmiş fact/pattern tabloları sonraki fazlarda gelecek.
+model ResearchRun {
+  id           String          @id @default(cuid())
+  brand        Brand           @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId      String
+  status       ResearchStatus  @default(QUEUED)
+  error        String?
+  result       Json?
+  model        String?
+  promptTokens Int?
+  outputTokens Int?
+  startedAt    DateTime?
+  finishedAt   DateTime?
+  createdAt    DateTime        @default(now())
+  sources      ResearchSource[]
+
+  @@index([brandId, createdAt])
+}
+
+// CLAUDE.md §37 — kaynak takibi: her araştırma verisinin nereden geldiği kayıtlı
+model ResearchSource {
+  id          String      @id @default(cuid())
+  run         ResearchRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  runId       String
+  url         String
+  type        String
+  reliability String
+  usedFor     String?
+  httpStatus  Int?
+  retrievedAt DateTime    @default(now())
 }
 
 // Davetli onboarding (HANDOFF 21.5) — davetler internal admin panelden açılır

@@ -7,11 +7,11 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  // Neon pooled bağlantı için: migrate/işlem dışı sorgular pooled URL'den,
-  // migration'lar direct URL'den gider. Lokalde ikisi aynı değere işaret eder.
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // Not: directUrl bilinçli olarak YOK. Neon migration'ları için direct URL,
+  // scripts/migrate-deploy.mjs tarafından pooled URL'den türetilir
+  // (hostname'deki "-pooler" eki kaldırılır). Ekstra env değişkeni gerekmez.
 }
 
 enum PlatformRole {

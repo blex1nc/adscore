@@ -7,7 +7,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "migrate:dev": "prisma migrate dev",
-    "migrate:deploy": "prisma migrate deploy",
+    "migrate:deploy": "node scripts/migrate-deploy.mjs",
     "generate": "prisma generate",
     "studio": "prisma studio",
     "seed": "tsx src/seed.ts"

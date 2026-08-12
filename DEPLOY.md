@@ -33,10 +33,13 @@ git push -u origin main
 
 ```text
 DATABASE_URL   = Neon pooled string
-DIRECT_URL     = Neon direct string
 SESSION_SECRET = openssl rand -base64 32 çıktısı (YENİ üret, lokaldekiyle aynı olmasın)
 GEMINI_API_KEY = AI Studio key'in
 ```
+
+Not: `DIRECT_URL` GEREKMİYOR — migration script'i direct adresi pooled string'den
+kendisi türetir (`packages/db/scripts/migrate-deploy.mjs`). İstersen yine de
+tanımlayabilirsin; varsa o kullanılır.
 
 4. Deploy'a bas. Build sırasında migration'lar otomatik koşar.
 

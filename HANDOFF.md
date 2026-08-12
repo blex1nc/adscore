@@ -441,6 +441,15 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
+**CANLI DEPLOY TAMAM (2026-08-12 gece): https://adscore-dwyy.vercel.app** — Vercel projesi `adscore-incord` (team: e-bike-shop-tuerkiye), Neon DB'ye 10 migration uygulandı, landing + login + /setup canlıda doğrulandı.
+
+Deploy sırasında çözülenler (API üzerinden, kullanıcı token'ı ile):
+- İki Vercel projesi varmış: `adscore-tyju` (Root Directory "apps" — YANLIŞ, statik çöp deploy alıyor; silinmesi önerildi) ve `adscore-incord` (Root "apps/web" — doğru, kullanılan bu).
+- Bağlantı stringi Vercel'e Sensitive olarak **"neon"** adıyla kaydedilmişti; Sensitive env yeniden adlandırılamıyor → kod tarafında fallback eklendi: `DATABASE_URL ?? process.env.neon` (PrismaClient `datasourceUrl` + migrate script).
+- `SESSION_SECRET` (yeni üretildi) ve `GEMINI_API_KEY` (lokal dosyadan değer görüntülenmeden aktarıldı) doğru projeye API'yle eklendi.
+- **`/setup` sayfası eklendi:** DB boşken ilk hesap ADMIN olur, sonra yol kalıcı kapanır — prod seed komutu gereksizleşti. Kullanıcının admin hesabını /setup'tan kendisi oluşturması bekleniyor.
+- Güvenlik bekleyenleri: Neon şifresi sohbete yapıştırıldığı için RESET önerisi hâlâ açık; Vercel token'ı iş bitince revoke edilecek.
+
 **DEPLOY HAZIRLIĞI TAMAM (2026-08-12 gece).** Kod Vercel + Neon uyumlu: görseller DB'de (bytea), Prisma `directUrl`, `deploy-build` (migrate deploy + build), `vercel.json`, AI sayfalarında `maxDuration=60`. Kullanıcı adımları: `DEPLOY.md` (Neon + GitHub private repo + Vercel + prod admin seed). Bilinen sınırlar orada kayıtlı (60 sn fonksiyon limiti → worker/queue sonraki altyapı fazı).
 
 **GÖRSEL ÜRETİM + LANDING ZENGİNLEŞTİRME (2026-08-12 gece).**

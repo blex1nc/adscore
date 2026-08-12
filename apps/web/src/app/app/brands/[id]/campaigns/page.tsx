@@ -9,7 +9,13 @@ import {
   CopyBlock,
   PlanForm,
 } from "@/components/campaigns/campaign-forms";
+import {
+  AddResultForm,
+  AnalyzeButton,
+} from "@/components/campaigns/result-forms";
 import { ResearchPoller } from "@/components/research/research-poller";
+import { computeMetrics, formatMetric } from "@/lib/results/metrics";
+import type { ResultAnalysis } from "@/lib/results/run";
 
 export const metadata = { title: "Kampanya kiti | AdScore" };
 
@@ -98,15 +104,26 @@ export default async function CampaignsPage({
       campaignPlans: {
         orderBy: { createdAt: "desc" },
         take: 3,
-        include: { creatives: true },
+        include: {
+          creatives: true,
+          results: { orderBy: { createdAt: "desc" } },
+        },
       },
+      learnings: { orderBy: { createdAt: "desc" }, take: 20 },
     },
   });
   if (!brand) notFound();
 
   const latest = brand.campaignPlans[0];
   const hasActive =
-    latest?.status === "QUEUED" || latest?.status === "RUNNING";
+    latest?.status === "QUEUED" ||
+    latest?.status === "RUNNING" ||
+    brand.campaignPlans.some((p) =>
+      p.results.some(
+        (r) =>
+          r.analysisStatus === "QUEUED" || r.analysisStatus === "RUNNING",
+      ),
+    );
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -400,9 +417,147 @@ export default async function CampaignsPage({
                 ) : null}
               </div>
             ) : null}
+
+            {plan.status === "COMPLETED" ? (
+              <div className="mt-6 border-t border-border pt-5">
+                <h3 className="text-sm font-medium">
+                  Sonuçlar (Ads Manager'dan elle giriş)
+                </h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Panel Meta'ya bağlı olmadığı için gerçek conversion tracking
+                  yok; sayıları Ads Manager raporundan sen girersin. Türetilmiş
+                  metrikler otomatik hesaplanır.
+                </p>
+                <AddResultForm planId={plan.id} />
+
+                {plan.results.map((r) => {
+                  const m = computeMetrics({
+                    spend: Number(r.spend),
+                    impressions: r.impressions,
+                    clicks: r.clicks,
+                    reach: r.reach,
+                    purchases: r.purchases,
+                    revenue: r.revenue == null ? null : Number(r.revenue),
+                  });
+                  const analysis = (r.analysis ?? null) as ResultAnalysis | null;
+                  return (
+                    <div
+                      key={r.id}
+                      className="mt-4 rounded-xl border border-border p-4"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                        <span>
+                          {r.periodStart.toLocaleDateString("tr-TR")} -{" "}
+                          {r.periodEnd.toLocaleDateString("tr-TR")} ·{" "}
+                          {r.spend.toString()} {plan.currency} harcama
+                        </span>
+                        <AnalyzeButton
+                          resultId={r.id}
+                          disabled={
+                            r.analysisStatus === "QUEUED" ||
+                            r.analysisStatus === "RUNNING"
+                          }
+                        />
+                      </div>
+
+                      <dl className="mt-3 grid grid-cols-3 gap-3 text-sm sm:grid-cols-7">
+                        {(
+                          [
+                            ["Gösterim", String(r.impressions)],
+                            ["Tıklama", String(r.clicks)],
+                            ["CTR", formatMetric(m.ctr, 2, "%")],
+                            ["CPC", formatMetric(m.cpc)],
+                            ["CPM", formatMetric(m.cpm)],
+                            ["CPA", formatMetric(m.cpa)],
+                            ["ROAS", formatMetric(m.roas)],
+                          ] as const
+                        ).map(([k, v]) => (
+                          <div key={k}>
+                            <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                              {k}
+                            </dt>
+                            <dd className="font-medium">{v}</dd>
+                          </div>
+                        ))}
+                      </dl>
+
+                      {r.analysisStatus === "QUEUED" ||
+                      r.analysisStatus === "RUNNING" ? (
+                        <p className="mt-3 animate-pulse text-xs text-muted-foreground">
+                          Analiz ediliyor...
+                        </p>
+                      ) : null}
+                      {r.analysisStatus === "FAILED" && r.analysisError ? (
+                        <div className="mt-3 rounded-md border border-destructive/40 p-2 text-xs">
+                          {r.analysisError}
+                        </div>
+                      ) : null}
+                      {r.analysisStatus === "COMPLETED" && analysis ? (
+                        <div className="mt-3 space-y-3 border-t border-border pt-3">
+                          {analysis.diagnosis?.map((d, i) => (
+                            <div key={i} className="text-sm">
+                              <div className="flex items-start justify-between gap-3">
+                                <span className="font-medium">
+                                  {d.observation}
+                                </span>
+                                <ConfidenceBadge level={d.confidence} />
+                              </div>
+                              {d.possible_causes?.length ? (
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                  Olası nedenler: {d.possible_causes.join(" · ")}
+                                </p>
+                              ) : null}
+                              {d.evidence ? (
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                  Kanıt: {d.evidence}
+                                </p>
+                              ) : null}
+                              {d.recommended_action ? (
+                                <p className="mt-1 text-xs">
+                                  Öneri: {d.recommended_action}
+                                </p>
+                              ) : null}
+                            </div>
+                          ))}
+                          {analysis.data_gaps?.length ? (
+                            <p className="text-xs text-muted-foreground">
+                              Eksik veri: {analysis.data_gaps.join(" · ")}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
         );
       })}
+
+      {brand.learnings.length > 0 ? (
+        <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+          <h2 className="text-sm font-medium">Öğrenmeler</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Analizlerden çıkan, bu markaya özel bulgular. Kesin gerçek değil;
+            örneklem notuyla birlikte değerlendirilir ve gelecek önerilerde
+            kullanılır.
+          </p>
+          <ul className="mt-4 space-y-3">
+            {brand.learnings.map((l) => (
+              <li key={l.id} className="text-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <span>{l.text}</span>
+                  <ConfidenceBadge level={l.confidence} />
+                </div>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Kanıt: {l.evidence} · Örneklem: {l.sampleNote}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -11,6 +11,11 @@ import {
   MIN_IMPRESSIONS_FOR_ANALYSIS,
 } from "@/lib/results/metrics";
 import { executeResultAnalysis } from "@/lib/results/run";
+import {
+  CSV_MAX_BYTES,
+  parseAdsManagerCsv,
+  type CsvImportPreview,
+} from "@/lib/results/import-csv";
 
 export type ResultFormState = { error?: string };
 
@@ -84,6 +89,44 @@ export async function addCampaignResult(
   });
   revalidatePath(`/app/brands/${plan.brandId}/campaigns`);
   return {};
+}
+
+export type CsvParseState = { error?: string; preview?: CsvImportPreview };
+
+// Ads Manager CSV export'unu parse eder — DB'ye YAZMAZ. Kayıt, kullanıcı
+// önizlemeyi onaylayıp saveCsvResult'ı çalıştırınca yapılır.
+export async function parseResultCsv(
+  planId: string,
+  _prev: CsvParseState,
+  formData: FormData,
+): Promise<CsvParseState> {
+  const user = await requireUser();
+  const plan = await prisma.campaignPlan.findFirst({
+    where: { id: planId, brand: { workspace: { ownerId: user.id } } },
+  });
+  if (!plan) return { error: "Plan bulunamadı." };
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: "Bir CSV dosyası seç." };
+  }
+  if (file.size > CSV_MAX_BYTES) {
+    return { error: "Dosya 1 MB'den büyük. Raporu daha dar bir dönem için export et." };
+  }
+  const parsed = parseAdsManagerCsv(await file.text());
+  if (!parsed.ok) return { error: parsed.error };
+  return { preview: parsed.preview };
+}
+
+export type CsvSaveState = ResultFormState & { saved?: boolean };
+
+export async function saveCsvResult(
+  planId: string,
+  _prev: CsvSaveState,
+  formData: FormData,
+): Promise<CsvSaveState> {
+  const res = await addCampaignResult(planId, {}, formData);
+  return res.error ? res : { saved: true };
 }
 
 export async function startResultAnalysis(

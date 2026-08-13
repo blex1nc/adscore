@@ -13,6 +13,7 @@ import {
   AddResultForm,
   AnalyzeButton,
 } from "@/components/campaigns/result-forms";
+import { ImportResultForm } from "@/components/campaigns/import-form";
 import { ResearchPoller } from "@/components/research/research-poller";
 import { computeMetrics, formatMetric } from "@/lib/results/metrics";
 import type { ResultAnalysis } from "@/lib/results/run";
@@ -429,6 +430,7 @@ export default async function CampaignsPage({
                   yok; sayıları Ads Manager raporundan sen girersin. Türetilmiş
                   metrikler otomatik hesaplanır.
                 </p>
+                <ImportResultForm planId={plan.id} />
                 <AddResultForm planId={plan.id} />
 
                 {plan.results.map((r) => {

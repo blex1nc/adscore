@@ -441,6 +441,14 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
+**CSV İÇE AKTARMA (Ads Manager raporu) TAMAM VE CANLI TEST EDİLDİ (2026-08-13).**
+
+Kullanıcı sorusu "metasız yapamaz mıyız" → dürüst cevap verildi: API'siz yayınlama imkânsız (Ads Manager otomasyonu ToS ihlali + hesap ban riski — yapılmayacak), ama veri tarafı CSV ile kapanır. Kullanıcı onayı: "şimdilik onaylıyorum meta dev açılınca onu da entegre ederiz".
+
+- `lib/results/import-csv.ts`: bağımlılıksız parser — TR+EN kolon adları (synonym eşleme), `;`/`,`/tab ayraç algılama, TR ("3.500,75") + EN ("3,500.75") sayı formatı, YYYY-MM-DD + GG.AA.YYYY tarih, BOM/tırnak desteği. Günlük satırlar tek döneme toplanır; **erişim satırlardan TOPLANMAZ** (kişiler örtüşür — dürüst uyarı + boş bırakılır, tek satırlık export önerilir). Çok kampanyalı dosya net hatayla reddedilir; eksik kolonlar bulunanlarla birlikte listelenir. Link clicks > clicks(all) tercihi, kaynak önizlemede yazar.
+- Akış: dosya → `parseResultCsv` (DB'ye YAZMAZ, önizleme döner) → kullanıcı "Doğru, sonuç olarak kaydet" → mevcut `addCampaignResult` şema doğrulamasından geçerek kaydedilir (nota "CSV içe aktarma (N satır)" düşülür). Sonrası aynı zincir: metrikler → AdScore → analiz → öğrenmeler.
+- Test: parser 4 senaryoda unit test edildi (TR günlük, EN tek satır, çok kampanya hatası, eksik kolon hatası); browser'da e2e upload → önizleme → kayıt → DB satırı doğrulandı.
+
 **PHASE 8 (Optimizasyon Motoru + AdScore Algoritması — Meta'sız) TAMAM VE CANLI TEST EDİLDİ (2026-08-13).**
 
 Kullanıcı kararı: "developer hesabı açamıyorum onu atla sistemi ve algoritmayı kodla" → Meta fazları atlandı, Meta'sız çalışan zeka katmanı tamamlandı.

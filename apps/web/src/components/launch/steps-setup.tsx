@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma, type Brand } from "@adscore/db";
 import { updateBrand } from "@/actions/brands";
 import { BrandForm } from "@/components/brand-form";
+import { BrandProfileSection } from "./brand-profile-section";
 import { ResearchStartForm } from "@/components/research/research-start-form";
 import { PatternStartForm } from "@/components/competitors/competitor-forms";
 import { GenerateForm } from "@/components/creatives/creative-forms";
@@ -39,11 +40,9 @@ export function ProfileStep({ state, brand, wizardHref }: StepProps) {
         submitLabel="Kaydet"
         successMessage="Kaydedildi."
       />
-      <p className="mt-4 rounded-md border border-dashed border-border p-3 text-xs text-muted-foreground">
-        Marka sesi, ayrıştırıcı değer, ürün listesi ve logo/ürün görselleri bu
-        adıma şema migration&apos;ı sonrası eklenir; fiyatı her zaman sen girersin,
-        sistem üretmez.
-      </p>
+      <div className="mt-6 border-t border-border pt-5">
+        <BrandProfileSection brandId={brand.id} />
+      </div>
     </StepPanel>
   );
 }

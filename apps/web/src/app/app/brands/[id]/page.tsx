@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { deleteBrand, updateBrand } from "@/actions/brands";
 import { BrandForm } from "@/components/brand-form";
 import { ResearchSection } from "@/components/research/research-section";
+import { BrandProfileSection } from "@/components/launch/brand-profile-section";
 import { PreviewTabs } from "@/components/preview/preview-tabs";
 import { cn } from "@/components/ui";
 import { DeleteBrandButton } from "./delete-brand-button";
@@ -50,6 +51,12 @@ export default async function BrandDetailPage({
           _count: { select: { creatives: true, results: true } },
         },
       },
+      assets: {
+        where: { kind: "LOGO" },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { id: true },
+      },
       creatives: {
         where: { approval: "APPROVED" },
         orderBy: { createdAt: "desc" },
@@ -69,6 +76,7 @@ export default async function BrandDetailPage({
 
   const updateAction = updateBrand.bind(null, brand.id);
   const lastApproved = brand.creatives[0] ?? null;
+  const logoUrl = brand.assets[0] ? `/api/brand-assets/${brand.assets[0].id}` : null;
   const base = `/app/brands/${brand.id}`;
 
   return (
@@ -116,6 +124,9 @@ export default async function BrandDetailPage({
           successMessage="Kaydedildi."
         />
       </div>
+      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+        <BrandProfileSection brandId={brand.id} />
+      </div>
       <ResearchSection brandId={brand.id} />
 
       {lastApproved ? (
@@ -139,7 +150,7 @@ export default async function BrandDetailPage({
                   ? `/api/creative-images/${lastApproved.images[0].id}`
                   : null
               }
-              brand={{ name: brand.name, logoUrl: null }}
+              brand={{ name: brand.name, logoUrl }}
             />
           </div>
         </div>

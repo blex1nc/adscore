@@ -2,6 +2,7 @@ import "server-only";
 import { prisma, type Prisma } from "@adscore/db";
 import { MIN_ADS_FOR_PATTERNS } from "@/lib/competitors/run";
 import {
+  EMPTY_BRIDGE,
   readBridgeFields,
   readBridgeFieldsMany,
   type BridgeFields,
@@ -395,20 +396,6 @@ export async function loadLaunchStates(workspaceId: string) {
     })),
   );
   return brands.map((b) =>
-    computeLaunchState(
-      toSummary(b, bridges.get(b.id) ?? {
-        usp: null,
-        brandVoice: null,
-        productCount: 0,
-        logoAssetId: null,
-        arena: {
-          latestStatus: null,
-          latestRunId: null,
-          currentRound: null,
-          maxRounds: null,
-        },
-        publishedAt: null,
-      }),
-    ),
+    computeLaunchState(toSummary(b, bridges.get(b.id) ?? EMPTY_BRIDGE)),
   );
 }

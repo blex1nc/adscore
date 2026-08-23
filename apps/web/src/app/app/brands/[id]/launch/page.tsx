@@ -48,17 +48,19 @@ export default async function LaunchPage({
 
   const wizardHref = `/app/brands/${brand.id}/launch`;
 
-  // Görüntülenen adım: ?step=n (kilitli değilse), yoksa önerilen adım.
-  // Kilitli adım istenirse önerilene düşülür — kapı bypass edilmez.
+  // Görüntülenen adım URL'de sabitlenir (?step=n): form action'ları sayfayı
+  // yeniden render ettiğinde kullanıcı aynı adımda kalır, "sonraki adım"
+  // yalnız kendi düğmesiyle gelir. Parametre yoksa önerilen adıma yönlendirilir;
+  // kilitli adım istenirse de önerilene düşülür — kapı bypass edilmez.
   const requested = Number.parseInt(stepParam ?? "", 10);
   const requestedStep =
     Number.isInteger(requested) && requested >= 1 && requested <= 8
       ? state.steps[requested - 1]
       : null;
-  const viewIndex =
-    requestedStep && requestedStep.status !== "locked"
-      ? requestedStep.index
-      : state.suggestedIndex;
+  if (!requestedStep || requestedStep.status === "locked") {
+    redirect(`${wizardHref}?step=${state.suggestedIndex}`);
+  }
+  const viewIndex = requestedStep.index;
 
   const stepProps = { state, brand, wizardHref };
   const panels = [

@@ -38,3 +38,13 @@ export const COMPETITOR_TYPE_LABELS: Record<string, string> = {
 export const MARKET_CODES = MARKETS.map((m) => m.code);
 export const CURRENCY_CODES = CURRENCIES.map((c) => c.code);
 export const COPY_LANGUAGE_CODES = COPY_LANGUAGES.map((l) => l.code);
+
+// Sprint 2026-08-23 (CONTRACTS §3) — Arena koşusu hedefleri ve döngü sınırları.
+// Sınırlar kodda sabittir; form doğrulaması dışındaki değerleri reddeder.
+export const CAMPAIGN_GOALS = ["sales", "traffic", "leads", "awareness"] as const;
+export const EVOLUTION_LIMITS = {
+  rounds: { min: 2, max: 8, default: 4 },
+  population: { min: 4, max: 10, default: 6 },
+  survivors: { min: 1, max: 3, default: 2 },
+  judges: { min: 2, max: 4, default: 3 },
+} as const;

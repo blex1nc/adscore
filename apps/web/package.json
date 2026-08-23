@@ -7,7 +7,8 @@
     "build": "next build",
     "deploy-build": "pnpm --filter @adscore/db migrate:deploy && pnpm --filter @adscore/db exec prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "tsx --test src/lib/evolution/__tests__/*.test.ts"
   },
   "dependencies": {
     "@adscore/ai": "workspace:*",
@@ -28,6 +29,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "typescript": "^5"
   },
   "packageManager": "pnpm@11.21.0"

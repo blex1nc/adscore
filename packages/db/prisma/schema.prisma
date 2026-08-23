@@ -494,6 +494,10 @@ model EvolutionRound {
   // Sözleşme dışı tek ek (Ajan A modeli): tüm adaylar lint'te elendiğinde GENERATE
   // bir kez tekrarlanır; ikinci boş denemede koşu FAILED olur. Sayaç burada tutulur.
   generateAttempts Int                  @default(0)
+  // Aşama başına claim sayısı: geçici sağlayıcı hatalarında (zaman aşımı, 429/503)
+  // aşama FAILED olmadan yeniden denenir; MAX_STAGE_ATTEMPTS aşılınca FAILED.
+  // Başarılı geçişte sıfırlanır. (İkinci migration: arena_round_attempts)
+  stageAttempts    Int                  @default(0)
   promptTokens     Int?
   outputTokens     Int?
   startedAt        DateTime             @default(now())

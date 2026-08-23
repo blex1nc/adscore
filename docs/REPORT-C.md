@@ -73,6 +73,8 @@ Kullanıcı: `418off@gmail.com` (dev şifresi). Test markası: **"Kronotrop (Aja
 | Sahip → başka workspace'in asset'i (test@ornek.dev markasına geçici satır) | **404** (satır silindi) |
 | Olmayan id | 404 |
 
+`/app/brands/[id]/launch` (yeni sayfa rotası): auth yok → 307 `/login?next=…`; sahip → 200; sahip → başka workspace'in markası (`?step=5` dahil) → **404**.
+
 ### 2.3 Yükleme reddi (sunucu mesajları)
 | Dosya | Sonuç |
 |---|---|

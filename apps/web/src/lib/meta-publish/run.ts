@@ -482,15 +482,14 @@ export async function advancePublish(publishId: string, userId: string): Promise
       // httpStatus 0 = cevap alınamadı (timeout/ağ) → sonuç BİLİNMİYOR; sent kaydı
       // durur, yetim koruması devreye girer. Kesin API hatasında sent temizlenir
       // (nesne oluşmadı → elle tekrar güvenli).
-      if (e.httpStatus !== 0) {
-        const req2 = readRequestJson(row.request);
-        if (req2 && stage in req2.sent) {
-          delete req2.sent[stage];
-          await prisma.metaPublish.update({
-            where: { id: row.id },
-            data: { request: req2 as unknown as Prisma.InputJsonValue },
-          });
-        }
+      if (e.httpStatus !== 0 && req && stage in req.sent) {
+        // Kesin API hatası: nesne oluşmadı → kapsamdaki req'ten sent temizlenir
+        // (yeniden parse edilmez; elle tekrar güvenli kalır).
+        delete req.sent[stage];
+        await prisma.metaPublish.update({
+          where: { id: row.id },
+          data: { request: req as unknown as Prisma.InputJsonValue },
+        });
       }
       return failPublish(row, e.userMessage);
     }

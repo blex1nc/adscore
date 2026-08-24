@@ -38,6 +38,9 @@ model Workspace {
   owner     User     @relation(fields: [ownerId], references: [id])
   ownerId   String   @unique
   brands    Brand[]
+  // Harcama tavani (CLAUDE.md par.23). Kullanici belirler; meta/guards bunu zorlar.
+  maxDailyBudget Decimal? @db.Decimal(12, 2)
+  metaConnection MetaConnection?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -70,6 +73,8 @@ model Brand {
   campaignPlans CampaignPlan[]
   learnings    Learning[]
   optimizationRuns OptimizationRun[]
+  metaBinding  BrandMetaBinding?
+  insightSyncs MetaInsightSync[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -144,6 +149,10 @@ model CompetitorAd {
   inputText    String
   // Ad Library veya reklam linki — kaynak referansı olarak saklanır, içerik kopyalanmaz (karar: 2026-08-12)
   inputUrl     String?
+  // Ajan C — Ad Library API kaydi (EU kapsami; TR-only reklamlar donmez)
+  adArchiveId   String?
+  fromAdLibrary Boolean @default(false)
+  libraryMeta   Json?    // yayin tarihleri, platformlar, kapsam notu
   status       AnalysisStatus @default(QUEUED)
   analysis     Json?
   error        String?
@@ -254,6 +263,16 @@ model CampaignPlan {
   // ör. Ads Manager kampanya adı/ID (kullanıcı elle girer)
   publishNote  String?
   kits         PublishKit[]
+  // Meta sprint 2026-08-24 (Ajan B doldurur, Ajan C okur) — gercek Meta nesne izleri
+  metaCampaignId      String?
+  metaAdSetId         String?
+  metaAdId            String?
+  metaPublishedAt     DateTime?
+  // Aramadan donen GERCEK Meta hedefleme nesneleri (uydurma ID yok, CLAUDE.md par.6)
+  metaTargeting       Json?
+  // Ozel reklam kategorisi — kullanici secer, varsayilan yok (yanlisi Meta reddi demek)
+  specialAdCategories String[]
+  publishes           MetaPublish[]
   result       Json?
   error        String?
   model        String?
@@ -299,6 +318,9 @@ model CampaignResult {
   spend          Decimal         @db.Decimal(12, 2)
   impressions    Int
   clicks         Int
+  // Meta sprint 2026-08-24 (Ajan C) — sonucun kaynagi + idempotent senkron anahtari
+  source         ResultSource    @default(MANUAL)
+  externalRef    String?         // Meta campaign/adset id — tekrar yazimi engeller
   reach          Int?
   purchases      Int?
   revenue        Decimal?        @db.Decimal(12, 2)
@@ -311,6 +333,7 @@ model CampaignResult {
   outputTokens   Int?
   createdAt      DateTime        @default(now())
 
+  @@unique([planId, periodStart, periodEnd, source])
   @@index([planId, createdAt])
 }
 
@@ -573,4 +596,145 @@ model BrandAsset {
   createdAt DateTime       @default(now())
 
   @@index([brandId])
+}
+
+// ============================================================
+// META SPRINT 2026-08-24 — CONTRACTS.md §3 (tek migration, Ajan A)
+// ============================================================
+
+// ---------- BAĞLANTI (Ajan A) ----------
+enum MetaConnectionStatus {
+  CONNECTED
+  EXPIRED       // token süresi doldu, yeniden bağlanmalı
+  REVOKED       // kullanıcı Meta tarafından izni kaldırdı (deauthorize webhook)
+  DISCONNECTED  // panelden koparıldı
+}
+
+model MetaConnection {
+  id           String   @id @default(cuid())
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId  String   @unique          // MVP: workspace başına tek bağlantı
+  metaUserId   String                     // Meta app-scoped user id
+  // AES-256-GCM: şifreli token + iv + auth tag. Düz token HİÇBİR YERDE saklanmaz.
+  tokenCipher  Bytes
+  tokenIv      Bytes
+  tokenTag     Bytes
+  tokenExpires DateTime?
+  scopes       String[]                   // debug_token'dan gelen GERÇEK izinler
+  status       MetaConnectionStatus @default(CONNECTED)
+  lastCheckedAt DateTime?
+  errorNote    String?                    // son doğrulama hatası (TR)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  adAccounts   MetaAdAccount[]
+  bindings     BrandMetaBinding[]
+}
+
+// Kullanıcının erişebildiği ad account'ların önbelleği (seçim ekranı için).
+model MetaAdAccount {
+  id            String   @id @default(cuid())
+  connection    MetaConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  connectionId  String
+  actId         String   // "act_123..."
+  name          String
+  currency      String
+  timezoneName  String?
+  accountStatus Int?     // Meta'nın sayısal durum kodu (ham saklanır, yorum UI'da)
+  fetchedAt     DateTime @default(now())
+
+  @@unique([connectionId, actId])
+}
+
+// Marka ↔ Meta varlık eşlemesi. Page ID yayın için ZORUNLU (object_story_spec).
+model BrandMetaBinding {
+  id                String   @id @default(cuid())
+  brand             Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId           String   @unique
+  connection        MetaConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  connectionId      String
+  adAccountId       String   // "act_..."
+  adAccountCurrency String
+  pageId            String
+  instagramActorId  String?
+  pixelId           String?
+  catalogId         String?  // bu sprintte kullanılmaz, alan hazır
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Her Meta API çağrısının sayacı (CLAUDE.md §43 maliyet takibi + rate limit teşhisi).
+model MetaApiCall {
+  id          String   @id @default(cuid())
+  workspaceId String
+  brandId     String?
+  method      String   // GET | POST
+  path        String   // token/param YOK — yalnız uç yolu
+  httpStatus  Int?
+  errorCode   Int?
+  errorSub    Int?
+  fbtraceId   String?
+  durationMs  Int
+  appUsagePct Int?     // X-App-Usage / X-Ad-Account-Usage'dan
+  createdAt   DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+}
+
+// ---------- YAYIN (Ajan B) ----------
+enum MetaPublishStatus {
+  DRAFT       // hazırlandı, gönderilmedi
+  RUNNING
+  COMPLETED   // Meta'da PAUSED olarak oluşturuldu
+  FAILED
+}
+
+model MetaPublish {
+  id             String   @id @default(cuid())
+  plan           CampaignPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId         String
+  brandId        String
+  status         MetaPublishStatus @default(DRAFT)
+  // Aşama aşama ilerler (Vercel 60 sn): campaign → adset → ad → creative
+  stage          String   @default("CAMPAIGN")
+  claimedAt      DateTime?      // yarış koruması (Arena'daki desenin aynısı)
+  metaCampaignId String?
+  metaAdSetId    String?
+  metaCreativeId String?
+  metaAdId       String?
+  // Gönderilen payload + dönen cevap: açıklanabilirlik (CLAUDE.md §29/§41).
+  request        Json?
+  response       Json?
+  // Meta'ya gönderilen efektif durum. Bu sprintte HER ZAMAN "PAUSED".
+  effectiveStatus String  @default("PAUSED")
+  error          String?
+  createdAt      DateTime @default(now())
+  finishedAt     DateTime?
+
+  @@index([planId, createdAt])
+}
+
+// ---------- VERİ (Ajan C) ----------
+enum ResultSource {
+  MANUAL
+  CSV
+  META_API
+}
+
+model MetaInsightSync {
+  id          String   @id @default(cuid())
+  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId     String
+  planId      String?
+  adAccountId String
+  since       DateTime
+  until       DateTime
+  status      AnalysisStatus @default(QUEUED)
+  rowCount    Int?
+  // Ham Meta cevabı: sayılar koddan türetilir, AI'a ham veri gitmez.
+  raw         Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  finishedAt  DateTime?
+
+  @@index([brandId, createdAt])
 }

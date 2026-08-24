@@ -14,6 +14,8 @@ import {
   AnalyzeButton,
 } from "@/components/campaigns/result-forms";
 import { ImportResultForm } from "@/components/campaigns/import-form";
+import { MetaSyncSection } from "@/components/insights/meta-sync-section";
+import { ResultSourceBadge } from "@/components/insights/source-badge";
 import { ResearchPoller } from "@/components/research/research-poller";
 import { computeMetrics, formatMetric } from "@/lib/results/metrics";
 import type { ResultAnalysis } from "@/lib/results/run";
@@ -469,6 +471,7 @@ export default async function CampaignsPage({
                 </p>
                 <ImportResultForm planId={plan.id} />
                 <AddResultForm planId={plan.id} />
+                <MetaSyncSection planId={plan.id} />
 
                 {plan.results.map((r) => {
                   const m = computeMetrics({
@@ -491,6 +494,7 @@ export default async function CampaignsPage({
                           {r.periodEnd.toLocaleDateString("tr-TR")} ·{" "}
                           {r.spend.toString()} {plan.currency} harcama
                         </span>
+                        <ResultSourceBadge source={r.source} notes={r.notes} />
                         <AnalyzeButton
                           resultId={r.id}
                           disabled={

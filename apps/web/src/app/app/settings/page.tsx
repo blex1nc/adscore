@@ -43,6 +43,10 @@ export default async function SettingsPage() {
           <a href="/app/settings/meta" className="underline">
             Meta bağlantısı →
           </a>
+          {" · "}
+          <a href="/app/settings/meta-usage" className="underline">
+            API kullanımı →
+          </a>
         </p>
       </div>
     </div>

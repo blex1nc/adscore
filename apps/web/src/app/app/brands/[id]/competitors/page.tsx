@@ -18,6 +18,8 @@ import {
   PatternStartForm,
 } from "@/components/competitors/competitor-forms";
 import { ResearchPoller } from "@/components/research/research-poller";
+import { AdLibrarySearch } from "@/components/library/ad-library-search";
+import { AdLibraryBadge } from "@/components/library/ad-library-badge";
 
 export const metadata = { title: "Rakipler | AdScore" };
 export const maxDuration = 60;
@@ -169,6 +171,7 @@ export default async function CompetitorsPage({
                     {STATUS_LABELS[ad.status]}
                   </span>
                   <span>{ad.createdAt.toLocaleString("tr-TR")}</span>
+                  <AdLibraryBadge show={ad.fromAdLibrary} />
                   {ad.inputUrl ? (
                     <a
                       href={ad.inputUrl}
@@ -196,6 +199,7 @@ export default async function CompetitorsPage({
 
             <div className="mt-4 border-t border-border pt-4">
               <AddAdForm competitorId={competitor.id} />
+              <AdLibrarySearch competitorId={competitor.id} competitorName={competitor.name} targetMarket={brand.targetMarket} />
             </div>
           </div>
         ))
@@ -259,7 +263,7 @@ export default async function CompetitorsPage({
                       {result.observed_patterns?.length ? (
                         <div>
                           <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                            Gözlemlenen pattern'ler
+                            Gözlemlenen pattern&apos;ler
                           </h4>
                           <ul className="mt-2 space-y-2">
                             {result.observed_patterns.map((p, i) => (

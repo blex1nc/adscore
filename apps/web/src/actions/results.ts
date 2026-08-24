@@ -1,10 +1,10 @@
 "use server";
 
-import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { prisma } from "@adscore/db";
 import { requireUser } from "@/lib/auth";
+import { resultSchema } from "@/lib/results/schema";
 import { audit } from "@/lib/audit";
 import {
   MIN_CLICKS_FOR_ANALYSIS,
@@ -18,25 +18,6 @@ import {
 } from "@/lib/results/import-csv";
 
 export type ResultFormState = { error?: string };
-
-const resultSchema = z
-  .object({
-    periodStart: z.coerce.date(),
-    periodEnd: z.coerce.date(),
-    spend: z.coerce.number().positive("Harcama sıfırdan büyük olmalı."),
-    impressions: z.coerce.number().int().nonnegative(),
-    clicks: z.coerce.number().int().nonnegative(),
-    reach: z.coerce.number().int().nonnegative().optional(),
-    purchases: z.coerce.number().int().nonnegative().optional(),
-    revenue: z.coerce.number().nonnegative().optional(),
-    notes: z.string().max(500).optional(),
-  })
-  .refine((d) => d.periodEnd >= d.periodStart, {
-    message: "Bitiş tarihi başlangıçtan önce olamaz.",
-  })
-  .refine((d) => d.clicks <= d.impressions, {
-    message: "Tıklama sayısı gösterimden fazla olamaz.",
-  });
 
 export async function addCampaignResult(
   planId: string,
@@ -61,20 +42,34 @@ export async function addCampaignResult(
     return { error: parsed.error.issues[0]?.message ?? "Form hatalı." };
   }
 
-  const result = await prisma.campaignResult.create({
-    data: {
-      planId,
-      periodStart: parsed.data.periodStart,
-      periodEnd: parsed.data.periodEnd,
-      spend: parsed.data.spend,
-      impressions: parsed.data.impressions,
-      clicks: parsed.data.clicks,
-      reach: parsed.data.reach ?? null,
-      purchases: parsed.data.purchases ?? null,
-      revenue: parsed.data.revenue ?? null,
-      notes: parsed.data.notes || null,
-    },
-  });
+  let result;
+  try {
+    result = await prisma.campaignResult.create({
+      data: {
+        planId,
+        periodStart: parsed.data.periodStart,
+        periodEnd: parsed.data.periodEnd,
+        spend: parsed.data.spend,
+        impressions: parsed.data.impressions,
+        clicks: parsed.data.clicks,
+        reach: parsed.data.reach ?? null,
+        purchases: parsed.data.purchases ?? null,
+        revenue: parsed.data.revenue ?? null,
+        notes: parsed.data.notes || null,
+      },
+    });
+  } catch (e) {
+    // Şema kısıtı @@unique([planId, periodStart, periodEnd, source]) — Meta sprinti
+    // migration'ı ile geldi. Aynı dönem için ikinci elle giriş ham Prisma hatası
+    // yerine eyleme dönük TR mesajla reddedilir (CLAUDE.md §42).
+    if (e && typeof e === "object" && "code" in e && e.code === "P2002") {
+      return {
+        error:
+          "Bu plan için aynı döneme ait (elle/CSV) bir sonuç zaten kayıtlı. Düzeltme yapacaksan farklı bir dönem gir veya mevcut satırı silip yeniden ekle.",
+      };
+    }
+    throw e;
+  }
   await audit({
     workspaceId: plan.brand.workspaceId,
     userId: user.id,

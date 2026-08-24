@@ -77,7 +77,8 @@ Bağlantı hazır olunca sırasıyla:
 5. TOTAL bütçeli planla deneme: guard `lifetime_budget`'ı günlük tavana karşı kontrol eder (A'nın bilinçli güvenli yönü) — tavan < toplam bütçe ise dürüst red mesajı görülmeli.
 
 Test fixture'ları hazır (dev DB): kullanıcı `meta-b-test@ornek.dev` (şifre scratchpad
-`meta-test-pass.txt`; sohbete yazılmadı), marka `cmt7bive00003jin16d3zrnyt`, plan
+`meta-test-pass.txt`; ilk değer bir araç hatasıyla transkripte bir kez yansıdı, ardından
+rotate edildi — güncel değer yalnız dosyada), marka `cmt7bive00003jin16d3zrnyt`, plan
 `cmt7biveg000ajin1jx2mqox7` (COMPLETED, traffic, 250,00 TRY günlük, onaylı creative + görsel).
 Harness'lar: `apps/web/.data/meta-b-{fixtures,gates,claim}.ts` (git dışı; koşturma
 `NODE_PATH=.data/node_modules node --env-file=.env.local --import tsx <dosya>`).

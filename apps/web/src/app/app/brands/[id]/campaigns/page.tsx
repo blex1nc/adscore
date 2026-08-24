@@ -109,6 +109,11 @@ export default async function CampaignsPage({
         include: {
           creatives: true,
           results: { orderBy: { createdAt: "desc" } },
+          kits: {
+            orderBy: { version: "desc" },
+            take: 1,
+            select: { id: true, version: true },
+          },
         },
       },
       learnings: { orderBy: { createdAt: "desc" }, take: 20 },
@@ -139,8 +144,8 @@ export default async function CampaignsPage({
       </Link>
       <h1 className="mt-3 font-display text-3xl">Kampanya kiti</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Panel Meta'ya bağlı değil; kampanyayı Ads Manager'da sen açarsın. Kit,
-        kurulum için gereken tüm ayarları ve onaylı copy'leri hazır verir.
+        Panel Meta&apos;ya bağlı değil; kampanyayı Ads Manager&apos;da sen açarsın. Kit,
+        kurulum için gereken tüm ayarları ve onaylı copy&apos;leri hazır verir.
         Performans tahmini içermez; veri yokken sayı üretilmez.
       </p>
 
@@ -177,12 +182,31 @@ export default async function CampaignsPage({
               >
                 {STATUS_LABELS[plan.status]}
               </span>
+              {plan.publishedAt ? (
+                <span
+                  className="rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-accent"
+                  title={plan.publishNote ?? undefined}
+                >
+                  Ads Manager&apos;da yayınlandı ·{" "}
+                  {plan.publishedAt.toLocaleDateString("tr-TR")}
+                </span>
+              ) : null}
               <span>{plan.createdAt.toLocaleString("tr-TR")}</span>
               <span>
                 {plan.goal} · {plan.budgetAmount.toString()} {plan.currency} (
                 {plan.budgetType === "DAILY" ? "günlük" : "toplam"})
                 {plan.durationDays ? ` · ${plan.durationDays} gün` : ""}
               </span>
+              {plan.status === "COMPLETED" ? (
+                <Link
+                  href={`/app/brands/${brand.id}/campaigns/${plan.id}/kit`}
+                  className="ml-auto inline-flex items-center gap-1 text-accent"
+                >
+                  {plan.kits.length > 0
+                    ? `Kurulum kiti (v${plan.kits[0].version}) →`
+                    : "Kurulum kiti →"}
+                </Link>
+              ) : null}
             </div>
 
             {plan.status === "FAILED" && plan.error ? (
@@ -365,7 +389,7 @@ export default async function CampaignsPage({
                 ) : null}
 
                 {result.manual_setup_steps?.length ? (
-                  <Section title="Ads Manager kurulum adımları">
+                  <Section title="Ads Manager kurulum adımları (plan özeti)">
                     <ol className="list-inside list-decimal space-y-1.5">
                       {result.manual_setup_steps.map((s, i) => (
                         <li key={i}>{s}</li>
@@ -421,12 +445,22 @@ export default async function CampaignsPage({
             ) : null}
 
             {plan.status === "COMPLETED" ? (
-              <div className="mt-6 border-t border-border pt-5">
+              <div
+                id={`results-${plan.id}`}
+                className="mt-6 scroll-mt-6 border-t border-border pt-5"
+              >
                 <h3 className="text-sm font-medium">
-                  Sonuçlar (Ads Manager'dan elle giriş)
+                  Sonuçlar (Ads Manager&apos;dan elle giriş)
                 </h3>
+                {plan.publishedAt ? (
+                  <p className="mt-1 text-xs text-accent">
+                    Ads Manager&apos;da yayınlandı ({plan.publishedAt.toLocaleDateString("tr-TR")}
+                    {plan.publishNote ? ` · ${plan.publishNote}` : ""}) — raporu
+                    buraya gir.
+                  </p>
+                ) : null}
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Panel Meta'ya bağlı olmadığı için gerçek conversion tracking
+                  Panel Meta&apos;ya bağlı olmadığı için gerçek conversion tracking
                   yok; sayıları Ads Manager raporundan sen girersin. Türetilmiş
                   metrikler otomatik hesaplanır.
                 </p>

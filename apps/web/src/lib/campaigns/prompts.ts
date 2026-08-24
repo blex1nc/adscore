@@ -51,26 +51,55 @@ MARKA ARAŞTIRMASI: ${input.researchResult ? JSON.stringify(input.researchResult
 PAZAR PATTERN ANALİZİ: ${input.patternResult ? JSON.stringify(input.patternResult) : "yok"}
 MARKA ÖĞRENMELERİ (geçmiş kampanya analizlerinden; hipotez muamelesi yap): ${input.learnings.length > 0 ? JSON.stringify(input.learnings) : "yok"}
 
-Şu JSON şemasına birebir uy:
+Şu JSON şemasına birebir uy (Ads Manager alan adları/değerleri docs/META-ADS-MANAGER-FIELDS.md'den; "key"/enum alanları kurulum kitinin alanlara eşlemesi için zorunludur):
 
 {
   "campaign_name": string,
-  "objective": { "recommended": string, "reason": string, "confidence": "low"|"medium"|"high", "alternative": string | null },
-  "optimization_event": { "recommended": string, "reason": string, "pixel_condition": string },
+  "objective": {
+    "recommended": string,
+    "key": "awareness"|"traffic"|"engagement"|"leads"|"app_promotion"|"sales",
+    "reason": string, "confidence": "low"|"medium"|"high", "alternative": string | null
+  },
+  "special_ad_category": {
+    "recommended": "NONE"|"EMPLOYMENT"|"HOUSING"|"CREDIT"|"ISSUES_ELECTIONS_POLITICS"|"ONLINE_GAMBLING_AND_GAMING"|"FINANCIAL_PRODUCTS_SERVICES",
+    "reason": string
+  },
+  "optimization_event": {
+    "recommended": string,
+    "conversion_location": string,
+    "performance_goal": string,
+    "event_name": "PURCHASE"|"ADD_TO_CART"|"INITIATED_CHECKOUT"|"LEAD"|"COMPLETE_REGISTRATION"|"CONTENT_VIEW"|"CONTACT"|"SUBSCRIBE"|"START_TRIAL"|"SCHEDULE"|"SUBMIT_APPLICATION"|"OTHER"|null,
+    "reason": string, "pixel_condition": string
+  },
   "audience": {
-    "suggestion": { "location": string, "age": string, "gender": string, "interests_behaviors": string, "advantage_plus_note": string },
+    "suggestion": {
+      "location": string, "locations": [ string ],
+      "age": string, "age_min": number, "age_max": number,
+      "gender": "all"|"men"|"women",
+      "interests_behaviors": string, "detailed_targeting": [ string ],
+      "advantage_plus_audience": boolean, "advantage_plus_note": string
+    },
     "hypotheses": [ { "hypothesis": string, "confidence": "low"|"medium"|"high" } ]
   },
-  "placements": { "recommended": string, "reason": string, "confidence": "low"|"medium"|"high" },
+  "placements": { "recommended": string, "mode": "advantage_plus"|"manual", "list": [ string ], "reason": string, "confidence": "low"|"medium"|"high" },
   "structure": [
     { "adset_name": string, "purpose": string, "creative_headlines": [ string ], "test_variable": string | null }
   ],
   "budget_plan": {
+    "level": "campaign"|"adset",
     "scenarios": [ { "name": "conservative"|"recommended"|"aggressive", "allocation": string, "note": string } ],
     "disclaimer": string
   },
   "manual_setup_steps": [ string ],
   "risks": [ string ],
   "data_gaps": [ string ]
-}`;
+}
+
+Alan notları:
+- "objective.key": Ads Manager'ın 6 hedefinden biri; "recommended" bunun açıklamalı hâli.
+- "special_ad_category": işletme kredi/istihdam/konut/sosyal-politik/kumar/finansal ürün kapsamında değilse "NONE"; emin değilsen "NONE" de ve "reason"da kullanıcıya doğrulatmasını söyle.
+- "conversion_location" ve "performance_goal": Ads Manager'ın Türkçe arayüzündeki adlarıyla. Satışlar amacında konumlar: "İnternet sitesi" | "Uygulama" | "İnternet sitesi ve uygulama" | "İnternet sitesi ve mağaza içi" | "İnternet sitesi ve aramalar" | "Messenger" | "WhatsApp". "İnternet sitesi" için performans hedefleri: "Dönüşüm sayısının en üst seviyeye çıkarılması" | "Dönüşümlerin değerinin en üst seviyeye çıkarılması" | "Yönlendirme sayfası görüntülemelerinin sayısının en üst seviyeye çıkarılması" | "Bağlantı tıklamalarının sayısının en üst seviyeye çıkarılması" | "Günlük tekil erişimin en üst seviyeye çıkarılması" | "Gösterim sayısını en üst seviyeye çıkarın". Trafik amacı, "İnternet sitesi" konumu: "Yönlendirme sayfası görüntülemelerinin sayısının en üst seviyeye çıkarılması" | "Bağlantı tıklamalarının sayısının en üst seviyeye çıkarılması" | "Günlük tekil erişimin en üst seviyeye çıkarılması" | "Gösterim sayısını en üst seviyeye çıkarın". "event_name": pixel standart event'i (API enum); pixel yoksa/bilinmiyorsa null ve "pixel_condition"da koşulu yaz.
+- "placements.list": yalnız "mode" = "manual" ise doldur; aksi halde boş dizi.
+- "budget_plan.level": bütçe kampanya düzeyinde mi (Advantage+ kampanya bütçesi) reklam seti düzeyinde mi.
+- "creative_headlines": verilen onaylı creative'lerin başlıklarını BİREBİR kopyala (kit eşlemesi başlıkla yapılır).`;
 }

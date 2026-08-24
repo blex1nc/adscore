@@ -1,0 +1,89 @@
+{
+  "risks": [
+    "Meta Pixel veya CAPI altyapısının web sitesinde hatalı/eksik kurulmuş olması durumunda Ads Manager dönüşümleri takip edemez ve kampanya optimizasyonu başarısız olur.",
+    "Günlük 500 TRY bütçenin rekabetçi e-ticaret pazarında öğrenme evresinden (Learning Phase) çıkmak için gereken haftalık dönüşüm sayısına ulaşmakta yavaş kalması riski.",
+    "Kampanyada yalnızca 2 adet onaylı metin/kreatif kullanıldığı için 14 günlük süreçte aynı kitleye sürekli gösterim yapılması sonucu reaksiyon düşüşü (kreatif yorgunluğu) riski."
+  ],
+  "audience": {
+    "hypotheses": [
+      {
+        "confidence": "high",
+        "hypothesis": "Evde taze ve kaliteli kahve demlemeyi seven, deneme seti kolaylığı ve ilk siparişte kargo bedava teklifiyle karar bariyerini düşüren 22-48 yaş arası kentli kitle en yüksek dönüşüm oranını verir."
+      },
+      {
+        "confidence": "medium",
+        "hypothesis": "Kahveyi bir yaşam tarzı ve duyusal aroma deneyimi olarak gören kitle, tazelik ve ritüel vurgulu metinlere daha yüksek duygusal bağ ile yanıt verir."
+      }
+    ],
+    "suggestion": {
+      "age": "22 - 48",
+      "gender": "Tüm Cinsiyetler (Kadın & Erkek)",
+      "location": "Türkiye",
+      "advantage_plus_note": "Advantage+ Hedef Kitle (Advantage+ Audience) özelliğinin açık tutulması önerilir. Algoritma, belirlenen ilgi alanlarını bir rehber olarak kullanıp dönüşüm potansiyeli yüksek daha geniş kitlelere erişebilir.",
+      "interests_behaviors": "Nitelikli Kahve (Specialty coffee), Kahve (Coffee), Espresso, Filtre Kahve, Kahve Demleme Ekipmanları veya ilgili perakende kahve markalarına ilgi duyanlar."
+    }
+  },
+  "data_gaps": [
+    "Markanın web sitesine ait geçmiş dönüşüm oranı (Conversion Rate) ve ortalama sepet tutarı (AOV) verileri bulunmamaktadır.",
+    "Kullanılacak 2 onaylı kreatifin görsel/video format türleri (1:1 kare, 9:16 dikey vb.) verisetinde belirtilmemiştir.",
+    "Sitedeki Meta Pixel ve CAPI kurulum durumu, olay geçmişi ve mevcut piksel veri büyüklüğü bilinmemektedir."
+  ],
+  "objective": {
+    "reason": "E-ticaret sitesi üzerinden doğrudan ürün satışı elde etmek ve dönüşüm odaklı optimizasyon sağlamak için Meta Ads Manager'daki en uygun ana kampanya hedefidir.",
+    "confidence": "high",
+    "alternative": "OUTCOME_TRAFFIC (Trafik) - Web sitesinde henüz aktif bir Pixel/CAPI dönüşüm kurulumu ve geçmiş verisi yoksa, başlangıçta tıklama ve sayfa ziyareti toplamak amacıyla geçici bir alternatif olarak değerlendirilebilir.",
+    "recommended": "SALES (Satışlar)"
+  },
+  "structure": [
+    {
+      "purpose": "Günlük bütçeyi bölmeden tek bir reklam setinde toplayarak, onaylı 2 farklı reklam metninin (Karar Kolaylığı/Deneme Seti vs. Duyusal Deneyim/Tazelik) performansını aynı kitle içinde test etmek.",
+      "adset_name": "AdSet_TOF_InterestBroad_CreativeAngleTest",
+      "test_variable": "Creative Strategy / Metin Açısı (Karar bariyeri kırma odaklı teklif metni ile yaşam tarzı ve duyusal tazelik odaklı metnin karşılaştırılması).",
+      "creative_headlines": [
+        "Damak Tadınıza Uygun Kahveyi Keşfedin",
+        "Damak Tadına Göre Kahve Keşfi"
+      ]
+    }
+  ],
+  "placements": {
+    "reason": "Günlük 500 TRY bütçenin verimli kullanımı için Meta algoritmalarının Instagram/Facebook Akış, Story ve Reels üzerinde en düşük maliyetli dönüşüm fırsatlarına dinamik olarak bütçe kaydırmasına olanak tanır.",
+    "confidence": "high",
+    "recommended": "Advantage+ Yerleşimleri (Advantage+ Placements / Otomatik Yerleşimler)"
+  },
+  "budget_plan": {
+    "scenarios": [
+      {
+        "name": "conservative",
+        "note": "Kısıtlı günlük bütçenin bölünmesini engelleyerek Meta algoritmasının öğrenme evresini (Learning Phase) tek noktada daha hızlı tamamlamasını sağlar.",
+        "allocation": "Günlük 500 TRY bütçenin tek bir Reklam Setinde (Ad Set) toplanması (14 gün x 500 TRY = 7.000 TRY toplam bütçe)."
+      },
+      {
+        "name": "recommended",
+        "note": "Bütçe bütünlüğünü korur, reklamlar arası etkileşime göre algoritmanın bütçeyi kazanan reklama kaydırmasına izin verir.",
+        "allocation": "Günlük 500 TRY bütçenin tek Reklam Seti altında onaylı 2 görsel ve metin varyasyonuna dinamik dağıtılması."
+      },
+      {
+        "name": "aggressive",
+        "note": "Kullanıcının mevcut bütçe sınırını aştığı için bir tavsiye senaryosudur; hedef kitle kırılımlarını paralel olarak test etmeyi mümkün kılar.",
+        "allocation": "Öneri olarak günlük bütçenin 1.000 TRY seviyesine çıkarılması (14 gün x 1.000 TRY = 14.000 TRY toplam bütçe) ve bütçenin 2 ayrı reklam setine (500 TRY İlgi Alanı / 500 TRY Geniş Kitle - Broad) bölünmesi."
+      }
+    ],
+    "disclaimer": "Bütçe senaryoları yalnızca belirlenen 500 TRY günlük bütçenin Ads Manager içerisindeki teknik dağılımını gösterir. Hangi senaryoda olursa olsun erişim, tıklama, satış veya ROAS gibi performans sonuçları garanti edilemez."
+  },
+  "campaign_name": "Örnek Kahve - Sales - Conversion - TOF - TR",
+  "manual_setup_steps": [
+    "1. Meta Ads Manager panelinde 'Oluştur' (Create) butonuna tıklayın ve Kampanya Hedefini 'Satışlar' (Sales) olarak işaretleyin.",
+    "2. Kampanya düzeyinde günlük bütçeyi 500 TRY olarak tanımlayın (CBO veya ABO tercihinize göre ayarlayın).",
+    "3. Reklam Seti (Ad Set) kurulumuna geçin; dönüşüm konumunu 'Web Sitesi' seçin ve pikselinizin altında 'Satın Alma' (Purchase) olayını belirleyin.",
+    "4. Hedef Kitle bölümünde konumu 'Türkiye', yaş aralığını '22-48' yapın. Nitelikli Kahve, Filtre Kahve gibi anahtar ilgi alanlarını ekleyip Advantage+ Hedef Kitle seçeneğini aktif tutun.",
+    "5. Yerleşimler adımında 'Advantage+ Yerleşimleri' (Önerilen) seçeneğini işaretleyin.",
+    "6. Reklam (Ad) düzeyinde onaylı 1. Kreatifi ekleyin: Ana metin, 'Damak Tadınıza Uygun Kahveyi Keşfedin' başlığı ve 'Hemen Keşfet' CTA butonunu tanımlayın.",
+    "7. Aynı reklam seti altında 2. Reklamı oluşturun: Onaylı 2. Kreatifin ana metnini, 'Damak Tadına Göre Kahve Keşfi' başlığını ve 'Alışverişe Başla' CTA butonunu girin.",
+    "8. Yönlendirme bağlantılarının (URL) doğru ürün/deneme seti sayfasına gittiğinden emin olarak 'Yayınla' butonuna basın."
+  ],
+  "optimization_event": {
+    "reason": "Doğrudan ciro üretimi ve e-ticaret satışını hedefleyen kampanyalarda algoritmanın satın alma eğilimi en yüksek kullanıcı segmentine odaklanmasını sağlar.",
+    "recommended": "PURCHASE (Satın Alma)",
+    "pixel_condition": "Sitede Meta Pixel ve Dönüşüm API'si (CAPI) kurulumunun eksiksiz yapılmış olması ve Satın Alma (Purchase) olayının tetiklendiğinin Olay Yöneticisi'nde (Events Manager) doğrulanmış olması şarttır. Eğer Pixel verisi henüz yetersizse veya kurulum yoksa, geçici olarak 'ADD_TO_CART' (Sepete Ekleme) veya 'LANDING_PAGE_VIEWS' (Hedef Sayfa Görüntülenmesi) hedeflenebilir."
+  }
+}

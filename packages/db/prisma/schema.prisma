@@ -55,6 +55,13 @@ model Brand {
   currency     String?
   // Üretilecek reklam copy dili (BCP 47)
   copyLanguage String?
+  // Sprint 2026-08-23 (Ajan C) — marka zenginleştirme: ton/ses, USP, ürün listesi
+  brandVoice   String?
+  usp          String?
+  // [{ name, price?: string, url?: string, description?: string }]
+  products     Json?
+  assets       BrandAsset[]
+  evolutionRuns EvolutionRun[]
   researchRuns ResearchRun[]
   competitors  Competitor[]
   patternAnalyses PatternAnalysis[]
@@ -242,6 +249,11 @@ model CampaignPlan {
   notes        String?
   creatives    Creative[]     @relation("PlanCreatives")
   results      CampaignResult[]
+  // Sprint 2026-08-23 (Ajan B) — kullanıcı "Ads Manager'da yayınladım" dedi
+  publishedAt  DateTime?
+  // ör. Ads Manager kampanya adı/ID (kullanıcı elle girer)
+  publishNote  String?
+  kits         PublishKit[]
   result       Json?
   error        String?
   model        String?
@@ -406,4 +418,159 @@ model AuditLog {
   createdAt     DateTime @default(now())
 
   @@index([workspaceId, createdAt])
+}
+
+// ===================================================================
+// SPRINT 2026-08-23 — ortak migration (docs/CONTRACTS.md §3). Şema sahibi: Ajan A.
+// ===================================================================
+
+// ---------- ARENA: Creative Evolution Engine (Ajan A) ----------
+// Arena skoru adaylar arası GÖRELİ sıralamadır; performans tahmini değildir
+// (CLAUDE.md §6/§31). Tahmini CTR/CPC/ROAS/erişim hiçbir yerde üretilmez.
+
+enum EvolutionStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum EvolutionStage {
+  GENERATE // adaylar üretiliyor (tohum veya mutasyon)
+  LINT     // deterministik kural kontrolü
+  JUDGE    // AI jüri paneli
+  SELECT   // skor birleştirme + seçilim
+  DONE
+}
+
+enum CandidateOrigin {
+  SEED
+  MUTATION
+  CROSSOVER
+  ELITE
+}
+
+model EvolutionRun {
+  id               String               @id @default(cuid())
+  brand            Brand                @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId          String
+  status           EvolutionStatus      @default(QUEUED)
+  // Kullanıcı girdileri
+  goal             String // "sales" | "traffic" | "leads" | "awareness" (lib/options.ts CAMPAIGN_GOALS)
+  offer            String? // kullanıcının GERÇEK teklifi; yoksa hiçbir adayda teklif yok
+  instruction      String?
+  // Döngü ayarları — kullanıcı seçer, sınırlar kodda (EVOLUTION_LIMITS)
+  config           Json // { rounds, population, survivors, judges }
+  currentRound     Int                  @default(0)
+  maxRounds        Int
+  // Sonuç
+  winnerCreativeId String? // kazanan, Creative tablosuna yazılır (onay akışına girer)
+  summary          Json? // { convergence, winnerRationale, confidence, dataBasis, disclaimer }
+  error            String?
+  model            String?
+  promptTokens     Int?
+  outputTokens     Int?
+  rounds           EvolutionRound[]
+  candidates       EvolutionCandidate[]
+  createdAt        DateTime             @default(now())
+  finishedAt       DateTime?
+
+  @@index([brandId, createdAt])
+}
+
+model EvolutionRound {
+  id               String               @id @default(cuid())
+  run              EvolutionRun         @relation(fields: [runId], references: [id], onDelete: Cascade)
+  runId            String
+  index            Int // 0-tabanlı
+  stage            EvolutionStage       @default(GENERATE)
+  // Açıklanabilirlik: jüriye ne verildi, ne döndü (snapshot)
+  judgeInput       Json?
+  judgeOutput      Json?
+  // Yarış koruması (AGENT-A §3): aşamaya başlamadan koşullu yazımla claim alınır;
+  // 90 sn'den eski claim çökmüş sayılır ve devralınır.
+  claimedAt        DateTime?
+  // Sözleşme dışı tek ek (Ajan A modeli): tüm adaylar lint'te elendiğinde GENERATE
+  // bir kez tekrarlanır; ikinci boş denemede koşu FAILED olur. Sayaç burada tutulur.
+  generateAttempts Int                  @default(0)
+  // Aşama başına claim sayısı: geçici sağlayıcı hatalarında (zaman aşımı, 429/503)
+  // aşama FAILED olmadan yeniden denenir; MAX_STAGE_ATTEMPTS aşılınca FAILED.
+  // Başarılı geçişte sıfırlanır. (İkinci migration: arena_round_attempts)
+  stageAttempts    Int                  @default(0)
+  promptTokens     Int?
+  outputTokens     Int?
+  startedAt        DateTime             @default(now())
+  finishedAt       DateTime?
+  candidates       EvolutionCandidate[]
+
+  @@unique([runId, index])
+}
+
+model EvolutionCandidate {
+  id               String          @id @default(cuid())
+  run              EvolutionRun    @relation(fields: [runId], references: [id], onDelete: Cascade)
+  runId            String
+  round            EvolutionRound  @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  roundId          String
+  parentId         String? // mutasyon/crossover/elit kaynağı (EvolutionCandidate.id)
+  origin           CandidateOrigin
+  // Creative ile aynı alan seti (kazanan birebir Creative'e kopyalanır)
+  strategy         String
+  hook             String
+  primaryText      String
+  headline         String
+  description      String?
+  cta              String
+  targetNote       String?
+  why              String
+  // Skorlar
+  lintScore        Int // 0-100, deterministik
+  lintIssues       Json // [{ rule, severity: "hard"|"soft", message }]
+  judgeScore       Decimal?        @db.Decimal(5, 2) // 0-100, jüri ortalaması (lint'ten geçenler için)
+  judgeBreakdown   Json? // { judges: { [judgeKey]: { scores, critique, suggestedMutation } }, borda }
+  totalScore       Decimal?        @db.Decimal(5, 2) // AGENT-A §5 formülü
+  rank             Int?
+  survived         Boolean         @default(false)
+  eliminatedReason String?
+  createdAt        DateTime        @default(now())
+
+  @@index([runId, roundId])
+}
+
+// ---------- KİT: Ads Manager Kurulum Kiti v2 (Ajan B) ----------
+model PublishKit {
+  id        String       @id @default(cuid())
+  plan      CampaignPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId    String
+  version   Int          @default(1)
+  // AGENT-B §4 şeması — deterministik olarak plan + onaylı creative'lerden üretilir
+  kit       Json
+  // Kullanıcının Ads Manager'da işaretlediği adımlar: { [stepId]: true }
+  checklist Json         @default("{}")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([planId])
+}
+
+// ---------- MARKA ZENGİNLEŞTİRME: marka asset'leri (Ajan C) ----------
+enum BrandAssetKind {
+  LOGO
+  PRODUCT_IMAGE
+  OTHER
+}
+
+model BrandAsset {
+  id        String         @id @default(cuid())
+  brand     Brand          @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId   String
+  kind      BrandAssetKind
+  name      String
+  // CreativeImage ile aynı karar: DB'de bytea (Vercel'de disk yok)
+  data      Bytes
+  mimeType  String
+  createdAt DateTime       @default(now())
+
+  @@index([brandId])
 }

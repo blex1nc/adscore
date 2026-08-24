@@ -24,3 +24,6 @@ coverage/
 
 # multicode lokal pane/tema ayarlari (makineye ozel)
 .multicode/
+
+# Vercel proje baglantisi (lokal)
+.vercel/

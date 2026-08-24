@@ -8,6 +8,7 @@ Tarih: 2026-08-23/24. Branch: `sprint/agent-a`. Deploy/push YAPILMADI; birleşti
 |---|---|---|---|
 | 1 | `4e4ff1a` | **Ortak migration** `20260823150335_arena_kit_brand_assets` — CONTRACTS §3 diff'inin tamamı (Arena + PublishKit/CampaignPlan alanları + BrandAsset/Brand alanları) + `lib/options.ts` `CAMPAIGN_GOALS`/`EVOLUTION_LIMITS` | cherry-pick (yapıldı) |
 | 2 | (bu rapor ile aynı commit) | Motor + action + UI + testler + **ikinci küçük migration** `20260823183001_arena_round_attempts` (`EvolutionRound.stageAttempts Int @default(0)`, yalnız A'nın modeli) | Ortak dev DB'ye zaten uygulandı; B/C'nin Prisma client'ı bu kolonu bilmese de çalışır (default'lu). Birleştirmede A→B→C sırası yeterli; ayrıca cherry-pick istenirse yalnız `schema.prisma` + migration klasörü gerekir. |
+| 3 | `51cd183` | Sessizce kesilen aşama için deneme sınırı (`stageAttempts > MAX_STAGE_ATTEMPTS` → koşu, aşamaya girmeden FAILED; süreç 60 sn'de ölürse `handleStageError` koşmadığı için aşama sonsuza dek yeniden deneniyordu). Yalnız `lib/evolution/run.ts`. | Şema değişikliği yok; A branch'i merge edilince gelir, cherry-pick gerekmez. |
 
 Sözleşme dışı şema ekleri (ikisi de yalnız `EvolutionRound`, A'nın modeli): `generateAttempts` (lint'te tüm adaylar elenince GENERATE tekrarı sayacı) ve `stageAttempts` (geçici sağlayıcı hatasında aşama tekrar sayacı, §4).
 

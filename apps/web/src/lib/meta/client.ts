@@ -6,7 +6,8 @@ import "server-only";
 // İmza değişikliği yalnız docs/meta/REPORT-A.md'de duyurularak yapılır.
 
 // API sürümü TEK yerde sabittir; B ve C kendi dosyalarında sürüm yazmaz.
-export const META_API_VERSION = "v23.0";
+// Kaynak: SOURCES-A.md #1 (Graph API changelog, retrieved 2026-08-24).
+export const META_API_VERSION = "v26.0";
 
 export type MetaCallOptions = {
   brandId?: string;          // maliyet kaydı + ad account bağlamı

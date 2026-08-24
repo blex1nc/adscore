@@ -82,6 +82,16 @@ class CancelledError extends Error {
   }
 }
 
+/** Aşama, hata fırlatmadan (süreç ölümü / zaman limiti) art arda yarıda kesildi */
+class StageInterruptedError extends Error {
+  constructor(times: number) {
+    super(
+      `Aşama ${times} kez yarıda kesildi (süreç zaman limiti?); koşu durduruldu. Daha az aday/jüri ile veya daha hızlı bir modelle tekrar dene.`,
+    );
+    this.name = "StageInterruptedError";
+  }
+}
+
 type RunWithBrand = Prisma.EvolutionRunGetPayload<{ include: { brand: true } }>;
 
 export function parseConfig(raw: unknown): EvolutionConfig {
@@ -331,6 +341,18 @@ export async function advanceEvolution(runId: string): Promise<AdvanceResult> {
   if (claimed.count !== 1) return snapshot(run, round.stage);
   round.stageAttempts += 1;
 
+  // Süreç hata fırlatmadan öldüyse (Vercel 60 sn limiti) handleStageError koşmaz;
+  // bayat claim 90 sn sonra devralınır ve sayaç artar. Sınır burada da uygulanır ki
+  // sürekli 60 sn'yi aşan bir aşama sonsuza dek AI çağrısı yakmasın (maliyet sınırı).
+  if (round.stageAttempts > MAX_STAGE_ATTEMPTS) {
+    await handleStageError(
+      run,
+      round,
+      new StageInterruptedError(round.stageAttempts - 1),
+    );
+    return snapshot({ status: "FAILED", currentRound: run.currentRound }, round.stage);
+  }
+
   const config = parseConfig(run.config);
   try {
     switch (round.stage) {
@@ -369,7 +391,13 @@ export async function advanceEvolution(runId: string): Promise<AdvanceResult> {
  * AiBlockedError, JSON/şema hatası, kural hataları → kalıcı.
  */
 function isTransientError(error: unknown): boolean {
-  if (error instanceof AiBlockedError || error instanceof CancelledError) return false;
+  if (
+    error instanceof AiBlockedError ||
+    error instanceof CancelledError ||
+    error instanceof StageInterruptedError
+  ) {
+    return false;
+  }
   if (error instanceof AiProviderError) {
     return error.status === undefined || [429, 500, 502, 503, 504].includes(error.status);
   }

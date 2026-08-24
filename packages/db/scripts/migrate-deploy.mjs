@@ -14,7 +14,9 @@ const envPath = path.join(
   "..",
   ".env",
 );
-if (existsSync(envPath)) {
+// Vercel'de env zaten süreçte gelir; CLI ile yüklenen deploy'da bu dosya pakete
+// girip lokal DATABASE_URL'i (localhost) süreçtekinin önüne geçiriyordu.
+if (!process.env.VERCEL && existsSync(envPath)) {
   for (const line of readFileSync(envPath, "utf8").split("\n")) {
     const match = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
     if (match && !process.env[match[1]]) {

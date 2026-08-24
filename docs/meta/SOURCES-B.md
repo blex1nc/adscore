@@ -2,7 +2,7 @@
 
 **Retrieved at (tümü): 2026-08-24.** Kaynaklar resmî `developers.facebook.com` sayfaları (WebFetch ile).
 Not: Görev promptu Meta MCP sunucusundan bahsediyordu; bu oturumda MCP araç listesinde Meta aracı **görünmedi** (ToolSearch ile arandı) → doğrulama WebFetch ile yapıldı.
-Doküman örnekleri **v25.0** gösteriyor; A'nın istemcisi `META_API_VERSION = "v23.0"` sabitliyor (desteklenen sürüm; sürüm A'nın dosyasında — REPORT-B'de not).
+Doküman örnekleri **v25.0** gösteriyor; A'nın istemcisi `META_API_VERSION = "v26.0"` sabitledi (sürüm yalnız A'nın dosyasında; ben kendi dosyalarımda sürüm yazmıyorum). v23.0+ davranış değişiklikleri (advantage_audience zorunluluğu) v26'da da geçerli.
 
 ## 1. Kampanya oluşturma
 - **Source:** Marketing API Reference — Campaign (`ad-campaign-group`)
@@ -80,7 +80,7 @@ Doküman örnekleri **v25.0** gösteriyor; A'nın istemcisi `META_API_VERSION = 
 - **Used for:** `buildTargetingSpec` — bayrak zorunluluğu
 - **Doğrulanan:**
   - Alan: `targeting.targeting_automation.advantage_audience` = `1` | `0`.
-  - **v23.0'dan itibaren** yeni ad set oluştururken yaş/cinsiyet/detaylı hedefleme gibi non-default ayar kullanılıyorsa bayrak **açıkça gönderilmek zorunda**; yoksa hata döner. (A'nın istemcisi v23.0 → bizi kapsıyor.)
+  - **v23.0'dan itibaren** yeni ad set oluştururken yaş/cinsiyet/detaylı hedefleme gibi non-default ayar kullanılıyorsa bayrak **açıkça gönderilmek zorunda**; yoksa hata döner. (A'nın istemcisi v26.0 → bizi kapsıyor.)
   - Kullanıcının seçtiği hedeflemeyi aynen korumak için `advantage_audience: 0` gönderilir; `1` seçeneği UI'da kullanıcıya bırakılır (varsayılan dayatılmaz).
 
 ## 9. Delivery estimate

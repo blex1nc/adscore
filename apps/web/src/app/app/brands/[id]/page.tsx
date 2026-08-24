@@ -114,6 +114,9 @@ export default async function BrandDetailPage({
         <Link href={`${base}/optimization`} className={navLink}>
           Optimizasyon →
         </Link>
+        <Link href="/app/settings/meta" className={navLink}>
+          Meta bağlantısı →
+        </Link>
       </div>
 
       <div className="mt-6 rounded-2xl border border-border bg-card p-6">

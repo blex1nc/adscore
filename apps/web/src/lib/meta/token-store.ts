@@ -166,3 +166,41 @@ export async function markRevokedByMetaUserId(metaUserId: string) {
   }
   return conns;
 }
+
+/** Panel "şimdi doğrula": token dışarı çıkmadan debug_token kontrolü (A5 ekranı).
+ *  Dönen özet UI içindir; düz token asla dönmez. */
+export async function revalidateConnection(workspaceId: string): Promise<{
+  status: string;
+  scopes: string[];
+  tokenExpires: Date | null;
+  errorNote: string | null;
+}> {
+  await prisma.metaConnection.updateMany({
+    where: { workspaceId },
+    data: { lastCheckedAt: null }, // bir sonraki getAccessToken zorunlu doğrular
+  });
+  try {
+    await getAccessToken(workspaceId);
+  } catch (e) {
+    if (!(e instanceof MetaBlockedError)) throw e;
+    // EXPIRED/REVOKED vb. durumlar aşağıda güncel kayıttan okunur
+  }
+  const conn = await prisma.metaConnection.findUnique({
+    where: { workspaceId },
+    select: {
+      status: true,
+      scopes: true,
+      tokenExpires: true,
+      errorNote: true,
+    },
+  });
+  if (!conn) {
+    return {
+      status: "NONE",
+      scopes: [],
+      tokenExpires: null,
+      errorNote: null,
+    };
+  }
+  return conn;
+}

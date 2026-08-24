@@ -42,20 +42,34 @@ export async function addCampaignResult(
     return { error: parsed.error.issues[0]?.message ?? "Form hatalı." };
   }
 
-  const result = await prisma.campaignResult.create({
-    data: {
-      planId,
-      periodStart: parsed.data.periodStart,
-      periodEnd: parsed.data.periodEnd,
-      spend: parsed.data.spend,
-      impressions: parsed.data.impressions,
-      clicks: parsed.data.clicks,
-      reach: parsed.data.reach ?? null,
-      purchases: parsed.data.purchases ?? null,
-      revenue: parsed.data.revenue ?? null,
-      notes: parsed.data.notes || null,
-    },
-  });
+  let result;
+  try {
+    result = await prisma.campaignResult.create({
+      data: {
+        planId,
+        periodStart: parsed.data.periodStart,
+        periodEnd: parsed.data.periodEnd,
+        spend: parsed.data.spend,
+        impressions: parsed.data.impressions,
+        clicks: parsed.data.clicks,
+        reach: parsed.data.reach ?? null,
+        purchases: parsed.data.purchases ?? null,
+        revenue: parsed.data.revenue ?? null,
+        notes: parsed.data.notes || null,
+      },
+    });
+  } catch (e) {
+    // Şema kısıtı @@unique([planId, periodStart, periodEnd, source]) — Meta sprinti
+    // migration'ı ile geldi. Aynı dönem için ikinci elle giriş ham Prisma hatası
+    // yerine eyleme dönük TR mesajla reddedilir (CLAUDE.md §42).
+    if (e && typeof e === "object" && "code" in e && e.code === "P2002") {
+      return {
+        error:
+          "Bu plan için aynı dönemde elle girilmiş bir sonuç zaten var. Düzeltme yapacaksan farklı bir dönem gir veya mevcut satırı silip yeniden ekle.",
+      };
+    }
+    throw e;
+  }
   await audit({
     workspaceId: plan.brand.workspaceId,
     userId: user.id,

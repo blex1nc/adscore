@@ -8,7 +8,7 @@
     "deploy-build": "pnpm --filter @adscore/db migrate:deploy && pnpm --filter @adscore/db exec prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test src/lib/evolution/__tests__/*.test.ts src/lib/meta/__tests__/*.test.ts"
+    "test": "tsx --test src/lib/evolution/__tests__/*.test.ts src/lib/meta/__tests__/*.test.ts src/lib/meta-insights/__tests__/*.test.ts src/lib/meta-library/__tests__/*.test.ts"
   },
   "dependencies": {
     "@adscore/ai": "workspace:*",

@@ -2,6 +2,7 @@
 // debug_token ile GERÇEK izinler → MetaConnection (şifreli) → panele dön.
 // Uçlar: SOURCES-A #3, #5, #6.
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@adscore/db";
 import { audit } from "@/lib/audit";
 import { getCurrentUser } from "@/lib/auth";
 import { getMetaAppCredentials } from "@/lib/meta/env";
@@ -85,6 +86,11 @@ export async function GET(req: NextRequest) {
           ? new Date(Date.now() + longLived.expires_in * 1000)
           : null;
 
+    // Yeniden bağlanma mı, ilk bağlanma mı? (audit: meta.connect / meta.reauth)
+    const existing = await prisma.metaConnection.findUnique({
+      where: { workspaceId: user.workspace.id },
+      select: { id: true },
+    });
     await saveConnection({
       workspaceId: user.workspace.id,
       metaUserId: info.user_id,
@@ -95,7 +101,7 @@ export async function GET(req: NextRequest) {
     await audit({
       workspaceId: user.workspace.id,
       userId: user.id,
-      action: "meta.connect",
+      action: existing ? "meta.reauth" : "meta.connect",
       entity: "MetaConnection",
       newState: { scopes, expiresAt: expiresAt?.toISOString() ?? null },
     });

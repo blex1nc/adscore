@@ -4,11 +4,12 @@ import "server-only";
 // Dialog: https://www.facebook.com/{v}/dialog/oauth  (SOURCES-A #3, #4)
 // Kod değişimi + uzun ömürlü değişim: GET /{v}/oauth/access_token  (SOURCES-A #3, #5)
 // Gerçek izinler: GET /debug_token  (SOURCES-A #6)
-import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { META_API_VERSION } from "./client";
 
+// State (CSRF) yardımcıları saf dosyada (birim test edilir); buradan yeniden dışa açılır.
+export { createOauthState, verifyOauthState } from "./oauth-state";
+
 export const META_OAUTH_STATE_COOKIE = "meta_oauth_state";
-const STATE_TTL_MS = 10 * 60 * 1000; // 10 dk
 
 // PHASE0 §1.3 MVP izin seti (App Review'sız, app'te rolü olan kullanıcı için çalışır)
 export const REQUIRED_SCOPES = [
@@ -19,32 +20,6 @@ export const REQUIRED_SCOPES = [
   "pages_read_engagement",
   "instagram_basic",
 ] as const;
-
-// ---- state (CSRF): "nonce.exp.imza" — imza = HMAC-SHA256(nonce.exp, appSecret) ----
-
-export function createOauthState(appSecret: string): string {
-  const nonce = randomBytes(16).toString("base64url");
-  const exp = Date.now() + STATE_TTL_MS;
-  const sig = createHmac("sha256", appSecret)
-    .update(`${nonce}.${exp}`)
-    .digest("base64url");
-  return `${nonce}.${exp}.${sig}`;
-}
-
-/** İmza + süre kontrolü. Cookie eşleşmesi çağıranda (route) yapılır. */
-export function verifyOauthState(state: string, appSecret: string): boolean {
-  const parts = state.split(".");
-  if (parts.length !== 3) return false;
-  const [nonce, expStr, sig] = parts;
-  const exp = Number(expStr);
-  if (!Number.isFinite(exp) || exp < Date.now()) return false;
-  const expected = createHmac("sha256", appSecret)
-    .update(`${nonce}.${exp}`)
-    .digest("base64url");
-  const a = Buffer.from(sig);
-  const b = Buffer.from(expected);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
 
 // ---- dialog URL ----
 

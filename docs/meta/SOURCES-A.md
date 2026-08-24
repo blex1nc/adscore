@@ -26,6 +26,8 @@ doğrulama WebFetch/WebSearch ile resmi dokümandan yapıldı.
 | 17 | Hata gövdesi: `error.{message,type,code,error_subcode,error_user_title,error_user_msg,fbtrace_id}`; geçici: **1, 2, 4, 17, 341, 368** (+BUC 80000–80005, 613 custom throttle); izin: **10, 200–299**; token: **102, 190** | https://developers.facebook.com/docs/graph-api/guides/error-handling | 2026-08-24 | A4 hata haritası + retry sınıflandırması |
 | 18 | Bütçe birimleri: `daily_budget`/`lifetime_budget` ad account para biriminin **minör biriminde** (USD için cent); offset 1 (bölünmez) para birimleri: CLP, COP, CRC, HUF, ISK, IDR, JPY, KRW, PYG, TWD, VND; **TRY offset 100** | https://developers.facebook.com/docs/marketing-api/currencies + /docs/marketing-api/adset/budget-limits | 2026-08-24 | A7 `assertSafePayload` bütçe karşılaştırması |
 
+| 19 | App access token kısayolu: `access_token={app_id}|{app_secret}` doğrudan parametre olarak kullanılabilir ("You can just pass your app ID and app secret as the access_token parameter") | https://developers.facebook.com/docs/facebook-login/guides/access-tokens | 2026-08-24 | A2/A3 `debug_token` çağrısındaki app token |
+
 ## Belirsiz kalanlar
 
 - `me/businesses` ucu bu turda doğrulanmadı (A5 MVP ekranı business listesi kullanmıyor; ad account/Page doğrudan listeleniyor). Gerekirse ayrı doğrulama yapılacak.

@@ -21,3 +21,6 @@ coverage/
 
 # Lokal uretim dosyalari (gorsel creative vb.)
 .data/
+
+# multicode lokal pane/tema ayarlari (makineye ozel)
+.multicode/

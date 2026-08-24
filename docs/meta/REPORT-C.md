@@ -104,10 +104,12 @@ Tarih: 2026-08-24. Branch: `meta/agent-c`. Ajan A'nın branch'i tamamen merge ed
    - `/app/settings/meta-usage`: dürüst boş durum ("kayıtlı Meta API çağrısı yok").
    - Ekran görüntüleri oturum scratchpad'inde (`ui-sync-section.png`, `ui-sync-blocked.png`,
      `ui-library-blocked.png`, `ui-usage.png`).
-5. **Elle/CSV regresyonu (A'nın uyarısı):** elle giriş yeni dönemle çalışıyor; **aynı dönem ikinci
-   giriş** artık dürüst mesajla reddediliyor ("Bu plan için aynı dönemde elle girilmiş bir sonuç
-   zaten var...") ve listede tek satır kalıyor (UI'da doğrulandı). CSV kaydı aynı
-   `addCampaignResult` yolundan geçtiği için aynı koruma geçerli.
+5. **Elle/CSV regresyonu (A'nın uyarısı) — İKİSİ DE CANLI DOĞRULANDI:** elle giriş yeni dönemle
+   çalışıyor; aynı dönem ikinci giriş dürüst mesajla reddediliyor ve listede tek satır kalıyor.
+   CSV yolu da canlı test edildi: upload → önizleme → kayıt BAŞARILI (16-22.08 dönemi, satır
+   listeye düştü); aynı CSV ikinci kez → "Bu plan için aynı döneme ait (elle/CSV) bir sonuç zaten
+   kayıtlı..." mesajı, satır sayısı 1 kaldı. Ayrıca yeniden senkronda bayat `analysis` blob'u da
+   temizleniyor (`Prisma.DbNull`).
 6. Test fixture'ları: `meta-test@ornek.dev` kullanıcısı + "Örnek Kahve (Meta UI testi)" markası
    (dev DB). Fixture planındaki `metaCampaignId` yalnız UI yolunu açmak için konulmuş test
    verisidir (ürün yolunda mock Meta cevabı YOK).

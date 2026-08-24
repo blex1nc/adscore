@@ -65,7 +65,7 @@ export async function addCampaignResult(
     if (e && typeof e === "object" && "code" in e && e.code === "P2002") {
       return {
         error:
-          "Bu plan için aynı dönemde elle girilmiş bir sonuç zaten var. Düzeltme yapacaksan farklı bir dönem gir veya mevcut satırı silip yeniden ekle.",
+          "Bu plan için aynı döneme ait (elle/CSV) bir sonuç zaten kayıtlı. Düzeltme yapacaksan farklı bir dönem gir veya mevcut satırı silip yeniden ekle.",
       };
     }
     throw e;

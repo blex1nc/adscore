@@ -6,7 +6,7 @@
 
 import "server-only";
 
-import { prisma } from "@adscore/db";
+import { prisma, Prisma } from "@adscore/db";
 import { requireBrandBinding, MetaApiError, MetaBlockedError } from "@/lib/meta/client";
 import { resultSchema } from "@/lib/results/schema";
 import {
@@ -198,6 +198,7 @@ export async function runInsightSync(input: {
           // analizi bayatladı — dürüstçe sıfırlanır, kullanıcı isterse yeniden
           // analiz koşar (Insufficient Data kapıları aynen geçerli).
           analysisStatus: null,
+          analysis: Prisma.DbNull,
           analysisError: null,
         },
       })

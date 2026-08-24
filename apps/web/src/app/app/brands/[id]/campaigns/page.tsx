@@ -207,6 +207,9 @@ export default async function CampaignsPage({
                     : "Kurulum kiti →"}
                 </Link>
               ) : null}
+              {plan.status === "COMPLETED" ? (
+                <Link href={`/app/brands/${brand.id}/campaigns/${plan.id}/publish`} className="inline-flex items-center gap-1 text-accent">Meta’da yayınla (PAUSED) →</Link>
+              ) : null}
             </div>
 
             {plan.status === "FAILED" && plan.error ? (

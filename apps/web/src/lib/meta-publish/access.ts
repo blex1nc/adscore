@@ -16,6 +16,7 @@ export async function loadPublishSource(planId: string, userId: string) {
           id: true,
           name: true,
           website: true,
+          targetMarket: true,
           workspaceId: true,
           workspace: { select: { maxDailyBudget: true } },
         },

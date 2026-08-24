@@ -153,6 +153,18 @@ export function resolveOptimization(input: {
   );
 }
 
+/** Satış amacında kullanıcının seçebileceği dönüşüm olayları (SOURCES-B §13
+ *  doğrulanmış custom_event_type listesinin e-ticaret alt kümesi; varsayılan dayatılmaz). */
+export const CUSTOM_EVENT_TYPES = [
+  { value: "PURCHASE", label: "Satın alma (Purchase)" },
+  { value: "ADD_TO_CART", label: "Sepete ekleme (AddToCart)" },
+  { value: "INITIATED_CHECKOUT", label: "Ödeme başlatma (InitiateCheckout)" },
+  { value: "LEAD", label: "Potansiyel müşteri (Lead)" },
+  { value: "COMPLETE_REGISTRATION", label: "Kayıt tamamlama (CompleteRegistration)" },
+  { value: "CONTENT_VIEW", label: "İçerik görüntüleme (ViewContent)" },
+  { value: "SUBSCRIBE", label: "Abonelik (Subscribe)" },
+] as const;
+
 // ---------------------------------------------------------------------------
 // Targeting spec (SOURCES-B §6–§8)
 // ---------------------------------------------------------------------------

@@ -146,8 +146,9 @@ export default async function CampaignsPage({
       </Link>
       <h1 className="mt-3 font-display text-3xl">Kampanya kiti</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Panel Meta&apos;ya bağlı değil; kampanyayı Ads Manager&apos;da sen açarsın. Kit,
-        kurulum için gereken tüm ayarları ve onaylı copy&apos;leri hazır verir.
+        Kit, kampanyayı Ads Manager&apos;da kendin kurman için hazırlanır (Meta
+        bağlantısı gerektirmez); kurulum için gereken tüm ayarları ve onaylı
+        copy&apos;leri hazır verir.
         Performans tahmini içermez; veri yokken sayı üretilmez.
       </p>
 
@@ -465,8 +466,8 @@ export default async function CampaignsPage({
                   </p>
                 ) : null}
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Panel Meta&apos;ya bağlı olmadığı için gerçek conversion tracking
-                  yok; sayıları Ads Manager raporundan sen girersin. Türetilmiş
+                  Sayıları Ads Manager raporundan elle veya CSV ile girebilir,
+                  marka Meta&apos;ya bağlıysa doğrudan çekebilirsin. Türetilmiş
                   metrikler otomatik hesaplanır.
                 </p>
                 <ImportResultForm planId={plan.id} />

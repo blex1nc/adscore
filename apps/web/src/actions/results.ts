@@ -1,10 +1,10 @@
 "use server";
 
-import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { prisma } from "@adscore/db";
 import { requireUser } from "@/lib/auth";
+import { resultSchema } from "@/lib/results/schema";
 import { audit } from "@/lib/audit";
 import {
   MIN_CLICKS_FOR_ANALYSIS,
@@ -18,25 +18,6 @@ import {
 } from "@/lib/results/import-csv";
 
 export type ResultFormState = { error?: string };
-
-const resultSchema = z
-  .object({
-    periodStart: z.coerce.date(),
-    periodEnd: z.coerce.date(),
-    spend: z.coerce.number().positive("Harcama sıfırdan büyük olmalı."),
-    impressions: z.coerce.number().int().nonnegative(),
-    clicks: z.coerce.number().int().nonnegative(),
-    reach: z.coerce.number().int().nonnegative().optional(),
-    purchases: z.coerce.number().int().nonnegative().optional(),
-    revenue: z.coerce.number().nonnegative().optional(),
-    notes: z.string().max(500).optional(),
-  })
-  .refine((d) => d.periodEnd >= d.periodStart, {
-    message: "Bitiş tarihi başlangıçtan önce olamaz.",
-  })
-  .refine((d) => d.clicks <= d.impressions, {
-    message: "Tıklama sayısı gösterimden fazla olamaz.",
-  });
 
 export async function addCampaignResult(
   planId: string,

@@ -37,11 +37,13 @@ Tamamı `docs/meta/SOURCES-A.md`'de kaynak+retrieved_at ile. Özet: güncel sür
 4. `client.post` yalnız `idempotencyKey` verilirse geçici hatada retry eder; anahtar Meta'ya gönderilmez (Meta'da doğrulanmış idempotency başlığı yok), "tekrar güvenli" beyanıdır. Publish aşamalarında `MetaPublish.id + stage` gibi bir anahtar öneririm.
 5. Kampanya sayfasına "Meta'ya yayınla" girişini sen ekleyeceksin (sayfa senin); ayar ekranı linki hazır: `/app/settings/meta`.
 6. `requireBrandBinding` dönüşündeki `currency`, bağlama anında önbellekten alınan **ad account para birimidir** — plan para birimiyle karşılaştırmayı yayında yap (uyuşmazsa dürüst hata).
+7. **TOTAL bütçeli planlarda dikkat:** `assertSafePayload`, `lifetime_budget`'ı da **günlük** tavana (`maxDailyBudget`) karşı kontrol eder — 3000 TRY lifetime + 500/gün tavan REDDEDİLİR. Bu spec'in yazıldığı gibi (güvenli yön) bilinçli davranıştır, guard hatası değil; TOTAL planda kullanıcıdan tavanı buna göre istemen ya da rapora ihtiyaç yazman gerekir.
 
 ### C'ye notlar
 1. Okumalar için `metaClientForWorkspace(workspaceId)` + `client.paginate(path, params, { maxPages })` (varsayılan 10 sayfa) kullan.
 2. Her çağrı `MetaApiCall`'a otomatik yazılır (`appUsagePct` dahil) — maliyet/kullanım paneli için ayrıca sayaç yazmana gerek yok.
 3. Rate limit'te `MetaApiError.isRateLimit=true` + TR mesaj gelir; Ad Library taramalarında `maxPages`'i küçük tut.
+4. **Şema değişikliği yan etkisi:** yeni `@@unique([planId, periodStart, periodEnd, source])` MEVCUT elle/CSV yolunu da bağlar — aynı plan+dönem için ikinci MANUAL sonuç artık DB'de unique ihlaliyle düşer. `addCampaignResult` bu hatayı yakalamıyorsa ham Prisma hatası görünür; insights senkronunda ve o akışa dokunan kimse bunu bilmeli (dosya sahibi kimse rapora not düşsün).
 
 ## 4. Test kanıtları (2026-08-24)
 
@@ -55,6 +57,7 @@ Tamamı `docs/meta/SOURCES-A.md`'de kaynak+retrieved_at ile. Özet: güncel sür
 - Env yokken kimlik kapısı: `{"ok":false,"missing":["META_APP_ID","META_APP_SECRET","META_TOKEN_KEY"]}`.
 - Bağlantı yokken `metaClientForWorkspace` → `MetaBlockedError NO_CONNECTION` + TR mesaj.
 - **Token DB'de şifreli:** `saveConnection` ile yazılan satırın ham `tokenCipher` baytlarında düz token hex'i YOK; `getAccessToken` deşifresi birebir eşleşti; test satırı silindi (dump kontrolü `encode(tokenCipher,'hex')` ile).
+- **Süresi geçmiş token → EXPIRED (yerel yarı):** `expiresAt` geçmişte olan bağlantıda `getAccessToken` → `MetaBlockedError TOKEN_EXPIRED` + TR mesaj; DB satırı `status=EXPIRED`, `errorNote="Token süresi doldu (yerel kayıt)."`; test satırı silindi.
 
 **4.3 Ekran/uç kanıtları (dev server, forged session ile SSR çıktısı):**
 - `.env`'de META_* varken `/app/settings/meta`: HTTP 200 — "Bağlantı durumu: Bağlı değil", "Meta'ya bağlan", "Harcama güvenliği/Günlük tavan" bölümleri render.
@@ -64,7 +67,7 @@ Tamamı `docs/meta/SOURCES-A.md`'de kaynak+retrieved_at ile. Özet: güncel sür
 - Webhook GET (verify token env'de yok): 403. Webhook POST imzasız: 401. Deauthorize `signed_request`'siz: 400. Veri silme durum sayfası bilinmeyen kod: 404.
 - `pnpm build` temiz; `tsc --noEmit` temiz; eslint (meta dosyaları) temiz.
 
-**4.4 Bekleyen kanıtlar (gerçek Facebook girişi gerekir — §5 sonrası):** gerçek OAuth ile bağlanıp izinlerin panelde görünmesi; `me/adaccounts` + Page listesinin gerçek API'den gelmesi; expired token'ın canlı `EXPIRED` akışı; `MetaApiCall` gerçek kayıtları. Bunlar **test edilmedi** — "çalışıyor" DENMİYOR.
+**4.4 Bekleyen kanıtlar (gerçek Facebook girişi gerekir — §5 sonrası):** gerçek OAuth ile bağlanıp izinlerin panelde görünmesi; `me/adaccounts` + Page listesinin gerçek API'den gelmesi; expired akışının `debug_token` yarısı (Meta "is_valid:false" dediğinde EXPIRED'a düşme — yerel süre yarısı §4.2'de kanıtlandı); `MetaApiCall` gerçek kayıtları. Bunlar **test edilmedi** — "çalışıyor" DENMİYOR.
 
 ## 5. KULLANICI AKSİYONU (sırayla)
 

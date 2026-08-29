@@ -15,13 +15,13 @@ const instrumentSerif = Instrument_Serif({
 });
 
 const manrope = Manrope({
-  weight: ["500", "600"],
+  weight: ["500", "600", "700", "800"],
   subsets: ["latin", "latin-ext"],
   variable: "--font-manrope",
 });
 
 const cabin = Cabin({
-  weight: ["500"],
+  weight: ["500", "600"],
   subsets: ["latin", "latin-ext"],
   variable: "--font-cabin",
 });

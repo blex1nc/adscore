@@ -105,3 +105,38 @@ body {
 .skin-landing ::selection {
   background: hsl(0 0% 100% / 0.2);
 }
+
+/* Landing hareket katmanı (2026-08-29): süzülen hero kartları + marquee bandı.
+   Scroll'a bağlı hareket ScrollMotion component'inden sürülür; buradakiler
+   sürekli çalışan CSS animasyonlarıdır. */
+@keyframes landing-float {
+  from { transform: translateY(0) rotate(0deg); }
+  to   { transform: translateY(var(--float-amp)) rotate(var(--float-rot)); }
+}
+
+.float-a, .float-b, .float-c, .float-d {
+  animation-name: landing-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.float-a { --float-amp: 16px; --float-rot: 1.8deg;  animation-duration: 4.2s; animation-delay: 0.40s; }
+.float-b { --float-amp: 13px; --float-rot: -1.6deg; animation-duration: 5.1s; animation-delay: 0.48s; }
+.float-c { --float-amp: 19px; --float-rot: 2.2deg;  animation-duration: 4.6s; animation-delay: 0.56s; }
+.float-d { --float-amp: 12px; --float-rot: -2deg;   animation-duration: 3.8s; animation-delay: 0.64s; }
+
+@keyframes landing-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: landing-marquee 34s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-a, .float-b, .float-c, .float-d, .marquee-track {
+    animation: none;
+  }
+}

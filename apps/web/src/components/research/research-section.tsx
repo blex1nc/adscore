@@ -161,8 +161,8 @@ function ResultView({
             ))}
           </ul>
           <p className="mt-2 text-xs text-muted-foreground">
-            Bunlar modelin website içeriğinden çıkardığı adaylardır; rakip
-            keşfi ve doğrulaması Phase 3'te ayrıca yapılacak.
+            Bunlar modelin website içeriğinden çıkardığı adaylardır; doğrulama
+            ve reklam analizi Rakipler bölümünde yapılır.
           </p>
         </div>
       ) : null}

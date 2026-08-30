@@ -125,3 +125,101 @@ export function buildLibraryMeta(input: {
     euTotalReach: typeof input.ad.eu_total_reach === "number" ? input.ad.eu_total_reach : str(input.ad.eu_total_reach),
   };
 }
+
+// ---------------------------------------------------------------------------
+// GEZİNME (browse) katmanı — C3
+// Ad Library modülü önce GÖSTERİR, sonra kullanıcı seçtiklerini içe aktarır.
+// Bu ayrım maliyet kapısıdır (CLAUDE.md §43): gezinmek AI çağrısı üretmez,
+// yalnız içe aktarma analiz tetikler.
+// Görsel/creative HÂLÂ kopyalanmaz: kart yalnız metin alanları + halka açık link.
+// ---------------------------------------------------------------------------
+
+export type AdLibraryCard = {
+  archiveId: string;
+  pageId: string | null;
+  pageName: string | null;
+  creationTime: string | null;
+  deliveryStart: string | null;
+  deliveryStop: string | null;
+  /** Reklamın hâlâ yayında görünüp görünmediği (stop tarihi yoksa açık kabul edilir). */
+  active: boolean;
+  bodies: string[];
+  titles: string[];
+  descriptions: string[];
+  captions: string[];
+  platforms: string[];
+  languages: string[];
+  euTotalReach: number | null;
+  /** facebook.com/ads/library/?id=... — token içermez. */
+  publicUrl: string;
+  /** Analiz motoruna girecek metin (içe aktarmada aynen kullanılır). */
+  inputText: string;
+  /** 40 karakter eşiğini geçiyor mu — geçmiyorsa içe aktarılamaz. */
+  importable: boolean;
+};
+
+/** ads_archive satırını gezinme kartına çevirir. Saf: fetch/Prisma yok. */
+export function toAdLibraryCard(ad: ArchivedAdRow): AdLibraryCard | null {
+  const archiveId = str(ad.id);
+  if (!archiveId) return null;
+  const inputText = composeAdInputText(ad);
+  const stop = str(ad.ad_delivery_stop_time);
+  const reach = ad.eu_total_reach;
+  return {
+    archiveId,
+    pageId: str(ad.page_id),
+    pageName: str(ad.page_name),
+    creationTime: str(ad.ad_creation_time),
+    deliveryStart: str(ad.ad_delivery_start_time),
+    deliveryStop: stop,
+    active: stop === null,
+    bodies: strList(ad.ad_creative_bodies, 3),
+    titles: strList(ad.ad_creative_link_titles, 3),
+    descriptions: strList(ad.ad_creative_link_descriptions, 3),
+    captions: strList(ad.ad_creative_link_captions, 3),
+    platforms: strList(ad.publisher_platforms, 10),
+    languages: strList(ad.languages, 10),
+    euTotalReach:
+      typeof reach === "number"
+        ? reach
+        : typeof reach === "string" && reach.trim() !== "" && Number.isFinite(Number(reach))
+          ? Number(reach)
+          : null,
+    publicUrl: publicAdLibraryUrl(archiveId),
+    inputText,
+    importable: hasAnalyzableText(inputText),
+  };
+}
+
+export function toAdLibraryCards(rows: ArchivedAdRow[]): AdLibraryCard[] {
+  const out: AdLibraryCard[] = [];
+  const seen = new Set<string>();
+  for (const row of rows) {
+    const card = toAdLibraryCard(row);
+    if (!card || seen.has(card.archiveId)) continue;
+    seen.add(card.archiveId);
+    out.push(card);
+  }
+  return out;
+}
+
+/** Aynı sayfaya (reklamveren) ait kartları gruplar — Ad Library'nin sayfa görünümü. */
+export function groupCardsByPage(
+  cards: AdLibraryCard[],
+): Array<{ pageId: string | null; pageName: string; cards: AdLibraryCard[] }> {
+  const groups = new Map<string, { pageId: string | null; pageName: string; cards: AdLibraryCard[] }>();
+  for (const card of cards) {
+    const key = card.pageId ?? card.pageName ?? "bilinmeyen";
+    let group = groups.get(key);
+    if (!group) {
+      group = {
+        pageId: card.pageId,
+        pageName: card.pageName ?? "Sayfa adı yok",
+        cards: [],
+      };
+      groups.set(key, group);
+    }
+    group.cards.push(card);
+  }
+  return [...groups.values()].sort((a, b) => b.cards.length - a.cards.length);
+}

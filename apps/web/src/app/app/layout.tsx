@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { prisma } from "@adscore/db";
 import { getCurrentUser } from "@/lib/auth";
 import { logout } from "@/actions/auth";
 import { SidebarNav } from "@/components/sidebar-nav";
+import { PanelMobileNav } from "@/components/panel-mobile-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function PanelLayout({
@@ -13,6 +15,15 @@ export default async function PanelLayout({
 }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
+
+  // Sidebar marka geçişi için workspace'in markaları (yalnız id + ad).
+  const brands = user.workspace
+    ? await prisma.brand.findMany({
+        where: { workspaceId: user.workspace.id },
+        select: { id: true, name: true },
+        orderBy: { createdAt: "desc" },
+      })
+    : [];
 
   const initials = user.name
     .split(" ")
@@ -30,13 +41,22 @@ export default async function PanelLayout({
         >
           adscore
         </Link>
-        <SidebarNav isAdmin={user.platformRole === "ADMIN"} />
+        <SidebarNav
+          isAdmin={user.platformRole === "ADMIN"}
+          brands={brands}
+        />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-border px-5 py-3">
-          <span className="truncate text-sm text-muted-foreground">
-            {user.workspace?.name ?? "Workspace"}
-          </span>
+          <div className="flex min-w-0 items-center gap-2.5">
+            <PanelMobileNav
+              isAdmin={user.platformRole === "ADMIN"}
+              brands={brands}
+            />
+            <span className="truncate text-sm text-muted-foreground">
+              {user.workspace?.name ?? "Workspace"}
+            </span>
+          </div>
           <div className="flex items-center gap-2.5">
             <ThemeToggle />
             <span

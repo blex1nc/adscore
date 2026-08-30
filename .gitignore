@@ -27,3 +27,4 @@ coverage/
 
 # Vercel proje baglantisi (lokal)
 .vercel/
+.dev-credentials.local

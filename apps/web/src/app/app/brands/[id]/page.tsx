@@ -102,6 +102,9 @@ export default async function BrandDetailPage({
         <Link href={`${base}/competitors`} className={navLink}>
           Rakipler →
         </Link>
+        <Link href={`${base}/ad-library`} className={navLink}>
+          Ad Library →
+        </Link>
         <Link href={`${base}/arena`} className={navLink}>
           Arena →
         </Link>

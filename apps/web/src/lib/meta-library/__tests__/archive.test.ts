@@ -8,6 +8,9 @@ import {
   hasAnalyzableText,
   isEuCovered,
   publicAdLibraryUrl,
+  toAdLibraryCard,
+  toAdLibraryCards,
+  groupCardsByPage,
   type ArchivedAdRow,
 } from "../archive";
 
@@ -71,4 +74,48 @@ test("isEuCovered: EU üyeleri true, TR false", () => {
   assert.equal(isEuCovered("de"), true);
   assert.equal(isEuCovered("TR"), false);
   assert.equal(isEuCovered(null), false);
+});
+
+// --- C3 gezinme katmanı ---------------------------------------------------
+
+test("toAdLibraryCard: metin alanlarını karta çevirir, görsel kopyalamaz", () => {
+  const card = toAdLibraryCard(sampleAd);
+  assert.ok(card);
+  assert.equal(card.archiveId, "1234567890");
+  assert.equal(card.pageName, "Beispiel Kaffee");
+  assert.equal(card.publicUrl, publicAdLibraryUrl("1234567890"));
+  assert.equal(card.active, false); // stop tarihi var
+  assert.equal(card.importable, hasAnalyzableText(card.inputText));
+  assert.ok(!("adSnapshotUrl" in card));
+});
+
+test("toAdLibraryCard: id yoksa kart üretilmez", () => {
+  assert.equal(toAdLibraryCard({ page_name: "X" }), null);
+});
+
+test("toAdLibraryCard: stop tarihi yoksa yayında sayılır", () => {
+  const card = toAdLibraryCard({ ...sampleAd, ad_delivery_stop_time: undefined });
+  assert.equal(card?.active, true);
+});
+
+test("toAdLibraryCards: aynı arşiv id'si tekrar etmez", () => {
+  const cards = toAdLibraryCards([sampleAd, sampleAd, { id: "999", page_name: "Y" }]);
+  assert.equal(cards.length, 2);
+});
+
+test("groupCardsByPage: sayfaya göre gruplar, çok reklamlı sayfa önce gelir", () => {
+  const cards = toAdLibraryCards([
+    { id: "1", page_id: "p1", page_name: "Bir" },
+    { id: "2", page_id: "p2", page_name: "İki" },
+    { id: "3", page_id: "p2", page_name: "İki" },
+  ]);
+  const groups = groupCardsByPage(cards);
+  assert.equal(groups.length, 2);
+  assert.equal(groups[0].pageName, "İki");
+  assert.equal(groups[0].cards.length, 2);
+});
+
+test("metin alanı olmayan kayıt içe aktarılabilir sayılmaz", () => {
+  const card = toAdLibraryCard({ id: "5", page_name: "Kısa" });
+  assert.equal(card?.importable, false);
 });

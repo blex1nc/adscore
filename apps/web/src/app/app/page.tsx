@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight, CirclePlus, Plug, Rocket } from "lucide-react";
+import { prisma } from "@adscore/db";
 import { getCurrentUser } from "@/lib/auth";
 import { loadLaunchStates } from "@/components/launch/launch-state";
 import { LaunchPoller } from "@/components/launch/launch-poller";
@@ -17,14 +18,59 @@ export default async function DashboardPage() {
   const firstName = user.name.split(" ")[0];
   const anyRunning = states.some((s) => s.running);
 
-  // Yalnızca gerçek kayıt sayıları
+  // Yalnızca gerçek kayıt sayıları — tahmin/örnek veri yok (CLAUDE.md §6, §31)
   const totals = states.reduce(
     (acc, s) => ({
       approved: acc.approved + s.summary.creatives.approved,
+      pendingCreatives: acc.pendingCreatives + s.summary.creatives.pending,
       results: acc.results + s.summary.plan.resultCount,
+      competitors: acc.competitors + s.summary.competitors.count,
+      analyzedAds: acc.analyzedAds + s.summary.competitors.analyzedAds,
     }),
-    { approved: 0, results: 0 },
+    { approved: 0, pendingCreatives: 0, results: 0, competitors: 0, analyzedAds: 0 },
   );
+
+  // Gerçek Meta bağlantı durumu — sabit metin değil (bayat metin riski)
+  const [connection, openRecommendations] = await Promise.all([
+    prisma.metaConnection.findUnique({
+      where: { workspaceId: user.workspace.id },
+      select: { status: true, lastCheckedAt: true, errorNote: true },
+    }),
+    prisma.recommendation.count({
+      where: {
+        status: "PROPOSED",
+        run: { brand: { workspaceId: user.workspace.id } },
+      },
+    }),
+  ]);
+
+  const boundBrands = connection
+    ? await prisma.brandMetaBinding.count({
+        where: { brand: { workspaceId: user.workspace.id } },
+      })
+    : 0;
+
+  const metaStatus = metaStatusCopy(connection?.status ?? null, boundBrands);
+
+  // Kullanıcının karar vermesi gereken açık işler
+  const pending: Array<{ label: string; href: string }> = [];
+  for (const s of states) {
+    if (s.summary.creatives.pending > 0) {
+      pending.push({
+        label: `${s.summary.brandName}: ${s.summary.creatives.pending} creative onay bekliyor`,
+        href: `/app/brands/${s.summary.brandId}/creatives`,
+      });
+    }
+  }
+  if (openRecommendations > 0) {
+    pending.push({
+      label: `${openRecommendations} optimizasyon önerisi karar bekliyor`,
+      href:
+        states.length === 1
+          ? `/app/brands/${states[0].summary.brandId}/optimization`
+          : "/app/brands",
+    });
+  }
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -145,6 +191,28 @@ export default async function DashboardPage() {
         </div>
       )}
 
+      {pending.length > 0 ? (
+        <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+          <div className="text-sm font-medium">Senin kararını bekleyenler</div>
+          <ul className="mt-3 space-y-1.5">
+            {pending.map((item) => (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  className="inline-flex items-center gap-1.5 text-sm text-accent hover:opacity-80"
+                >
+                  {item.label}
+                  <ArrowRight size={13} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-muted-foreground">
+            AI hiçbir öneriyi kendi başına uygulamaz; onay senindir.
+          </p>
+        </div>
+      ) : null}
+
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="text-sm font-medium">Kayıtlar</div>
@@ -152,7 +220,10 @@ export default async function DashboardPage() {
             {(
               [
                 ["Marka", states.length],
+                ["Rakip", totals.competitors],
+                ["Analizli rakip reklamı", totals.analyzedAds],
                 ["Onaylı creative", totals.approved],
+                ["Onay bekleyen", totals.pendingCreatives],
                 ["Girilen sonuç", totals.results],
               ] as const
             ).map(([k, v]) => (
@@ -160,9 +231,7 @@ export default async function DashboardPage() {
                 <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">
                   {k}
                 </dt>
-                <dd className="mt-0.5 text-2xl font-semibold tabular-nums">
-                  {v}
-                </dd>
+                <dd className="mt-0.5 text-2xl font-semibold tabular-nums">{v}</dd>
               </div>
             ))}
           </dl>
@@ -176,14 +245,64 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-2 text-sm font-medium">
             <Plug size={15} className="text-muted-foreground" />
             Meta bağlantısı
+            <span
+              className={cn(
+                "rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide",
+                metaStatus.tone === "ok"
+                  ? "border-accent/40 text-accent"
+                  : "border-border text-muted-foreground",
+              )}
+            >
+              {metaStatus.label}
+            </span>
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Bağlı değil (ertelendi). Kampanyayı kurulum kitiyle Ads Manager&apos;da
-            sen kurarsın; sonuçları CSV veya elle girersin. Resmi OAuth
-            bağlantısı ileride panelden eklenecek.
-          </p>
+          <p className="mt-3 text-sm text-muted-foreground">{metaStatus.detail}</p>
+          {connection?.errorNote ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Son hata: {connection.errorNote}
+            </p>
+          ) : null}
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-xs">
+            <Link href="/app/settings/meta" className="text-accent hover:opacity-80">
+              Bağlantı ayarları →
+            </Link>
+            <Link href="/app/settings/meta-usage" className="text-accent hover:opacity-80">
+              API kullanımı →
+            </Link>
+          </div>
         </div>
       </div>
     </div>
   );
+}
+
+// Bağlantı durumu metinleri — durum DB'den gelir, sabit "bağlı değil" yazılmaz.
+function metaStatusCopy(
+  status: string | null,
+  boundBrands: number,
+): { label: string; tone: "ok" | "warn"; detail: string } {
+  if (status === "CONNECTED") {
+    return {
+      label: "Bağlı",
+      tone: "ok",
+      detail:
+        boundBrands > 0
+          ? `${boundBrands} marka bir reklam hesabına bağlı. Insights çekimi ve Ad Library araması kullanılabilir; yayınlama her zaman senin onayınla ve PAUSED olarak yapılır.`
+          : "Hesap bağlı ama hiçbir marka bir reklam hesabına eşlenmedi. Insights ve yayınlama için markayı bir Ad Account'a bağla.",
+    };
+  }
+  if (status === "EXPIRED" || status === "REVOKED" || status === "DISCONNECTED") {
+    return {
+      label: status === "EXPIRED" ? "Süresi doldu" : status === "REVOKED" ? "İzin kaldırıldı" : "Kesildi",
+      tone: "warn",
+      detail:
+        "Meta bağlantısı artık geçerli değil. Insights, Ad Library ve yayınlama bu bağlantı yenilenene kadar çalışmaz.",
+    };
+  }
+  return {
+    label: "Bağlı değil",
+    tone: "warn",
+    detail:
+      "Meta hesabı bağlanmadı. Bağlantı olmadan Ad Library araması ve Insights çekimi yapılamaz; kampanyayı kurulum kitiyle Ads Manager'da kurar, sonuçları CSV veya elle girersin. Mock veri gösterilmez.",
+  };
 }

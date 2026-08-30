@@ -90,9 +90,14 @@ export default async function CompetitorsPage({
       <div className="mt-6 rounded-2xl border border-border bg-card p-6">
         <h2 className="text-sm font-medium">Rakip ekle</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Marka araştırmasındaki adayları tek tıkla ekleyebilir veya elle
-          girebilirsin. Hedef pazar EU/UK ise Ad Library API bağlantısı Meta
-          entegrasyonuyla (Phase 5+) gelecek; şimdilik reklamlar elle girilir.
+          Marka araştırmasındaki adayları tek tıkla ekleyebilir, elle
+          girebilir ya da{" "}
+          <Link href={`/app/brands/${brand.id}/ad-library`} className="text-accent hover:opacity-80">
+            Ad Library&apos;de gezip
+          </Link>{" "}
+          bulduğun reklamı sayfasıyla birlikte içe aktarabilirsin. Ad Library
+          yalnız kapsamdaki (EU&apos;ya ulaşan) reklamları döndürür; kapsam
+          dışındaki reklamlar için metni elle ekle.
         </p>
         <div className="mt-4">
           <AddCompetitorForm brandId={brand.id} />
@@ -102,6 +107,12 @@ export default async function CompetitorsPage({
       {brand.competitors.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">Henüz rakip yok.</p>
+          <Link
+            href={`/app/brands/${brand.id}/ad-library`}
+            className="mt-3 inline-block text-xs text-accent hover:opacity-80"
+          >
+            Ad Library&apos;de ara ve bulduğun sayfadan rakip oluştur →
+          </Link>
         </div>
       ) : (
         brand.competitors.map((competitor) => (
@@ -116,6 +127,14 @@ export default async function CompetitorsPage({
                   <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
                     {COMPETITOR_TYPE_LABELS[competitor.type]}
                   </span>
+                  {competitor.addedFrom === "ad_library" ? (
+                    <span
+                      className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground"
+                      title="Meta Ad Library'de bulunan sayfadan oluşturuldu"
+                    >
+                      ad library
+                    </span>
+                  ) : null}
                   {competitor.addedFrom === "research" ? (
                     <span
                       className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground"

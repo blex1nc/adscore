@@ -441,6 +441,32 @@ Workspace
 
 ## 14. CURRENT DEVELOPMENT STATUS
 
+**PANEL GEZİNME + KALAN ROTA BOŞLUKLARI TAMAM (2026-08-30).**
+
+Ad Library modülü (C3) ile aynı commit'te panelin gezinme katmanı tamamlandı. Yeni şema/migration YOK, yeni AI çağrısı YOK.
+
+- **Marka değiştirici (§40):** sidebar'ın marka bölümü yalnız URL'de marka id'si varken açılıyordu; markalar arasında geçmek için her seferinde `/app/brands` listesine dönmek gerekiyordu. Artık workspace'in markaları layout'ta (yalnız `id` + `name`) çekilip sidebar'a veriliyor; seçici **bulunulan modülü koruyarak** geçiş yapar (ör. Rakipler'deyken marka değişince yine Rakipler açılır). Marka seçili değilken seçici + "modüller marka bazlıdır" notu görünür; seçicinin boş seçeneği ("Tüm markalar…") marka bağlamından çıkıp listeye döner — tek markalı workspace'te ölü kontrol kalmaz. Not: layout artık her panel isteğinde marka listesini (id+ad) sorgular; `/app` ve ayarlar ekranlarında kullanılmasa da tek ek sorgu.
+- **Mobil gezinme:** sidebar `hidden md:flex` olduğu için md altında panelde hiç gezinme yoktu. Aynı `SidebarNav` artık topbar'daki hamburger ile çekmece olarak açılıyor (Escape ile kapanır, arka plan kaydırması kilitli, rota değişince kapanır — kapanma render'dan türetilir, effect içinde setState yok).
+- **Ölü rota kapatıldı:** `/app/brands/[id]/campaigns/[planId]` klasörü yalnız `kit/` ve `publish/` alt rotalarına sahipti; elle yazılan plan adresi 404 veriyordu. Artık kite yönlendiriyor (plan detayı = kurulum kiti).
+- **Markalar listesi:** salt tablo yerine marka başına **gerçek kayıt sayıları** (rakip / creative / plan) + Launch kısayolu. Sayılar Prisma `_count`'tan gelir; tahmin veya örnek veri yok (§6, §31). "Para birimi" kolonu marka sayfasında zaten göründüğü için tablodan çıkarıldı.
+- **Bayat metin:** araştırma sonucundaki rakip adayları notu "Phase 3'te ayrıca yapılacak" diyordu (Phase 3 tamamlandı) → "doğrulama ve reklam analizi Rakipler bölümünde yapılır".
+- **Doğrulama:** `pnpm build` temiz (yeni `[planId]` rotası kayıtlı), `tsc --noEmit` temiz, `pnpm test` 141/141, değişen dosyalarda eslint temiz. **Tarayıcıda tıklanarak doğrulanmadı** (bu makinede Chrome kurulu değil) — mobil çekmece ve marka değiştirici görsel olarak test edilmeyi bekliyor.
+
+**AD LIBRARY MODÜLÜ (C3) + PANEL DÜZENİ TAMAM (2026-08-29).**
+
+Ad Library artık yalnız rakip kartındaki bir arama kutusu değil, kendi modülü:
+`/app/brands/[id]/ad-library` (sidebar + marka sayfası + Rakipler sayfasından link).
+
+- **Gezinme ≠ kaydetme.** `lib/meta-library/search.ts` üç işi (fetch → CompetitorAd yaz → AI analizi) tek fonksiyonda yapıyordu; tek Meta çağrı noktası `fetchAdArchive` olarak ayrıldı. `browseAdArchive` yalnız okur — **DB'ye yazmaz, AI çağırmaz**. Maliyet kapısı (§43) artık içe aktarma adımında: onaydan önce ekranda "N reklam içe aktarılacak → N AI analizi" yazar, `MAX_SAVED_PER_SEARCH = 6` orada uygulanır.
+- **Şema değişikliği YOK, migration YOK.** Gezinme durumsuz; içe aktarma mevcut `CompetitorAd`'e yazar. `composeAdInputText` / `buildLibraryMeta` / `publicAdLibraryUrl` aynen kullanılır.
+- **Sayfadan rakip oluşturma** (kullanıcı kararı, 2026-08-29): gezerken bulunan reklam kayıtlı rakiplerden birine ait değilse, seçim `page_name`/`page_id` üzerinden yeni `Competitor` açar (`addedFrom: "ad_library"`, rozet Rakipler sayfasında görünür). Aynı adlı rakip varsa ona bağlanır. Alternatif: listeden mevcut rakip seçmek.
+- **Kaynak dürüstlüğü (§37):** içe aktarmada satırlar İSTEMCİDEN GELMEZ — aynı sorgu tekrar çalıştırılır, seçilen arşiv id'leri Meta'nın kendi cevabından alınır. Çok hedefli içe aktarmada bile Meta'ya TEK çağrı yapılır.
+- **Canlı sonuç kayması:** gezinme ile içe aktarma arasında bir kayıt sonuç penceresinden düşerse sessizce kaybolmaz — "N kayıt yeniden sorguda dönmedi (Ad Library sonuçları canlıdır)" olarak raporlanır. Başarılı içe aktarmadan sonra seçim temizlenir ki "zaten ekliydi" mesajı bu durumla karışmasın. Kart durum rozeti çıkarım olduğunu saklamaz: bitiş tarihi yoksa "Bitiş tarihi yok" yazar, "Yayında" iddiasında bulunmaz (§6/§31).
+- **Kapsam dürüstlüğü:** kapsam notu + EU-dışı uyarısı sayfanın kalıcı parçası (arama sonrası çıkan bildirim değil). Boş sonuç açıkça "bu, markanın reklam vermediği anlamına gelmez" der. Kartlar **yalnız metin** gösterir — görsel/video kopyalanmaz, orijinal halka açık Ad Library linkinden açılır (`ad_snapshot_url` hâlâ istenmiyor: token içerir).
+- **Panel düzeni:** sidebar'a Ad Library eklendi; Rakipler sayfasındaki bayat "Ad Library Phase 5+'ta gelecek" metni düzeltildi; `/app` ana sayfasındaki sabit "Meta bağlı değil (ertelendi)" kartı **gerçek `MetaConnection` durumundan** türetiliyor (bağlı/süresi doldu/izin kaldırıldı/bağlı değil + bağlı marka sayısı + son hata notu). Ana sayfaya "Senin kararını bekleyenler" bölümü eklendi (onay bekleyen creative sayısı + PROPOSED optimizasyon önerisi sayısı — hepsi gerçek DB sayıları, tahmin yok).
+- **Doğrulama:** `pnpm build` temiz (yeni rota kayıtlı), `tsc --noEmit` temiz, `pnpm test` 141/141 (6 yeni birim test: kart eşleme, tekilleştirme, sayfa gruplama, metinsiz kayıt içe aktarılamaz). Yeni dosyalarda lint hatası yok. **Canlı Meta çağrısıyla ve tarayıcıda tıklanarak DOĞRULANMADI** — bu makinede Chrome kurulu değil ve workspace'te bağlı Meta hesabı yok; bağlantı yokken sayfa dürüst BLOCKED gösteriyor (mock yazılmadı, §33).
+- Dev notu: `meta-test@ornek.dev` şifresi UI doğrulaması için sıfırlandı; değer `.dev-credentials.local` dosyasında (gitignore'da).
+
 **CSV İÇE AKTARMA (Ads Manager raporu) TAMAM VE CANLI TEST EDİLDİ (2026-08-13).**
 
 Kullanıcı sorusu "metasız yapamaz mıyız" → dürüst cevap verildi: API'siz yayınlama imkânsız (Ads Manager otomasyonu ToS ihlali + hesap ban riski — yapılmayacak), ama veri tarafı CSV ile kapanır. Kullanıcı onayı: "şimdilik onaylıyorum meta dev açılınca onu da entegre ederiz".
@@ -487,7 +513,7 @@ Deploy sırasında çözülenler (API üzerinden, kullanıcı token'ı ile):
 - `Learning` (CLAUDE.md §26): analizden çıkan bulgular örneklem notuyla marka bazında saklanır ve kampanya sayfasında listelenir (canlı test: "9 satın alma istatistiksel kesinlik göstermez" notu otomatik geldi).
 - Landing dönüşümü aynı gün: yeni hero referansı uygulandı (autoplay video, Manrope/Cabin, mor token seti); scroll-scrub kaldırıldı; video anında oynuyor (doğrulandı).
 
-**BLOCKED (kullanıcı Meta developer hesabı açana kadar):** Meta OAuth, API publish, gerçek Insights çekimi, delivery estimate tabanlı tahmin ekranı (Referans C). Bunlar için mock YAZILMADI; sıra geldiğinde HANDOFF §23 koşulları geçerli.
+**(2026-08-12 tarihli BLOCKED notu artık kısmen geçersiz — bkz. Ajan A/B/C birleştirmeleri.)** Meta OAuth, PAUSED-only yayın hattı ve Insights senkronu **kodlandı**; delivery estimate tabanlı tahmin ekranı (Referans C) hâlâ yok. Kodlanan uçlar **canlı Meta çağrısıyla doğrulanmadı** (workspace'te bağlı hesap yok); bağlantı yokken ekranlar dürüst BLOCKED gösterir, mock YAZILMADI. Sıra geldiğinde HANDOFF §23 koşulları geçerli.
 
 **PHASE 4 (Creative Studio v1) TAMAM VE CANLI TEST EDİLDİ (2026-08-12).**
 

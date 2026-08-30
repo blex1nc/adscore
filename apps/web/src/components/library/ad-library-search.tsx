@@ -13,37 +13,7 @@ import {
 } from "@/lib/meta-library/archive";
 import { Button, Input, Label, Select } from "@/components/ui";
 
-// TR + EU üyeleri (SOURCES-C §4 — ticari kapsam EU-ulaşan reklamlar)
-const COUNTRY_OPTIONS: Array<[string, string]> = [
-  ["TR", "Türkiye (API kapsamı dışı — yalnız EU'ya da ulaşan reklamlar döner)"],
-  ["DE", "Almanya"],
-  ["FR", "Fransa"],
-  ["NL", "Hollanda"],
-  ["ES", "İspanya"],
-  ["IT", "İtalya"],
-  ["PL", "Polonya"],
-  ["SE", "İsveç"],
-  ["IE", "İrlanda"],
-  ["BE", "Belçika"],
-  ["AT", "Avusturya"],
-  ["PT", "Portekiz"],
-  ["DK", "Danimarka"],
-  ["FI", "Finlandiya"],
-  ["GR", "Yunanistan"],
-  ["CZ", "Çekya"],
-  ["RO", "Romanya"],
-  ["HU", "Macaristan"],
-  ["BG", "Bulgaristan"],
-  ["HR", "Hırvatistan"],
-  ["SK", "Slovakya"],
-  ["SI", "Slovenya"],
-  ["LT", "Litvanya"],
-  ["LV", "Letonya"],
-  ["EE", "Estonya"],
-  ["LU", "Lüksemburg"],
-  ["CY", "Kıbrıs"],
-  ["MT", "Malta"],
-];
+import { COUNTRY_OPTIONS } from "@/components/library/country-options";
 
 export function AdLibrarySearch({
   competitorId,

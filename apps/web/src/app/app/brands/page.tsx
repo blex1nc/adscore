@@ -11,9 +11,15 @@ export default async function BrandsPage() {
   const user = await getCurrentUser();
   if (!user?.workspace) redirect("/login");
 
+  // Sayılar gerçek kayıtlardan gelir; tahmin veya örnek veri yok (CLAUDE.md §6, §31).
   const brands = await prisma.brand.findMany({
     where: { workspaceId: user.workspace.id },
     orderBy: { createdAt: "desc" },
+    include: {
+      _count: {
+        select: { competitors: true, creatives: true, campaignPlans: true },
+      },
+    },
   });
 
   return (
@@ -44,7 +50,10 @@ export default async function BrandsPage() {
                 <th className="px-4 py-3 font-medium">Marka</th>
                 <th className="px-4 py-3 font-medium">Website</th>
                 <th className="px-4 py-3 font-medium">Hedef pazar</th>
-                <th className="px-4 py-3 font-medium">Para birimi</th>
+                <th className="px-4 py-3 font-medium">Rakip</th>
+                <th className="px-4 py-3 font-medium">Creative</th>
+                <th className="px-4 py-3 font-medium">Plan</th>
+                <th className="px-4 py-3 font-medium sr-only">Aç</th>
               </tr>
             </thead>
             <tbody>
@@ -68,8 +77,22 @@ export default async function BrandsPage() {
                     {MARKETS.find((m) => m.code === brand.targetMarket)
                       ?.label ?? "-"}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {brand.currency ?? "-"}
+                  <td className="px-4 py-3 tabular-nums text-muted-foreground">
+                    {brand._count.competitors}
+                  </td>
+                  <td className="px-4 py-3 tabular-nums text-muted-foreground">
+                    {brand._count.creatives}
+                  </td>
+                  <td className="px-4 py-3 tabular-nums text-muted-foreground">
+                    {brand._count.campaignPlans}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Link
+                      href={`/app/brands/${brand.id}/launch`}
+                      className="text-xs text-accent hover:opacity-80"
+                    >
+                      Launch →
+                    </Link>
                   </td>
                 </tr>
               ))}

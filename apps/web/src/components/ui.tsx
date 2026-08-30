@@ -29,7 +29,7 @@ export function Button({
         variant === "primary" &&
           "bg-accent text-accent-foreground hover:opacity-85",
         variant === "secondary" &&
-          "border border-border bg-card text-card-foreground hover:bg-muted",
+          "border border-border-soft bg-panel text-foreground hover:bg-muted",
         variant === "ghost" && "text-muted-foreground hover:text-foreground",
         variant === "destructive" &&
           "bg-destructive text-destructive-foreground hover:opacity-85",
@@ -47,7 +47,7 @@ export function Input({
   return (
     <input
       className={cn(
-        "w-full rounded-md border border-border bg-card px-3 py-2 text-sm text-card-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
+        "w-full rounded-md border border-border-soft bg-panel px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
         className,
       )}
       {...props}
@@ -62,7 +62,7 @@ export function Textarea({
   return (
     <textarea
       className={cn(
-        "w-full rounded-md border border-border bg-card px-3 py-2 text-sm text-card-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
+        "w-full rounded-md border border-border-soft bg-panel px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
         className,
       )}
       {...props}
@@ -77,7 +77,7 @@ export function Select({
   return (
     <select
       className={cn(
-        "w-full rounded-md border border-border bg-card px-3 py-2 text-sm text-card-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
+        "w-full rounded-md border border-border-soft bg-panel px-3 py-2 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
         className,
       )}
       {...props}

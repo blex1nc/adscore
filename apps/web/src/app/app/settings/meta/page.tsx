@@ -91,23 +91,23 @@ export default async function MetaSettingsPage({
   const statusInfo = connection ? STATUS_TR[connection.status] : null;
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto w-full max-w-4xl">
       <Link
         href="/app/settings"
         className="text-xs text-muted-foreground hover:text-foreground"
       >
         ← Ayarlar
       </Link>
-      <h1 className="mt-2 font-display text-3xl">Meta bağlantısı</h1>
+      <h1 className="mt-2 text-xl font-semibold tracking-tight">Meta bağlantısı</h1>
 
       {/* Yönlendirme sonrası mesajlar */}
       {baglandi ? (
-        <div className="mt-4 rounded-xl border border-border bg-card p-4 text-sm">
+        <div className="mt-4 rounded-xl border border-border-soft bg-panel p-4 text-sm">
           Meta hesabın bağlandı. Verilen izinler aşağıda listeleniyor.
         </div>
       ) : null}
       {eksikIzin.length > 0 ? (
-        <div className="mt-4 rounded-xl border border-destructive/40 bg-card p-4 text-sm">
+        <div className="mt-4 rounded-xl border border-destructive/40 bg-panel p-4 text-sm">
           Bağlantı kuruldu ama şu izinler <strong>verilmedi</strong>:{" "}
           <code className="text-xs">{eksikIzin.join(", ")}</code>. Bu izinler
           olmadan ilgili özellikler çalışmaz. Tüm izinleri vermek için yeniden
@@ -115,14 +115,14 @@ export default async function MetaSettingsPage({
         </div>
       ) : null}
       {hata ? (
-        <div className="mt-4 rounded-xl border border-destructive/40 bg-card p-4 text-sm text-destructive">
+        <div className="mt-4 rounded-xl border border-destructive/40 bg-panel p-4 text-sm text-destructive">
           {HATA_TR[hata] ?? "Meta bağlantısında bir hata oluştu."}
         </div>
       ) : null}
 
       {/* A1 — kimlik bilgisi kapısı */}
       {!creds.ok ? (
-        <div className="mt-6 rounded-2xl border border-destructive/40 bg-card p-6">
+        <div className="mt-6 rounded-lg border border-destructive/40 bg-panel p-6">
           <p className="text-sm font-medium text-destructive">
             BLOCKED — Meta uygulama bilgileri eksik
           </p>
@@ -151,21 +151,21 @@ export default async function MetaSettingsPage({
       ) : (
         <>
           {/* Bağlantı durumu */}
-          <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+          <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-sm font-medium">Bağlantı durumu</h2>
               {connection && statusInfo ? (
                 <span
                   className={
                     statusInfo.tone === "ok"
-                      ? "rounded-full border border-border px-3 py-1 text-xs text-muted-foreground"
+                      ? "rounded-full border border-border-soft px-3 py-1 text-xs text-muted-foreground"
                       : "rounded-full border border-destructive/40 px-3 py-1 text-xs text-destructive"
                   }
                 >
                   {statusInfo.label}
                 </span>
               ) : (
-                <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+                <span className="rounded-full border border-border-soft px-3 py-1 text-xs text-muted-foreground">
                   Bağlı değil
                 </span>
               )}
@@ -273,7 +273,7 @@ export default async function MetaSettingsPage({
 
           {/* Ad account listesi */}
           {connection && connection.status === "CONNECTED" ? (
-            <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+            <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h2 className="text-sm font-medium">Ad account&apos;lar</h2>
                 <MetaActionButton
@@ -286,7 +286,7 @@ export default async function MetaSettingsPage({
                 <div className="mt-3 overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                      <tr className="border-b border-border-soft text-left text-xs text-muted-foreground">
                         <th className="py-2 pr-3 font-normal">Ad</th>
                         <th className="py-2 pr-3 font-normal">ID</th>
                         <th className="py-2 pr-3 font-normal">Para birimi</th>
@@ -295,7 +295,7 @@ export default async function MetaSettingsPage({
                     </thead>
                     <tbody>
                       {connection.adAccounts.map((a) => (
-                        <tr key={a.id} className="border-b border-border/50">
+                        <tr key={a.id} className="border-b border-border-soft/50">
                           <td className="py-2 pr-3">{a.name}</td>
                           <td className="py-2 pr-3">
                             <code className="text-xs">{a.actId}</code>
@@ -325,7 +325,7 @@ export default async function MetaSettingsPage({
           ) : null}
 
           {/* Harcama tavanı */}
-          <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+          <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
             <h2 className="text-sm font-medium">Harcama güvenliği</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Günlük bütçe tavanını sen belirlersin; sistem bu tavanı aşan
@@ -341,7 +341,7 @@ export default async function MetaSettingsPage({
 
           {/* Marka bağlama */}
           {connection && connection.status === "CONNECTED" ? (
-            <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+            <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
               <h2 className="text-sm font-medium">Marka ↔ Meta varlıkları</h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Her marka bir ad account + Facebook Page ile çalışır (Page
@@ -385,7 +385,7 @@ export default async function MetaSettingsPage({
           ) : null}
 
           {/* Webhook bilgisi */}
-          <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+          <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
             <h2 className="text-sm font-medium">Webhook / geri çağrılar</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Uygulamanın izni Meta tarafından kaldırılırsa bağlantı burada

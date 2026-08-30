@@ -48,7 +48,7 @@ function StageChips({ stage }: { stage: EvolutionStage }) {
             i < idx && "border-accent/40 text-accent",
             i === idx && s !== "DONE" && "border-foreground text-foreground",
             i === idx && s === "DONE" && "border-accent/40 text-accent",
-            i > idx && "border-border text-muted-foreground",
+            i > idx && "border-border-soft text-muted-foreground",
           )}
         >
           {STAGE_LABELS[s]}
@@ -60,7 +60,7 @@ function StageChips({ stage }: { stage: EvolutionStage }) {
 
 function ScoreCell({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-border px-2.5 py-1.5">
+    <div className="rounded-md border border-border-soft px-2.5 py-1.5">
       <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
         {label}
       </div>
@@ -92,7 +92,7 @@ function CandidateCard({
       id={`cand-${c.id}`}
       className={cn(
         "rounded-xl border p-4",
-        eliminated ? "border-border opacity-70" : "border-border",
+        eliminated ? "border-border-soft opacity-70" : "border-border-soft",
         c.rank === 1 && !eliminated && "border-accent/50",
       )}
     >
@@ -100,14 +100,14 @@ function CandidateCard({
         <span className="font-mono text-[11px] tracking-[0.15em]">
           {labelById.get(c.id) ?? c.id.slice(-4)}
         </span>
-        <span className="rounded-full border border-border px-2 py-0.5 uppercase tracking-wide">
+        <span className="rounded-full border border-border-soft px-2 py-0.5 uppercase tracking-wide">
           {ORIGIN_LABELS[c.origin] ?? c.origin}
         </span>
         {c.rank ? (
           <span
             className={cn(
               "rounded-full border px-2 py-0.5 uppercase tracking-wide",
-              c.rank === 1 ? "border-accent/40 text-accent" : "border-border",
+              c.rank === 1 ? "border-accent/40 text-accent" : "border-border-soft",
             )}
           >
             {c.rank}. sıra
@@ -173,11 +173,11 @@ function CandidateCard({
         </div>
       </div>
 
-      <div className="mt-3 rounded-md border border-border bg-muted/40 p-3">
+      <div className="mt-3 rounded-md border border-border-soft bg-muted/40 p-3">
         <p className="whitespace-pre-wrap text-sm leading-relaxed">
           {c.primaryText}
         </p>
-        <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-border pt-2 text-sm">
+        <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-border-soft pt-2 text-sm">
           <span className="font-medium">{c.headline}</span>
           {c.description ? (
             <span className="text-muted-foreground">· {c.description}</span>
@@ -213,7 +213,7 @@ function CandidateCard({
           </summary>
           <div className="mt-2 space-y-2">
             {Object.entries(breakdown.judges).map(([key, j]) => (
-              <div key={key} className="rounded-md border border-border p-2 text-xs">
+              <div key={key} className="rounded-md border border-border-soft p-2 text-xs">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium">
                     {JUDGE_PERSONAS.find((p) => p.key === key)?.label ?? key}
@@ -286,7 +286,7 @@ export default async function ArenaRunPage({
     : null;
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-5xl">
       {isActive ? <ArenaPoller runId={run.id} /> : null}
       <Link
         href={`/app/brands/${brand.id}/arena`}
@@ -296,7 +296,7 @@ export default async function ArenaRunPage({
         Arena · {brand.name}
       </Link>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-3xl">Koşu</h1>
+        <h1 className="text-xl font-semibold tracking-tight">Koşu</h1>
         {isActive ? <CancelRunButton runId={run.id} /> : null}
       </div>
 
@@ -307,7 +307,7 @@ export default async function ArenaRunPage({
             run.status === "COMPLETED" && "border-accent/40 text-accent",
             run.status === "FAILED" && "border-destructive/40 text-destructive",
             isActive && "border-foreground text-foreground",
-            run.status === "CANCELLED" && "border-border",
+            run.status === "CANCELLED" && "border-border-soft",
           )}
         >
           {RUN_STATUS_LABELS[run.status]}
@@ -338,7 +338,7 @@ export default async function ArenaRunPage({
       </div>
 
       {isActive ? (
-        <p className="mt-3 rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+        <p className="mt-3 rounded-md border border-border-soft bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
           Koşu bu sayfa açıkken ilerler (her aşama ayrı bir adımda kaydedilir).
           Sekmeyi kapatırsan koşu kaldığı aşamada bekler; tekrar açınca
           sürer.
@@ -350,13 +350,13 @@ export default async function ArenaRunPage({
         </div>
       ) : null}
       {run.status === "CANCELLED" ? (
-        <div className="mt-3 rounded-md border border-border p-3 text-sm text-muted-foreground">
+        <div className="mt-3 rounded-md border border-border-soft p-3 text-sm text-muted-foreground">
           Koşu iptal edildi; tamamlanan turlar aşağıda görünür.
         </div>
       ) : null}
 
       {summary && winner ? (
-        <div className="mt-6 rounded-2xl border border-accent/50 bg-card p-6">
+        <div className="mt-6 rounded-lg border border-accent/50 bg-panel p-6">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-sm font-medium">Kazanan</h2>
             <ConfidenceBadge level={summary.confidence} />
@@ -375,11 +375,11 @@ export default async function ArenaRunPage({
               </Link>
             ) : null}
           </div>
-          <div className="mt-3 rounded-md border border-border bg-muted/40 p-3">
+          <div className="mt-3 rounded-md border border-border-soft bg-muted/40 p-3">
             <p className="whitespace-pre-wrap text-sm leading-relaxed">
               {winner.primaryText}
             </p>
-            <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-border pt-2 text-sm">
+            <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-border-soft pt-2 text-sm">
               <span className="font-medium">{winner.headline}</span>
               {winner.description ? (
                 <span className="text-muted-foreground">· {winner.description}</span>
@@ -423,7 +423,7 @@ export default async function ArenaRunPage({
         return (
           <section
             key={round.id}
-            className="mt-6 rounded-2xl border border-border bg-card p-6"
+            className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3">

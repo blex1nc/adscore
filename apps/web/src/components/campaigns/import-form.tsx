@@ -26,7 +26,7 @@ export function ImportResultForm({ planId }: { planId: string }) {
   const preview = parseState.preview;
 
   return (
-    <div className="mt-4 rounded-xl border border-dashed border-border p-4">
+    <div className="mt-4 rounded-xl border border-dashed border-border-soft p-4">
       <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         CSV'den içe aktar (Ads Manager raporu)
       </h4>
@@ -44,7 +44,7 @@ export function ImportResultForm({ planId }: { planId: string }) {
             type="file"
             accept=".csv,text/csv"
             required
-            className="mt-1 block text-sm file:mr-3 file:rounded-full file:border file:border-border file:bg-card file:px-3 file:py-1.5 file:text-xs file:font-medium"
+            className="mt-1 block text-sm file:mr-3 file:rounded-full file:border file:border-border-soft file:bg-panel file:px-3 file:py-1.5 file:text-xs file:font-medium"
           />
         </div>
         <Button type="submit" size="sm" variant="secondary" disabled={parsing}>
@@ -58,7 +58,7 @@ export function ImportResultForm({ planId }: { planId: string }) {
           Sonuç kaydedildi ve aşağıdaki listeye eklendi.
         </p>
       ) : preview ? (
-        <div className="mt-4 rounded-md border border-border bg-muted/40 p-3">
+        <div className="mt-4 rounded-md border border-border-soft bg-muted/40 p-3">
           <div className="text-xs text-muted-foreground">
             Önizleme — {preview.rowCount} satırdan toplandı
             {preview.campaignName ? ` · Kampanya: ${preview.campaignName}` : ""}

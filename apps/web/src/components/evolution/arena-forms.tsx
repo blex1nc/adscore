@@ -121,7 +121,7 @@ export function StartArenaForm({
         </div>
       </div>
 
-      <details className="rounded-md border border-border p-3">
+      <details className="rounded-md border border-border-soft p-3">
         <summary className="cursor-pointer text-xs text-muted-foreground transition-colors duration-300 hover:text-foreground">
           Gelişmiş: tur / aday / elit / jüri sayısı
         </summary>
@@ -190,7 +190,7 @@ export function CancelRunButton({ runId }: { runId: string }) {
       <input type="hidden" name="runId" value={runId} />
       <button
         type="submit"
-        className="rounded-full border border-border px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-destructive"
+        className="rounded-full border border-border-soft px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-destructive"
       >
         Koşuyu iptal et
       </button>
@@ -211,7 +211,7 @@ export function PromoteCandidateButton({
       <input type="hidden" name="candidateId" value={candidateId} />
       <button
         type="submit"
-        className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground transition-colors duration-300 hover:text-foreground"
+        className="rounded-full border border-border-soft px-3 py-1 text-xs text-muted-foreground transition-colors duration-300 hover:text-foreground"
       >
         Onay akışına gönder
       </button>

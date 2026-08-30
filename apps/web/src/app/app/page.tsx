@@ -1,10 +1,25 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, CirclePlus, Plug, Rocket } from "lucide-react";
+import {
+  ArrowRight,
+  CirclePlus,
+  LayoutDashboard,
+  Plug,
+  Rocket,
+} from "lucide-react";
 import { prisma } from "@adscore/db";
 import { getCurrentUser } from "@/lib/auth";
 import { loadLaunchStates } from "@/components/launch/launch-state";
 import { LaunchPoller } from "@/components/launch/launch-poller";
+import {
+  Card,
+  CardHeader,
+  Chip,
+  EmptyState,
+  PageHeader,
+  StatTile,
+} from "@/components/panel/kit";
+import { BarChart, type BarPoint } from "@/components/panel/bar-chart";
 import { cn } from "@/components/ui";
 
 export const metadata = { title: "Ana sayfa | AdScore" };
@@ -30,8 +45,8 @@ export default async function DashboardPage() {
     { approved: 0, pendingCreatives: 0, results: 0, competitors: 0, analyzedAds: 0 },
   );
 
-  // Gerçek Meta bağlantı durumu — sabit metin değil (bayat metin riski)
-  const [connection, openRecommendations] = await Promise.all([
+  const [connection, openRecommendations, results] = await Promise.all([
+    // Gerçek Meta bağlantı durumu — sabit metin değil (bayat metin riski)
     prisma.metaConnection.findUnique({
       where: { workspaceId: user.workspace.id },
       select: { status: true, lastCheckedAt: true, errorNote: true },
@@ -42,6 +57,20 @@ export default async function DashboardPage() {
         run: { brand: { workspaceId: user.workspace.id } },
       },
     }),
+    // Grafik YALNIZ girilmiş gerçek sonuçlardan çizilir (CLAUDE.md §6, §28).
+    prisma.campaignResult.findMany({
+      where: { plan: { brand: { workspaceId: user.workspace.id } } },
+      select: {
+        periodStart: true,
+        periodEnd: true,
+        impressions: true,
+        clicks: true,
+        source: true,
+        plan: { select: { brand: { select: { name: true } } } },
+      },
+      orderBy: { periodStart: "asc" },
+      take: 30,
+    }),
   ]);
 
   const boundBrands = connection
@@ -51,6 +80,16 @@ export default async function DashboardPage() {
     : 0;
 
   const metaStatus = metaStatusCopy(connection?.status ?? null, boundBrands);
+
+  const fmt = new Intl.NumberFormat("tr-TR");
+  const day = new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "2-digit" });
+  // Para birimleri markadan markaya değişebildiği için harcama TOPLANMAZ;
+  // birimsiz ve toplanabilir olan gösterim çizilir (§6 — uydurma normalizasyon yok).
+  const points: BarPoint[] = results.map((r) => ({
+    label: day.format(r.periodStart),
+    value: r.impressions,
+    hint: `${r.plan.brand.name} · ${fmt.format(r.impressions)} gösterim · ${fmt.format(r.clicks)} tıklama`,
+  }));
 
   // Kullanıcının karar vermesi gereken açık işler
   const pending: Array<{ label: string; href: string }> = [];
@@ -73,48 +112,74 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-5">
       {anyRunning ? <LaunchPoller intervalMs={5000} /> : null}
-      <h1 className="font-display text-3xl">Hoş geldin, {firstName}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Her marka tek akışta ilerler: Marka → Araştırma → Arena → Onay → Plan
-        → Kit → Sonuç.
-      </p>
 
-      {states.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-border bg-card p-6">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Rocket size={15} className="text-muted-foreground" />
-            Launch
-          </div>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Henüz marka eklenmedi. Araştırma, Arena ve kampanya her markanın
-            kendi çalışma alanında yürür.
-          </p>
+      <PageHeader
+        icon={<LayoutDashboard size={16} />}
+        title={`Hoş geldin, ${firstName}`}
+        description="Her marka tek akışta ilerler: Marka → Araştırma → Arena → Onay → Plan → Kit → Sonuç."
+        actions={
           <Link
             href="/app/brands/new"
-            className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-opacity duration-300 hover:opacity-85"
+            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-opacity duration-300 hover:opacity-85"
           >
             <CirclePlus size={14} />
-            İlk markanı ekle
+            Marka ekle
           </Link>
-        </div>
+        }
+      />
+
+      {/* Sonuç grafiği — veri yoksa çizilmez, dürüst boş durum gösterilir */}
+      <Card>
+        <CardHeader
+          title="Girilen sonuçlar"
+          note={
+            points.length > 0
+              ? `${points.length} dönem · gösterim sayısı. Para birimleri markalar arasında değişebildiği için harcama toplanmaz.`
+              : undefined
+          }
+          actions={
+            points.length > 0 ? (
+              <Chip tone="accent">Gerçek kayıt</Chip>
+            ) : null
+          }
+        />
+        {points.length > 0 ? (
+          <BarChart points={points} valueFormat={(v) => fmt.format(Math.round(v))} />
+        ) : (
+          <EmptyState
+            title="Henüz sonuç girilmedi"
+            description="Grafik yalnızca girilmiş gerçek kampanya sonuçlarından çizilir. Ads Manager raporunu CSV olarak içe aktarabilir veya sonucu elle girebilirsin; örnek veri gösterilmez."
+          />
+        )}
+      </Card>
+
+      {states.length === 0 ? (
+        <Card>
+          <CardHeader title="Launch" icon={<Rocket size={15} />} />
+          <EmptyState
+            title="Henüz marka eklenmedi"
+            description="Araştırma, Arena ve kampanya her markanın kendi çalışma alanında yürür."
+            action={
+              <Link
+                href="/app/brands/new"
+                className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-opacity duration-300 hover:opacity-85"
+              >
+                <CirclePlus size={14} />
+                İlk markanı ekle
+              </Link>
+            }
+          />
+        </Card>
       ) : (
-        <div className="mt-8">
-          <div className="flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-sm font-medium">
-              <Rocket size={15} className="text-muted-foreground" />
-              Launch durumu
-            </h2>
-            <Link
-              href="/app/brands/new"
-              className="inline-flex items-center gap-1.5 text-xs text-accent hover:opacity-80"
-            >
-              <CirclePlus size={13} />
-              Marka ekle
-            </Link>
-          </div>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+        <Card>
+          <CardHeader
+            title="Launch durumu"
+            icon={<Rocket size={15} />}
+            note={`${states.length} marka`}
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
             {states.map((state) => {
               const s = state.summary;
               const doneCount = state.steps.filter(
@@ -124,7 +189,7 @@ export default async function DashboardPage() {
               return (
                 <div
                   key={s.brandId}
-                  className="rounded-2xl border border-border bg-card p-5"
+                  className="rounded-lg border border-border-soft bg-panel-2 p-4"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -141,7 +206,7 @@ export default async function DashboardPage() {
                       </p>
                     </div>
                     {state.running ? (
-                      <span className="shrink-0 animate-pulse rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                      <span className="shrink-0 animate-pulse rounded-full border border-border-soft px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
                         Sürüyor
                       </span>
                     ) : null}
@@ -159,7 +224,7 @@ export default async function DashboardPage() {
                           "h-1.5 rounded-full",
                           st.status === "done" && "bg-accent",
                           st.status === "active" && "bg-accent/40",
-                          st.status === "skipped" && "bg-border",
+                          st.status === "skipped" && "bg-border-soft",
                           (st.status === "available" ||
                             st.status === "locked") &&
                             "bg-muted",
@@ -171,7 +236,7 @@ export default async function DashboardPage() {
 
                   <p className="mt-3 text-sm">{state.nextAction}</p>
 
-                  <div className="mt-4 flex items-center gap-3">
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
                     <Link
                       href={`/app/brands/${s.brandId}/launch`}
                       className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-opacity duration-300 hover:opacity-85"
@@ -188,13 +253,17 @@ export default async function DashboardPage() {
               );
             })}
           </div>
-        </div>
+        </Card>
       )}
 
       {pending.length > 0 ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-5">
-          <div className="text-sm font-medium">Senin kararını bekleyenler</div>
-          <ul className="mt-3 space-y-1.5">
+        <Card>
+          <CardHeader
+            title="Senin kararını bekleyenler"
+            note="AI hiçbir öneriyi kendi başına uygulamaz; onay senindir."
+            actions={<Chip tone="accent">{pending.length}</Chip>}
+          />
+          <ul className="space-y-1.5">
             {pending.map((item) => (
               <li key={item.label}>
                 <Link
@@ -207,56 +276,42 @@ export default async function DashboardPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-muted-foreground">
-            AI hiçbir öneriyi kendi başına uygulamaz; onay senindir.
-          </p>
-        </div>
+        </Card>
       ) : null}
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="text-sm font-medium">Kayıtlar</div>
-          <dl className="mt-3 grid grid-cols-3 gap-3 text-sm">
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Card>
+          <CardHeader
+            title="Kayıtlar"
+            note="Yalnızca gerçek kayıt sayıları; performans tahmini veya örnek veri gösterilmez."
+          />
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             {(
               [
                 ["Marka", states.length],
                 ["Rakip", totals.competitors],
-                ["Analizli rakip reklamı", totals.analyzedAds],
+                ["Analizli reklam", totals.analyzedAds],
                 ["Onaylı creative", totals.approved],
                 ["Onay bekleyen", totals.pendingCreatives],
                 ["Girilen sonuç", totals.results],
               ] as const
             ).map(([k, v]) => (
-              <div key={k}>
-                <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {k}
-                </dt>
-                <dd className="mt-0.5 text-2xl font-semibold tabular-nums">{v}</dd>
-              </div>
+              <StatTile key={k} label={k} value={v} />
             ))}
-          </dl>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Yalnızca gerçek kayıt sayıları; performans tahmini veya örnek veri
-            gösterilmez.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Plug size={15} className="text-muted-foreground" />
-            Meta bağlantısı
-            <span
-              className={cn(
-                "rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide",
-                metaStatus.tone === "ok"
-                  ? "border-accent/40 text-accent"
-                  : "border-border text-muted-foreground",
-              )}
-            >
-              {metaStatus.label}
-            </span>
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">{metaStatus.detail}</p>
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="Meta bağlantısı"
+            icon={<Plug size={15} />}
+            actions={
+              <Chip tone={metaStatus.tone === "ok" ? "positive" : "default"}>
+                {metaStatus.label}
+              </Chip>
+            }
+          />
+          <p className="text-sm text-muted-foreground">{metaStatus.detail}</p>
           {connection?.errorNote ? (
             <p className="mt-2 text-xs text-muted-foreground">
               Son hata: {connection.errorNote}
@@ -266,11 +321,14 @@ export default async function DashboardPage() {
             <Link href="/app/settings/meta" className="text-accent hover:opacity-80">
               Bağlantı ayarları →
             </Link>
-            <Link href="/app/settings/meta-usage" className="text-accent hover:opacity-80">
+            <Link
+              href="/app/settings/meta-usage"
+              className="text-accent hover:opacity-80"
+            >
               API kullanımı →
             </Link>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
@@ -293,7 +351,12 @@ function metaStatusCopy(
   }
   if (status === "EXPIRED" || status === "REVOKED" || status === "DISCONNECTED") {
     return {
-      label: status === "EXPIRED" ? "Süresi doldu" : status === "REVOKED" ? "İzin kaldırıldı" : "Kesildi",
+      label:
+        status === "EXPIRED"
+          ? "Süresi doldu"
+          : status === "REVOKED"
+            ? "İzin kaldırıldı"
+            : "Kesildi",
       tone: "warn",
       detail:
         "Meta bağlantısı artık geçerli değil. Insights, Ad Library ve yayınlama bu bağlantı yenilenene kadar çalışmaz.",

@@ -50,28 +50,28 @@ export default async function MetaUsagePage() {
   const recent = calls.slice(0, 20);
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto w-full max-w-4xl">
       <Link
         href="/app/settings"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" /> Ayarlar
       </Link>
-      <h1 className="mt-2 font-display text-3xl">Meta API kullanımı</h1>
+      <h1 className="mt-2 text-xl font-semibold tracking-tight">Meta API kullanımı</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Yalnız kaydedilen gerçek çağrılar sayılır; tahmin üretilmez. Rate limit
         doluluğu Meta&apos;nın kendi kullanım başlıklarından okunur.
       </p>
 
       {calls.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6 text-sm text-muted-foreground">
           Son 15 günde kayıtlı Meta API çağrısı yok. Çağrılar Meta bağlantısı
           kurulup senkron/yayın işlemleri çalıştıkça burada birikir.
         </div>
       ) : (
         <>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="rounded-lg border border-border-soft bg-panel shadow-card p-5">
               <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
                 Son 24 saat
               </div>
@@ -80,7 +80,7 @@ export default async function MetaUsagePage() {
                 çağrı · {err24h} hata ({pct(err24h, last24h.length)})
               </div>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="rounded-lg border border-border-soft bg-panel shadow-card p-5">
               <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
                 Rate limit doluluğu
               </div>
@@ -93,7 +93,7 @@ export default async function MetaUsagePage() {
                   : "Son 24 saatte kullanım başlığı içeren çağrı yok"}
               </div>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="rounded-lg border border-border-soft bg-panel shadow-card p-5">
               <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
                 Son 15 gün
               </div>
@@ -104,7 +104,7 @@ export default async function MetaUsagePage() {
             </div>
           </div>
 
-          <div className="mt-4 rounded-2xl border border-border bg-card p-5 text-sm">
+          <div className="mt-4 rounded-lg border border-border-soft bg-panel shadow-card p-5 text-sm">
             <h2 className="text-sm font-medium">Full Access hazırlığı</h2>
             <p className="mt-1 text-xs text-muted-foreground">
               Meta&apos;nın Full Access şartı: son 15 günde ≥500 başarılı çağrı ve
@@ -126,7 +126,7 @@ export default async function MetaUsagePage() {
             </ul>
           </div>
 
-          <div className="mt-4 rounded-2xl border border-border bg-card p-5">
+          <div className="mt-4 rounded-lg border border-border-soft bg-panel shadow-card p-5">
             <h2 className="text-sm font-medium">Son çağrılar</h2>
             <div className="mt-3 overflow-x-auto">
               <table className="w-full text-left text-xs">
@@ -142,7 +142,7 @@ export default async function MetaUsagePage() {
                 </thead>
                 <tbody>
                   {recent.map((c) => (
-                    <tr key={c.id} className="border-t border-border">
+                    <tr key={c.id} className="border-t border-border-soft">
                       <td className="py-1.5 pr-3 whitespace-nowrap">
                         {c.createdAt.toLocaleString("tr-TR")}
                       </td>

@@ -50,8 +50,8 @@ export function MetaSyncForm({
       </div>
 
       {state.blocked ? (
-        <div className="rounded-md border border-border bg-muted/40 p-3 text-xs">
-          <span className="mr-2 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide">
+        <div className="rounded-md border border-border-soft bg-muted/40 p-3 text-xs">
+          <span className="mr-2 rounded-full border border-border-soft px-2 py-0.5 text-[10px] uppercase tracking-wide">
             BLOCKED
           </span>
           {state.blocked}

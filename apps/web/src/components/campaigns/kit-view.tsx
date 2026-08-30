@@ -30,7 +30,7 @@ function FieldCard({ field }: { field: KitField }) {
   return (
     <div
       id={`field-${field.id}`}
-      className="rounded-xl border border-border p-3"
+      className="rounded-xl border border-border-soft p-3"
       tabIndex={-1}
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -52,7 +52,7 @@ function FieldCard({ field }: { field: KitField }) {
           {field.value}
         </pre>
       ) : (
-        <p className="mt-2 rounded-md border border-dashed border-border p-2 text-xs text-muted-foreground">
+        <p className="mt-2 rounded-md border border-dashed border-border-soft p-2 text-xs text-muted-foreground">
           Boş — planda bu değer yok; Ads Manager&apos;da sen belirle.
         </p>
       )}
@@ -107,7 +107,7 @@ export function KitView({
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="space-y-6">
-        <div className="rounded-2xl border border-border bg-card p-4 text-xs text-muted-foreground">
+        <div className="rounded-lg border border-border-soft bg-panel shadow-card p-4 text-xs text-muted-foreground">
           {kit.disclaimer} Kit v{version} ·{" "}
           {new Date(kit.generatedAt).toLocaleString("tr-TR")} · alan adları{" "}
           <code>{kit.meta.fieldsDoc}</code> ({kit.meta.fieldsRetrievedAt}).
@@ -117,7 +117,7 @@ export function KitView({
           <section
             key={section.id}
             id={`section-${section.id}`}
-            className="rounded-2xl border border-border bg-card p-6"
+            className="rounded-lg border border-border-soft bg-panel shadow-card p-6"
           >
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-base font-medium">
@@ -146,7 +146,7 @@ export function KitView({
           </section>
         ))}
 
-        <section className="rounded-2xl border border-border bg-card p-6">
+        <section className="rounded-lg border border-border-soft bg-panel shadow-card p-6">
           <h2 className="text-base font-medium">Görseller (yerleşime göre)</h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Kaynak görsel üç orana merkezden kırpılıp ölçeklenir:{" "}
@@ -184,7 +184,7 @@ export function KitView({
                             <img
                               src={src}
                               alt={`${ad.headline} — ${RATIO_LABELS[ratio]}`}
-                              className="w-full rounded-md border border-border bg-muted/40"
+                              className="w-full rounded-md border border-border-soft bg-muted/40"
                               loading="lazy"
                             />
                             <figcaption className="mt-1 flex items-center justify-between gap-2 text-muted-foreground">
@@ -212,7 +212,7 @@ export function KitView({
       </div>
 
       <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-lg border border-border-soft bg-panel shadow-card p-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium">İlerleme</h3>
             <span className="text-xs text-muted-foreground">
@@ -248,7 +248,7 @@ export function KitView({
         </div>
 
         {kit.gaps.length > 0 ? (
-          <div className="rounded-2xl border border-destructive/40 bg-card p-4">
+          <div className="rounded-lg border border-destructive/40 bg-panel p-4">
             <h3 className="inline-flex items-center gap-1.5 text-sm font-medium">
               <AlertTriangle size={14} className="text-destructive" />
               Senin belirleyeceklerin ({kit.gaps.length})
@@ -261,7 +261,7 @@ export function KitView({
           </div>
         ) : null}
 
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-lg border border-border-soft bg-panel shadow-card p-4">
           <h3 className="text-sm font-medium">Senin girdilerin</h3>
           <p className="mt-1 text-xs text-muted-foreground">
             Hesabına ait bilgiler; kaydedince ilgili alanlar dolar, eksikler
@@ -272,7 +272,7 @@ export function KitView({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-lg border border-border-soft bg-panel shadow-card p-4">
           <h3 className="text-sm font-medium">Dışa aktar</h3>
           <div className="mt-2 flex flex-col gap-1.5 text-xs">
             <a href={`${exportBase}?format=json`} className="inline-flex items-center gap-1.5 text-accent">
@@ -304,8 +304,8 @@ export function KitView({
         <div
           id="published"
           className={cn(
-            "rounded-2xl border bg-card p-4",
-            publishedAt ? "border-accent/40" : "border-border",
+            "rounded-lg border bg-panel p-4",
+            publishedAt ? "border-accent/40" : "border-border-soft",
           )}
         >
           <h3 className="text-sm font-medium">

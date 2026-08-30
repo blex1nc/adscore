@@ -23,7 +23,7 @@ const PLAN_STATUS_LABELS: Record<string, string> = {
 };
 
 const navLink =
-  "rounded-full border border-border bg-card px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted";
+  "rounded-full border border-border-soft bg-panel px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted";
 
 export default async function BrandDetailPage({
   params,
@@ -89,7 +89,7 @@ export default async function BrandDetailPage({
         Markalar
       </Link>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-3xl">{brand.name}</h1>
+        <h1 className="text-xl font-semibold tracking-tight">{brand.name}</h1>
         <Link
           href={`${base}/launch`}
           className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-opacity duration-300 hover:opacity-85"
@@ -122,7 +122,7 @@ export default async function BrandDetailPage({
         </Link>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <BrandForm
           action={updateAction}
           initial={brand}
@@ -130,13 +130,13 @@ export default async function BrandDetailPage({
           successMessage="Kaydedildi."
         />
       </div>
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <BrandProfileSection brandId={brand.id} />
       </div>
       <ResearchSection brandId={brand.id} />
 
       {lastApproved ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
           <h2 className="text-sm font-medium">Son onaylı creative</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {lastApproved.strategy} · onaylandığı haliyle nötr çerçevelerde
@@ -163,7 +163,7 @@ export default async function BrandDetailPage({
       ) : null}
 
       {brand.campaignPlans.length ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
           <h2 className="text-sm font-medium">Kampanya planları</h2>
           <ul className="mt-3 divide-y divide-border">
             {brand.campaignPlans.map((plan) => (
@@ -179,7 +179,7 @@ export default async function BrandDetailPage({
                       plan.status === "FAILED" &&
                         "border-destructive/40 text-destructive",
                       (plan.status === "QUEUED" || plan.status === "RUNNING") &&
-                        "animate-pulse border-border",
+                        "animate-pulse border-border-soft",
                     )}
                   >
                     {PLAN_STATUS_LABELS[plan.status]}
@@ -214,7 +214,7 @@ export default async function BrandDetailPage({
         </div>
       ) : null}
 
-      <div className="mt-6 rounded-2xl border border-destructive/30 p-6">
+      <div className="mt-6 rounded-lg border border-destructive/30 p-6">
         <h2 className="text-sm font-medium">Markayı sil</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Marka ve ona bağlı araştırma, creative, plan ve sonuç verileri

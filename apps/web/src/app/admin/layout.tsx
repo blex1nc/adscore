@@ -15,7 +15,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="flex items-center justify-between border-b border-border px-5 py-3">
+      <header className="flex items-center justify-between border-b border-border-soft px-5 py-3">
         <div className="flex items-center gap-4">
           <span className="text-lg font-semibold tracking-tight">adscore</span>
           <span className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">

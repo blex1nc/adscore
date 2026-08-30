@@ -61,7 +61,7 @@ export default async function CreativesPage({
     );
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-5xl">
       {hasActive ? <ResearchPoller /> : null}
       <Link
         href={`/app/brands/${brand.id}`}
@@ -70,14 +70,14 @@ export default async function CreativesPage({
         <ArrowLeft size={14} />
         {brand.name}
       </Link>
-      <h1 className="mt-3 font-display text-3xl">Creative Studio</h1>
+      <h1 className="mt-3 text-xl font-semibold tracking-tight">Creative Studio</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Copy varyantları marka araştırması ve pattern analizinden beslenir.
         Onaylanmayan hiçbir creative kampanyada kullanılmaz; yayın her zaman
         senin onayınla olur.
       </p>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Yeni üretim</h2>
         <GenerateForm brandId={brand.id} hasActive={hasActive} />
         {latestGeneration?.status === "FAILED" && latestGeneration.error ? (
@@ -88,7 +88,7 @@ export default async function CreativesPage({
       </div>
 
       {brand.creatives.length === 0 && !hasActive ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-8 text-center">
           <p className="text-sm text-muted-foreground">
             Henüz creative üretilmedi.
           </p>
@@ -98,7 +98,7 @@ export default async function CreativesPage({
       {brand.creatives.map((creative, index) => (
         <div
           key={creative.id}
-          className="mt-6 rounded-2xl border border-border bg-card p-6"
+          className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -112,7 +112,7 @@ export default async function CreativesPage({
                     "border-accent/40 text-accent",
                   creative.approval === "REJECTED" &&
                     "border-destructive/40 text-destructive",
-                  creative.approval === "PENDING" && "border-border",
+                  creative.approval === "PENDING" && "border-border-soft",
                 )}
               >
                 {APPROVAL_LABELS[creative.approval]}
@@ -145,7 +145,7 @@ export default async function CreativesPage({
                   />
                   <button
                     type="submit"
-                    className="rounded-full border border-border px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-destructive"
+                    className="rounded-full border border-border-soft px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-destructive"
                   >
                     Reddet
                   </button>
@@ -160,7 +160,7 @@ export default async function CreativesPage({
                   />
                   <button
                     type="submit"
-                    className="rounded-full border border-border px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                    className="rounded-full border border-border-soft px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     Geri al
                   </button>
@@ -184,11 +184,11 @@ export default async function CreativesPage({
             </div>
           </div>
 
-          <div className="mt-4 rounded-md border border-border bg-muted/40 p-4">
+          <div className="mt-4 rounded-md border border-border-soft bg-muted/40 p-4">
             <p className="whitespace-pre-wrap text-sm leading-relaxed">
               {creative.primaryText}
             </p>
-            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-3 text-sm">
+            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border-soft pt-3 text-sm">
               <span className="font-medium">{creative.headline}</span>
               {creative.description ? (
                 <span className="text-muted-foreground">
@@ -209,13 +209,13 @@ export default async function CreativesPage({
             ) : null}
           </div>
 
-          <div className="mt-4 border-t border-border pt-3">
+          <div className="mt-4 border-t border-border-soft pt-3">
             {creative.images[0]?.status === "COMPLETED" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={`/api/creative-images/${creative.images[0].id}`}
                 alt={`${creative.headline} için üretilen reklam görseli`}
-                className="mb-3 w-full max-w-sm rounded-xl border border-border"
+                className="mb-3 w-full max-w-sm rounded-xl border border-border-soft"
               />
             ) : null}
             {creative.images[0]?.status === "FAILED" &&

@@ -244,7 +244,7 @@ export function BrandProfileForm({
             {rows.map((row) => (
               <li
                 key={row.key}
-                className="grid gap-2 rounded-md border border-border p-3 sm:grid-cols-[1.2fr_0.7fr_1fr_auto]"
+                className="grid gap-2 rounded-md border border-border-soft p-3 sm:grid-cols-[1.2fr_0.7fr_1fr_auto]"
               >
                 <Input
                   aria-label="Ürün adı"
@@ -272,7 +272,7 @@ export function BrandProfileForm({
                   type="button"
                   onClick={() => removeRow(row.key)}
                   aria-label="Ürünü sil"
-                  className="inline-flex items-center justify-center rounded-md border border-border px-2 text-muted-foreground transition-colors duration-300 hover:text-destructive"
+                  className="inline-flex items-center justify-center rounded-md border border-border-soft px-2 text-muted-foreground transition-colors duration-300 hover:text-destructive"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -367,7 +367,7 @@ export function BrandAssetUploadForm({
           type="file"
           accept={ASSET_MIME_TYPES.join(",")}
           required
-          className="block text-sm file:mr-3 file:rounded-full file:border file:border-border file:bg-card file:px-3 file:py-1.5 file:text-xs file:font-medium"
+          className="block text-sm file:mr-3 file:rounded-full file:border file:border-border-soft file:bg-panel file:px-3 file:py-1.5 file:text-xs file:font-medium"
         />
       </div>
       <Button type="submit" size="sm" variant="secondary" disabled={pending}>

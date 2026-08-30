@@ -75,7 +75,7 @@ export default async function LaunchPage({
   ];
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-5xl">
       {state.running ? <LaunchPoller /> : null}
       <Link
         href={`/app/brands/${brand.id}`}
@@ -86,7 +86,7 @@ export default async function LaunchPage({
       </Link>
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl">Launch</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Launch</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Marka → Araştırma → Arena → Onay → Plan → Kit → Sonuç. Adım durumu
             kayıtlardan türetilir; hiçbir kapı atlanmaz, para harcanmaz.

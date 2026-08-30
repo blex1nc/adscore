@@ -43,7 +43,7 @@ export default async function ArenaPage({
   );
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-5xl">
       {active ? <ArenaPoller runId={active.id} /> : null}
       <Link
         href={`/app/brands/${brand.id}`}
@@ -52,18 +52,18 @@ export default async function ArenaPage({
         <ArrowLeft size={14} />
         {brand.name}
       </Link>
-      <h1 className="mt-3 font-display text-3xl">Arena</h1>
+      <h1 className="mt-3 text-xl font-semibold tracking-tight">Arena</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Creative Evolution Engine: copy adayları birçok tur boyunca
         deterministik kurallar ve AI jüri paneliyle yarışır; zayıf elenir,
         güçlü çoğalır. Kazanan ve en iyi adaylar onayına sunulur — yayın her
         zaman senin onayınla olur.
       </p>
-      <p className="mt-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+      <p className="mt-2 rounded-md border border-border-soft bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
         {ARENA_DISCLAIMER}
       </p>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Yeni koşu</h2>
         <StartArenaForm
           brandId={brand.id}
@@ -85,7 +85,7 @@ export default async function ArenaPage({
 
       <h2 className="mt-8 text-sm font-medium">Geçmiş koşular</h2>
       {brand.evolutionRuns.length === 0 ? (
-        <div className="mt-3 rounded-2xl border border-border bg-card p-8 text-center">
+        <div className="mt-3 rounded-lg border border-border-soft bg-panel shadow-card p-8 text-center">
           <p className="text-sm text-muted-foreground">Henüz koşu yok.</p>
         </div>
       ) : null}
@@ -97,7 +97,7 @@ export default async function ArenaPage({
             <Link
               key={run.id}
               href={`/app/brands/${brand.id}/arena/${run.id}`}
-              className="block rounded-2xl border border-border bg-card p-5 transition-colors duration-300 hover:bg-muted/40"
+              className="block rounded-lg border border-border-soft bg-panel shadow-card p-5 transition-colors duration-300 hover:bg-muted/40"
             >
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span
@@ -105,9 +105,9 @@ export default async function ArenaPage({
                     "rounded-full border px-2 py-0.5 uppercase tracking-wide",
                     run.status === "COMPLETED" && "border-accent/40 text-accent",
                     run.status === "FAILED" && "border-destructive/40 text-destructive",
-                    run.status === "CANCELLED" && "border-border",
+                    run.status === "CANCELLED" && "border-border-soft",
                     (run.status === "RUNNING" || run.status === "QUEUED") &&
-                      "border-border text-foreground",
+                      "border-border-soft text-foreground",
                   )}
                 >
                   {RUN_STATUS_LABELS[run.status]}

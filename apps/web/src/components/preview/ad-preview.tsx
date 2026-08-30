@@ -60,7 +60,7 @@ function BrandMark({ brand }: { brand: PreviewBrand }) {
         <img
           src={brand.logoUrl}
           alt=""
-          className="size-7 shrink-0 rounded-full border border-border bg-card object-cover"
+          className="size-7 shrink-0 rounded-full border border-border-soft bg-panel object-cover"
         />
       ) : (
         <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-[11px] font-semibold text-foreground">
@@ -140,7 +140,7 @@ function FeedFrame({
   ratio: FeedRatio;
 }) {
   return (
-    <div className="flex h-full flex-col bg-card">
+    <div className="flex h-full flex-col bg-panel">
       <div className="flex items-center justify-between px-3 py-2.5">
         <BrandMark brand={brand} />
         <span className="text-muted-foreground" aria-hidden>
@@ -155,9 +155,9 @@ function FeedFrame({
       >
         <ImageArea imageUrl={imageUrl} alt={`${creative.headline} görseli`} />
       </div>
-      <div className="flex items-center justify-between gap-3 border-y border-border bg-muted/40 px-3 py-2">
+      <div className="flex items-center justify-between gap-3 border-y border-border-soft bg-muted/40 px-3 py-2">
         <div className="min-w-0">
-          <div className="truncate text-[12px] font-semibold text-card-foreground">
+          <div className="truncate text-[12px] font-semibold text-foreground">
             {creative.headline}
           </div>
           {creative.description ? (
@@ -166,7 +166,7 @@ function FeedFrame({
             </div>
           ) : null}
         </div>
-        <span className="shrink-0 rounded-md border border-border px-2.5 py-1 text-[11px] font-medium text-card-foreground">
+        <span className="shrink-0 rounded-md border border-border-soft px-2.5 py-1 text-[11px] font-medium text-foreground">
           {creative.cta}
         </span>
       </div>
@@ -285,7 +285,7 @@ export function AdPreview({
     <div
       className={cn(
         // Telefon silueti
-        "mx-auto w-full max-w-[300px] overflow-hidden rounded-[28px] border-4 border-foreground/80 bg-card shadow-dashboard",
+        "mx-auto w-full max-w-[300px] overflow-hidden rounded-[28px] border-4 border-foreground/80 bg-panel shadow-dashboard",
         className,
       )}
       aria-label={`${PLACEMENT_LABELS[placement]} önizlemesi`}

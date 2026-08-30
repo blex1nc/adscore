@@ -125,7 +125,7 @@ export function TargetingForm({ planId, brandId, aiSuggestion, initial, initialS
   const chip = (item: StoredItemUI, onRemove: () => void) => (
     <span
       key={item.id}
-      className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2.5 py-1 text-xs"
+      className="inline-flex items-center gap-1 rounded-full border border-border-soft bg-muted px-2.5 py-1 text-xs"
     >
       {item.name}
       {fmtSize(item.audienceSizeLowerBound, item.audienceSizeUpperBound) ? (
@@ -138,7 +138,7 @@ export function TargetingForm({ planId, brandId, aiSuggestion, initial, initialS
   );
 
   return (
-    <section className="rounded-2xl border border-border bg-card p-6">
+    <section className="rounded-lg border border-border-soft bg-panel shadow-card p-6">
       <h2 className="text-base font-medium">1 · Hedefleme (Meta’dan doğrulanmış)</h2>
       {aiSuggestion ? (
         <p className="mt-1.5 text-xs text-muted-foreground">
@@ -151,7 +151,7 @@ export function TargetingForm({ planId, brandId, aiSuggestion, initial, initialS
         <p className="text-sm font-medium">Ülkeler</p>
         <div className="mt-1.5 flex flex-wrap gap-1.5">
           {countries.map((c) => (
-            <span key={c} className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2.5 py-1 text-xs">
+            <span key={c} className="inline-flex items-center gap-1 rounded-full border border-border-soft bg-muted px-2.5 py-1 text-xs">
               {c}
               <button type="button" onClick={() => setCountries(countries.filter((x) => x !== c))} aria-label={`${c} kaldır`} className="text-muted-foreground hover:text-foreground">
                 <X size={12} />
@@ -167,7 +167,7 @@ export function TargetingForm({ planId, brandId, aiSuggestion, initial, initialS
       </div>
 
       {/* Arama */}
-      <div className="mt-4 rounded-xl border border-border bg-background p-4">
+      <div className="mt-4 rounded-xl border border-border-soft bg-background p-4">
         <div className="flex flex-wrap items-center gap-2">
           {(
             [
@@ -186,7 +186,7 @@ export function TargetingForm({ planId, brandId, aiSuggestion, initial, initialS
               }}
               className={
                 "rounded-full px-3 py-1 text-xs " +
-                (kind === k ? "bg-accent text-accent-foreground" : "border border-border text-muted-foreground hover:text-foreground")
+                (kind === k ? "bg-accent text-accent-foreground" : "border border-border-soft text-muted-foreground hover:text-foreground")
               }
             >
               {label}
@@ -216,7 +216,7 @@ export function TargetingForm({ planId, brandId, aiSuggestion, initial, initialS
                 <button
                   type="button"
                   onClick={() => !countries.includes(g.code) && setCountries([...countries, g.code])}
-                  className="rounded-full border border-border px-2.5 py-1 text-xs hover:bg-muted"
+                  className="rounded-full border border-border-soft px-2.5 py-1 text-xs hover:bg-muted"
                 >
                   + {g.name} ({g.code})
                 </button>
@@ -280,7 +280,7 @@ export function TargetingForm({ planId, brandId, aiSuggestion, initial, initialS
           <select
             value={gender}
             onChange={(e) => setGender(e.target.value as typeof gender)}
-            className="rounded-md border border-border bg-card px-3 py-2 text-sm"
+            className="rounded-md border border-border-soft bg-panel px-3 py-2 text-sm"
           >
             <option value="all">Tümü</option>
             <option value="women">Kadınlar</option>
@@ -299,7 +299,7 @@ export function TargetingForm({ planId, brandId, aiSuggestion, initial, initialS
       </div>
 
       {/* Özel reklam kategorisi — varsayılan yok, kullanıcı cevaplar */}
-      <div className="mt-5 rounded-xl border border-border bg-background p-4">
+      <div className="mt-5 rounded-xl border border-border-soft bg-background p-4">
         <p className="text-sm font-medium">Özel reklam kategorisi (zorunlu soru)</p>
         <p className="mt-1 text-xs text-muted-foreground">
           Reklamın kredi, istihdam, konut, sosyal/siyasi konular veya kumar/oyun kapsamına giriyorsa işaretle.

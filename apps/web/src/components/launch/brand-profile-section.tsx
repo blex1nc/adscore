@@ -63,7 +63,7 @@ export async function BrandProfileSection({ brandId }: { brandId: string }) {
         </div>
       </div>
 
-      <div className="border-t border-border pt-5">
+      <div className="border-t border-border-soft pt-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="text-sm font-medium">Logo ve görseller</h3>
@@ -80,8 +80,8 @@ export async function BrandProfileSection({ brandId }: { brandId: string }) {
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div
             className={cn(
-              "flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border bg-muted",
-              logo ? "border-accent/40" : "border-dashed border-border",
+              "flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted",
+              logo ? "border-accent/40" : "border-dashed border-border-soft",
             )}
             title={logo ? `Logo: ${logo.name}` : "Logo yok"}
           >
@@ -131,7 +131,7 @@ export async function BrandProfileSection({ brandId }: { brandId: string }) {
             {others.map((asset) => (
               <li
                 key={asset.id}
-                className="overflow-hidden rounded-xl border border-border"
+                className="overflow-hidden rounded-xl border border-border-soft"
               >
                 <div className="aspect-square bg-muted">
                   {/* eslint-disable-next-line @next/next/no-img-element */}

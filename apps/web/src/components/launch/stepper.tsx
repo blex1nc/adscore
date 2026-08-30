@@ -28,11 +28,11 @@ export function Stepper({
                   "border-accent/40 bg-accent text-accent-foreground",
                 step.status === "active" && "border-accent text-accent",
                 step.status === "available" &&
-                  "border-border text-muted-foreground",
+                  "border-border-soft text-muted-foreground",
                 step.status === "skipped" &&
-                  "border-dashed border-border text-muted-foreground",
+                  "border-dashed border-border-soft text-muted-foreground",
                 step.status === "locked" &&
-                  "border-border text-muted-foreground/50",
+                  "border-border-soft text-muted-foreground/50",
                 step.running && "animate-pulse",
               )}
             >
@@ -75,7 +75,7 @@ export function Stepper({
             key={step.key}
             className={cn(
               "rounded-xl border px-2 py-2.5 text-center",
-              viewing ? "border-accent/40 bg-card" : "border-transparent",
+              viewing ? "border-accent/40 bg-panel" : "border-transparent",
             )}
             aria-current={viewing ? "step" : undefined}
             title={step.note}

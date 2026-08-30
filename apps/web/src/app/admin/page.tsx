@@ -19,18 +19,18 @@ export default async function AdminPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="font-display text-3xl">Admin</h1>
+      <h1 className="text-xl font-semibold tracking-tight">Admin</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Onboarding davetle çalışıyor; self-serve signup kapalı.
       </p>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Davet oluştur</h2>
         <InviteForm />
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-card">
-        <div className="border-b border-border px-4 py-3 text-sm font-medium">
+      <div className="mt-6 overflow-x-auto rounded-lg border border-border-soft bg-panel shadow-card">
+        <div className="border-b border-border-soft px-4 py-3 text-sm font-medium">
           Davetler
         </div>
         {invitations.length === 0 ? (
@@ -40,7 +40,7 @@ export default async function AdminPage() {
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+              <tr className="border-b border-border-soft text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <th className="px-4 py-3 font-medium">E-posta</th>
                 <th className="px-4 py-3 font-medium">Durum</th>
                 <th className="px-4 py-3 font-medium">Son geçerlilik</th>
@@ -58,7 +58,7 @@ export default async function AdminPage() {
                 return (
                   <tr
                     key={inv.id}
-                    className="border-b border-border last:border-0"
+                    className="border-b border-border-soft last:border-0"
                   >
                     <td className="px-4 py-3">{inv.email ?? "Serbest"}</td>
                     <td className="px-4 py-3 text-muted-foreground">
@@ -96,13 +96,13 @@ export default async function AdminPage() {
         )}
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-card">
-        <div className="border-b border-border px-4 py-3 text-sm font-medium">
+      <div className="mt-6 overflow-x-auto rounded-lg border border-border-soft bg-panel shadow-card">
+        <div className="border-b border-border-soft px-4 py-3 text-sm font-medium">
           Kullanıcılar
         </div>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+            <tr className="border-b border-border-soft text-left text-xs uppercase tracking-wide text-muted-foreground">
               <th className="px-4 py-3 font-medium">İsim</th>
               <th className="px-4 py-3 font-medium">E-posta</th>
               <th className="px-4 py-3 font-medium">Rol</th>
@@ -112,7 +112,7 @@ export default async function AdminPage() {
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className="border-b border-border last:border-0">
+              <tr key={u.id} className="border-b border-border-soft last:border-0">
                 <td className="px-4 py-3">{u.name}</td>
                 <td className="px-4 py-3 text-muted-foreground">{u.email}</td>
                 <td className="px-4 py-3 text-muted-foreground">

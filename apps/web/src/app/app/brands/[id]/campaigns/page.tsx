@@ -135,7 +135,7 @@ export default async function CampaignsPage({
     );
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-5xl">
       {hasActive ? <ResearchPoller /> : null}
       <Link
         href={`/app/brands/${brand.id}`}
@@ -144,7 +144,7 @@ export default async function CampaignsPage({
         <ArrowLeft size={14} />
         {brand.name}
       </Link>
-      <h1 className="mt-3 font-display text-3xl">Kampanya kiti</h1>
+      <h1 className="mt-3 text-xl font-semibold tracking-tight">Kampanya kiti</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Kit, kampanyayı Ads Manager&apos;da kendin kurman için hazırlanır (Meta
         bağlantısı gerektirmez); kurulum için gereken tüm ayarları ve onaylı
@@ -152,7 +152,7 @@ export default async function CampaignsPage({
         Performans tahmini içermez; veri yokken sayı üretilmez.
       </p>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Yeni kurulum kiti</h2>
         <PlanForm
           brandId={brand.id}
@@ -170,7 +170,7 @@ export default async function CampaignsPage({
         return (
           <div
             key={plan.id}
-            className="mt-6 rounded-2xl border border-border bg-card p-6"
+            className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6"
           >
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span
@@ -180,7 +180,7 @@ export default async function CampaignsPage({
                   plan.status === "FAILED" &&
                     "border-destructive/40 text-destructive",
                   (plan.status === "QUEUED" || plan.status === "RUNNING") &&
-                    "animate-pulse border-border",
+                    "animate-pulse border-border-soft",
                 )}
               >
                 {STATUS_LABELS[plan.status]}
@@ -267,7 +267,7 @@ export default async function CampaignsPage({
                       {result.optimization_event.reason}
                     </p>
                     {result.optimization_event.pixel_condition ? (
-                      <p className="mt-1 rounded-md border border-border bg-muted/40 p-2 text-xs">
+                      <p className="mt-1 rounded-md border border-border-soft bg-muted/40 p-2 text-xs">
                         Pixel koşulu: {result.optimization_event.pixel_condition}
                       </p>
                     ) : null}
@@ -339,7 +339,7 @@ export default async function CampaignsPage({
                       {result.structure.map((s, i) => (
                         <li
                           key={i}
-                          className="rounded-md border border-border p-3"
+                          className="rounded-md border border-border-soft p-3"
                         >
                           <span className="font-medium">{s.adset_name}</span>
                           <p className="mt-0.5 text-muted-foreground">
@@ -371,7 +371,7 @@ export default async function CampaignsPage({
                             "rounded-xl border p-3",
                             s.name === "recommended"
                               ? "border-accent/40"
-                              : "border-border",
+                              : "border-border-soft",
                           )}
                         >
                           <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -409,7 +409,7 @@ export default async function CampaignsPage({
                     {plan.creatives.map((c) => (
                       <div
                         key={c.id}
-                        className="rounded-md border border-border bg-muted/40 p-3"
+                        className="rounded-md border border-border-soft bg-muted/40 p-3"
                       >
                         <div className="flex items-center justify-between gap-3">
                           <span className="text-sm font-medium">
@@ -453,7 +453,7 @@ export default async function CampaignsPage({
             {plan.status === "COMPLETED" ? (
               <div
                 id={`results-${plan.id}`}
-                className="mt-6 scroll-mt-6 border-t border-border pt-5"
+                className="mt-6 scroll-mt-6 border-t border-border-soft pt-5"
               >
                 <h3 className="text-sm font-medium">
                   Sonuçlar (Ads Manager&apos;dan elle giriş)
@@ -487,7 +487,7 @@ export default async function CampaignsPage({
                   return (
                     <div
                       key={r.id}
-                      className="mt-4 rounded-xl border border-border p-4"
+                      className="mt-4 rounded-xl border border-border-soft p-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
                         <span>
@@ -538,7 +538,7 @@ export default async function CampaignsPage({
                         </div>
                       ) : null}
                       {r.analysisStatus === "COMPLETED" && analysis ? (
-                        <div className="mt-3 space-y-3 border-t border-border pt-3">
+                        <div className="mt-3 space-y-3 border-t border-border-soft pt-3">
                           {analysis.diagnosis?.map((d, i) => (
                             <div key={i} className="text-sm">
                               <div className="flex items-start justify-between gap-3">
@@ -581,7 +581,7 @@ export default async function CampaignsPage({
       })}
 
       {brand.learnings.length > 0 ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
           <h2 className="text-sm font-medium">Öğrenmeler</h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Analizlerden çıkan, bu markaya özel bulgular. Kesin gerçek değil;

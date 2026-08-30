@@ -121,7 +121,7 @@ export default async function PublishPage({
         {source.brand.name} · Kampanya kiti
       </Link>
       <div className="mt-3">
-        <h1 className="font-display text-3xl">Meta’da yayınla — hepsi PAUSED</h1>
+        <h1 className="text-xl font-semibold tracking-tight">Meta’da yayınla — hepsi PAUSED</h1>
         <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
           Onaylı creative + plan, bağlı reklam hesabında <span className="font-medium">duraklatılmış</span> taslak
           nesnelere dönüştürülür. Harcama başlamaz; aktifleştirme yalnız Ads Manager’dan, senin tarafından yapılır.
@@ -135,7 +135,7 @@ export default async function PublishPage({
       </div>
 
       {blockedMsg ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
           <p className="text-sm font-medium">BLOCKED — Meta bağlantısı hazır değil</p>
           <p className="mt-1 text-sm text-muted-foreground">{blockedMsg}</p>
           <Link href="/app/settings/meta" className="mt-3 inline-block text-sm text-accent hover:underline">
@@ -143,7 +143,7 @@ export default async function PublishPage({
           </Link>
         </div>
       ) : unsupported ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-6 text-sm">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6 text-sm">
           <p className="font-medium">Bu amaç için API yayın yolu bu sprintte kapalı</p>
           <p className="mt-1 text-muted-foreground">
             “{objective?.labelTr ?? objectiveKey}” amacı için yalnız doğrulanmış kombinasyonları gönderiyoruz

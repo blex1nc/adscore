@@ -71,7 +71,7 @@ export default async function CompetitorsPage({
     latestPattern?.status === "RUNNING";
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-5xl">
       {hasActiveWork ? <ResearchPoller /> : null}
       <Link
         href={`/app/brands/${brand.id}`}
@@ -80,14 +80,14 @@ export default async function CompetitorsPage({
         <ArrowLeft size={14} />
         {brand.name}
       </Link>
-      <h1 className="mt-3 font-display text-3xl">Rakipler</h1>
+      <h1 className="mt-3 text-xl font-semibold tracking-tight">Rakipler</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Rakip reklamları kopyalanmaz; yapılandırılmış analizle pattern
         çıkarılır ve markana uyarlanır. Reklamlar referans + analiz olarak
         saklanır.
       </p>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Rakip ekle</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Marka araştırmasındaki adayları tek tıkla ekleyebilir, elle
@@ -105,7 +105,7 @@ export default async function CompetitorsPage({
       </div>
 
       {brand.competitors.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-8 text-center">
           <p className="text-sm text-muted-foreground">Henüz rakip yok.</p>
           <Link
             href={`/app/brands/${brand.id}/ad-library`}
@@ -118,7 +118,7 @@ export default async function CompetitorsPage({
         brand.competitors.map((competitor) => (
           <div
             key={competitor.id}
-            className="mt-6 rounded-2xl border border-border bg-card p-6"
+            className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -173,7 +173,7 @@ export default async function CompetitorsPage({
             {competitor.ads.map((ad) => (
               <div
                 key={ad.id}
-                className="mt-4 border-t border-border pt-4"
+                className="mt-4 border-t border-border-soft pt-4"
               >
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <span
@@ -184,7 +184,7 @@ export default async function CompetitorsPage({
                       ad.status === "FAILED" &&
                         "border-destructive/40 text-destructive",
                       (ad.status === "QUEUED" || ad.status === "RUNNING") &&
-                        "animate-pulse border-border",
+                        "animate-pulse border-border-soft",
                     )}
                   >
                     {STATUS_LABELS[ad.status]}
@@ -216,7 +216,7 @@ export default async function CompetitorsPage({
               </div>
             ))}
 
-            <div className="mt-4 border-t border-border pt-4">
+            <div className="mt-4 border-t border-border-soft pt-4">
               <AddAdForm competitorId={competitor.id} />
               <AdLibrarySearch competitorId={competitor.id} competitorName={competitor.name} targetMarket={brand.targetMarket} />
             </div>
@@ -224,7 +224,7 @@ export default async function CompetitorsPage({
         ))
       )}
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-sm font-medium">Pattern analizi</h2>
@@ -246,7 +246,7 @@ export default async function CompetitorsPage({
         </div>
 
         {latestPattern ? (
-          <div className="mt-4 border-t border-border pt-4">
+          <div className="mt-4 border-t border-border-soft pt-4">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span
                 className={cn(
@@ -257,7 +257,7 @@ export default async function CompetitorsPage({
                     "border-destructive/40 text-destructive",
                   (latestPattern.status === "QUEUED" ||
                     latestPattern.status === "RUNNING") &&
-                    "animate-pulse border-border",
+                    "animate-pulse border-border-soft",
                 )}
               >
                 {STATUS_LABELS[latestPattern.status]}

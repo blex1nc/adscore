@@ -35,7 +35,7 @@ export function AdLibrarySearch({
       : "TR";
 
   return (
-    <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4">
+    <div className="mt-4 rounded-xl border border-border-soft bg-muted/30 p-4">
       <h4 className="text-sm font-medium">Ad Library&apos;de ara</h4>
       <p className="mt-1 text-xs text-muted-foreground">{AD_LIBRARY_SCOPE_NOTE}</p>
       {!isEuCovered(defaultCountry) ? (
@@ -74,8 +74,8 @@ export function AdLibrarySearch({
         </div>
 
         {state.blocked ? (
-          <div className="rounded-md border border-border bg-muted/40 p-3 text-xs">
-            <span className="mr-2 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide">
+          <div className="rounded-md border border-border-soft bg-muted/40 p-3 text-xs">
+            <span className="mr-2 rounded-full border border-border-soft px-2 py-0.5 text-[10px] uppercase tracking-wide">
               BLOCKED
             </span>
             {state.blocked}
@@ -90,7 +90,7 @@ export function AdLibrarySearch({
           <div
             className={
               state.emptyResult
-                ? "rounded-md border border-border p-3 text-xs text-muted-foreground"
+                ? "rounded-md border border-border-soft p-3 text-xs text-muted-foreground"
                 : "rounded-md border border-accent/40 p-3 text-xs"
             }
           >

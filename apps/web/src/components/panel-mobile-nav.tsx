@@ -11,9 +11,11 @@ import { SidebarNav, type SidebarBrand } from "@/components/sidebar-nav";
 export function PanelMobileNav({
   isAdmin,
   brands,
+  workspaceName,
 }: {
   isAdmin: boolean;
   brands: SidebarBrand[];
+  workspaceName: string;
 }) {
   const pathname = usePathname();
   // Çekmece hangi rotada açıldıysa onunla saklanır: rota değişince (link
@@ -46,7 +48,7 @@ export function PanelMobileNav({
         onClick={() => setOpen(true)}
         aria-label="Menüyü aç"
         aria-expanded={open}
-        className="rounded-full border border-border bg-card p-2 text-muted-foreground transition-colors duration-300 hover:text-foreground md:hidden"
+        className="rounded-full border border-border-soft bg-panel p-2 text-muted-foreground transition-colors duration-300 hover:text-foreground md:hidden"
       >
         <Menu size={15} />
       </button>
@@ -59,7 +61,7 @@ export function PanelMobileNav({
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-background/80"
           />
-          <div className="absolute inset-y-0 left-0 flex w-64 flex-col overflow-y-auto border-r border-border bg-background px-3 py-5">
+          <div className="absolute inset-y-0 left-0 flex w-[268px] flex-col overflow-y-auto border-r border-border-soft bg-canvas px-2.5 py-4">
             <div className="mb-6 flex items-center justify-between px-2.5">
               <Link href="/app" className="text-lg font-semibold tracking-tight">
                 adscore
@@ -76,6 +78,7 @@ export function PanelMobileNav({
             <SidebarNav
               isAdmin={isAdmin}
               brands={brands}
+              workspaceName={workspaceName}
               onNavigate={() => setOpen(false)}
             />
           </div>

@@ -14,7 +14,7 @@ function ConfidenceBadge({ level }: { level?: string }) {
         "shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide",
         level === "high"
           ? "border-accent/40 text-accent"
-          : "border-border text-muted-foreground",
+          : "border-border-soft text-muted-foreground",
       )}
       title={`Confidence: ${label}`}
     >
@@ -184,7 +184,7 @@ function ResultView({
       ) : null}
 
       {result.data_gaps?.length ? (
-        <div className="rounded-md border border-border bg-muted/50 p-3">
+        <div className="rounded-md border border-border-soft bg-muted/50 p-3">
           <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Eksik veri
           </h4>
@@ -218,7 +218,7 @@ export async function ResearchSection({ brandId }: { brandId: string }) {
     latest?.status === "QUEUED" || latest?.status === "RUNNING";
 
   return (
-    <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+    <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
       {hasActiveRun ? <ResearchPoller /> : null}
       <div className="flex items-center justify-between gap-4">
         <div>
@@ -236,7 +236,7 @@ export async function ResearchSection({ brandId }: { brandId: string }) {
       </div>
 
       {latest ? (
-        <div className="mt-5 border-t border-border pt-5">
+        <div className="mt-5 border-t border-border-soft pt-5">
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span
               className={cn(
@@ -244,7 +244,7 @@ export async function ResearchSection({ brandId }: { brandId: string }) {
                 latest.status === "COMPLETED" && "border-accent/40 text-accent",
                 latest.status === "FAILED" &&
                   "border-destructive/40 text-destructive",
-                hasActiveRun && "border-border animate-pulse",
+                hasActiveRun && "border-border-soft animate-pulse",
               )}
             >
               {STATUS_LABELS[latest.status]}
@@ -271,7 +271,7 @@ export async function ResearchSection({ brandId }: { brandId: string }) {
                 brandId={brandId}
               />
               {latest.sources.length ? (
-                <div className="mt-5 border-t border-border pt-3 text-xs text-muted-foreground">
+                <div className="mt-5 border-t border-border-soft pt-3 text-xs text-muted-foreground">
                   Kaynaklar:{" "}
                   {latest.sources.map((s, i) => (
                     <span key={s.id}>
@@ -303,7 +303,7 @@ export async function ResearchSection({ brandId }: { brandId: string }) {
           ) : null}
         </div>
       ) : (
-        <p className="mt-5 border-t border-border pt-5 text-sm text-muted-foreground">
+        <p className="mt-5 border-t border-border-soft pt-5 text-sm text-muted-foreground">
           Henüz araştırma yapılmadı.
         </p>
       )}

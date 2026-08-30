@@ -25,7 +25,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-      className="rounded-full border border-border bg-card p-2 text-muted-foreground transition-colors duration-300 hover:text-foreground"
+      className="rounded-full border border-border-soft bg-panel p-2 text-muted-foreground transition-colors duration-300 hover:text-foreground"
     >
       {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
     </button>

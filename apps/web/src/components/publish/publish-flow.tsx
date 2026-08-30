@@ -184,7 +184,7 @@ export function PublishFlow(props: Props) {
       ["Reklam", snapshot.ids.ad, snapshot.links.ad],
     ] as const;
     return (
-      <section className="rounded-2xl border border-border bg-card p-6">
+      <section className="rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-base font-medium">3 · Meta yayını {completed ? "— tamamlandı (PAUSED)" : failed ? "— durdu" : "— sürüyor"}</h2>
         {running ? (
           <p className="mt-2 text-sm text-muted-foreground">
@@ -215,7 +215,7 @@ export function PublishFlow(props: Props) {
           <table className="w-full min-w-80 text-sm">
             <tbody>
               {rows.map(([label, idVal, link]) => (
-                <tr key={label} className="border-b border-border/50">
+                <tr key={label} className="border-b border-border-soft/50">
                   <td className="py-2 pr-4 text-muted-foreground">{label}</td>
                   <td className="py-2 pr-4 font-mono text-xs">{idVal ?? "—"}</td>
                   <td className="py-2">
@@ -231,7 +231,7 @@ export function PublishFlow(props: Props) {
           </table>
         </div>
         {completed ? (
-          <p className="mt-4 rounded-xl border border-border bg-muted p-4 text-sm">
+          <p className="mt-4 rounded-xl border border-border-soft bg-muted p-4 text-sm">
             Tüm nesneler <span className="font-medium">PAUSED</span> durumda oluşturuldu ve para harcamıyor.
             Meta, reklamı incelemeye alır (PENDING_REVIEW) ve inceleme bitince PAUSED’a döner.{" "}
             <span className="font-medium">Yayına almak için Ads Manager’dan sen aktif edeceksin</span> — AdScore bu sprintte hiçbir nesneyi aktifleştirmez.
@@ -259,7 +259,7 @@ export function PublishFlow(props: Props) {
         trafficGoal={props.objectiveKey === "traffic" ? trafficGoal : null}
         budgetDisplay={props.budgetDisplay}
       />
-      <section className="rounded-2xl border border-border bg-card p-6">
+      <section className="rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-base font-medium">3 · Yayın (önizleme → onay → PAUSED oluşturma)</h2>
         {props.blockers.length > 0 ? (
           <ul className="mt-2 list-disc pl-5 text-sm text-destructive">
@@ -311,7 +311,7 @@ export function PublishFlow(props: Props) {
                       }}
                       className={
                         "overflow-hidden rounded-lg border " +
-                        (imageId === img.id ? "border-accent ring-2 ring-accent" : "border-border")
+                        (imageId === img.id ? "border-accent ring-2 ring-accent" : "border-border-soft")
                       }
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -348,7 +348,7 @@ export function PublishFlow(props: Props) {
                   <select
                     value={event ?? ""}
                     onChange={(e) => { setEvent(e.target.value || null); setPreview(null); }}
-                    className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm"
+                    className="w-full rounded-md border border-border-soft bg-panel px-3 py-2 text-sm"
                   >
                     <option value="">Seç (varsayılan yok)</option>
                     {props.eventOptions.map((o) => (
@@ -365,7 +365,7 @@ export function PublishFlow(props: Props) {
                   <select
                     value={trafficGoal}
                     onChange={(e) => { setTrafficGoal(e.target.value as typeof trafficGoal); setPreview(null); }}
-                    className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm"
+                    className="w-full rounded-md border border-border-soft bg-panel px-3 py-2 text-sm"
                   >
                     <option value="LINK_CLICKS">Bağlantı tıklamaları (LINK_CLICKS)</option>
                     <option value="LANDING_PAGE_VIEWS">Yönlendirme sayfası görüntülemeleri (LANDING_PAGE_VIEWS)</option>
@@ -395,7 +395,7 @@ export function PublishFlow(props: Props) {
 
             {/* Önizleme (HANDOFF §9 Stage 1) */}
             {preview ? (
-              <div className="rounded-xl border border-border bg-background p-4">
+              <div className="rounded-xl border border-border-soft bg-background p-4">
                 <p className="text-sm font-medium">Meta’ya gidecek nesneler (özet)</p>
                 <dl className="mt-2 grid gap-x-6 gap-y-1.5 text-xs sm:grid-cols-2">
                   <div>
@@ -426,7 +426,7 @@ export function PublishFlow(props: Props) {
                 </dl>
 
                 {/* B5 — resmî önizleme (açık beyanla görsel yüklenir) */}
-                <div className="mt-3 border-t border-border pt-3">
+                <div className="mt-3 border-t border-border-soft pt-3">
                   <Button type="button" variant="secondary" size="sm" onClick={fetchOfficial} disabled={previewing}>
                     {previewing ? "Önizleme alınıyor…" : "Görseli yükle + resmî önizleme al"}
                   </Button>
@@ -438,7 +438,7 @@ export function PublishFlow(props: Props) {
                       {official.previews.map((p) => (
                         <details key={p.format} open={p.format === "MOBILE_FEED_STANDARD"}>
                           <summary className="cursor-pointer text-xs font-medium">{p.label}</summary>
-                          <div className="mt-2 overflow-x-auto rounded-lg border border-border bg-card p-2" dangerouslySetInnerHTML={{ __html: p.body }} />
+                          <div className="mt-2 overflow-x-auto rounded-lg border border-border-soft bg-panel p-2" dangerouslySetInnerHTML={{ __html: p.body }} />
                           <p className="mt-1 text-[11px] text-muted-foreground">Kaynak: Meta generatepreviews (24 saat geçerli render).</p>
                         </details>
                       ))}
@@ -458,7 +458,7 @@ export function PublishFlow(props: Props) {
                 </div>
 
                 {/* Onay (HANDOFF §9 Stage 2) */}
-                <div className="mt-3 border-t border-border pt-3">
+                <div className="mt-3 border-t border-border-soft pt-3">
                   <label className="flex items-start gap-2 text-sm">
                     <input type="checkbox" checked={approved} onChange={(e) => setApproved(e.target.checked)} />
                     <span>

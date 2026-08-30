@@ -120,7 +120,7 @@ export function BrandBindingForm({
   }
 
   return (
-    <div className="rounded-xl border border-border bg-background p-4">
+    <div className="rounded-xl border border-border-soft bg-background p-4">
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-medium">{brandName}</p>
         <Button

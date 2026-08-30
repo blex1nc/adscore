@@ -39,7 +39,7 @@ export default async function AdLibraryPage({
   });
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto w-full max-w-6xl">
       <Link
         href={`/app/brands/${brand.id}`}
         className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
@@ -50,7 +50,7 @@ export default async function AdLibraryPage({
 
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl">Ad Library</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Ad Library</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Meta Ad Library&apos;de reklam ara, gez, işine yarayanları rakip
             reklamı olarak içe aktar. Gezinme hiçbir şey kaydetmez.
@@ -74,8 +74,8 @@ export default async function AdLibraryPage({
             competitors={brand.competitors}
           />
         ) : (
-          <div className="rounded-xl border border-border bg-muted/30 p-5 text-sm">
-            <span className="mr-2 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide">
+          <div className="rounded-xl border border-border-soft bg-muted/30 p-5 text-sm">
+            <span className="mr-2 rounded-full border border-border-soft px-2 py-0.5 text-[10px] uppercase tracking-wide">
               BLOCKED
             </span>
             Ad Library sorgusu Meta bağlantısı gerektirir.{" "}

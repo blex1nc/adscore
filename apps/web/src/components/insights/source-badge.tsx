@@ -24,7 +24,7 @@ export function ResultSourceBadge({
       <span
         className={cn(
           "rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide",
-          isMeta ? "border-accent/40 text-accent" : "border-border text-muted-foreground",
+          isMeta ? "border-accent/40 text-accent" : "border-border-soft text-muted-foreground",
         )}
         title={
           isMeta

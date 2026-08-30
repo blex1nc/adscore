@@ -26,9 +26,9 @@ export function StatusChip({
         "rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide",
         status === "done" && "border-accent/40 text-accent",
         status === "active" && "border-accent text-accent",
-        status === "locked" && "border-border text-muted-foreground/70",
+        status === "locked" && "border-border-soft text-muted-foreground/70",
         (status === "available" || status === "skipped") &&
-          "border-border text-muted-foreground",
+          "border-border-soft text-muted-foreground",
         running && "animate-pulse",
       )}
     >
@@ -54,7 +54,7 @@ export function StepPanel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mt-6 rounded-2xl border border-border bg-card p-6">
+    <section className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
@@ -90,11 +90,11 @@ export function StepPanel({
       </div>
 
       {step.status === "locked" ? null : (
-        <div className="mt-5 border-t border-border pt-5">{children}</div>
+        <div className="mt-5 border-t border-border-soft pt-5">{children}</div>
       )}
 
       {nextHref ? (
-        <div className="mt-5 flex justify-end border-t border-border pt-4">
+        <div className="mt-5 flex justify-end border-t border-border-soft pt-4">
           <Link
             href={nextHref}
             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-medium text-accent-foreground transition-opacity duration-300 hover:opacity-85"

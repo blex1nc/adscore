@@ -49,7 +49,7 @@ export default async function KitPage({
       </Link>
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl">Ads Manager kurulum kiti</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Ads Manager kurulum kiti</h1>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
             Ads Manager ekran sırasında (Kampanya → Reklam seti → Reklam), her
             alan kopyalanabilir. Planda olmayan değer uydurulmaz; senin
@@ -67,7 +67,7 @@ export default async function KitPage({
                 id="kit-version"
                 name="v"
                 defaultValue={String(current?.version ?? "")}
-                className="rounded-md border border-border bg-card px-2 py-1 text-xs"
+                className="rounded-md border border-border-soft bg-panel px-2 py-1 text-xs"
               >
                 {plan.kits.map((k) => (
                   <option key={k.id} value={k.version}>
@@ -96,7 +96,7 @@ export default async function KitPage({
       </div>
 
       {!kit || !current ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
+        <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6 text-sm text-muted-foreground">
           {canBuild
             ? "Bu plan için henüz kit üretilmedi. Sağ üstten üret; kit yalnız onaylı creative'lerden ve planın kendi verisinden kurulur."
             : plan.status !== "COMPLETED"

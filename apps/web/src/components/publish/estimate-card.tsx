@@ -30,7 +30,7 @@ export function EstimateCard({ planId, disabled, disabledReason, customEventType
   };
 
   return (
-    <section className="rounded-2xl border border-border bg-card p-6">
+    <section className="rounded-lg border border-border-soft bg-panel shadow-card p-6">
       <h2 className="text-base font-medium">2 · Erişim tahmini (Meta delivery estimate)</h2>
       <p className="mt-1 text-xs text-muted-foreground">
         Girdi: kaydettiğin hedefleme + optimizasyon hedefi. Bütçen ({budgetDisplay}) senin kararın; tahmin bütçeyi değiştirmez.
@@ -50,7 +50,7 @@ export function EstimateCard({ planId, disabled, disabledReason, customEventType
       ) : null}
 
       {result && "status" in result && result.status === "insufficient" ? (
-        <div className="mt-3 rounded-xl border border-border bg-muted p-4">
+        <div className="mt-3 rounded-xl border border-border-soft bg-muted p-4">
           <p className="text-sm font-medium">Insufficient Data</p>
           <p className="mt-1 text-xs text-muted-foreground">{result.note}</p>
           <p className="mt-2 text-[11px] text-muted-foreground">
@@ -74,7 +74,7 @@ export function EstimateCard({ planId, disabled, disabledReason, customEventType
                   Meta’nın günlük sonuç eğrisi (noktalar Meta’nın döndürdüğü gibidir; ara değer hesaplamayız)
                 </caption>
                 <thead>
-                  <tr className="border-b border-border text-left text-muted-foreground">
+                  <tr className="border-b border-border-soft text-left text-muted-foreground">
                     <th className="py-1 pr-3 font-normal">Harcama (minör birim)</th>
                     <th className="py-1 pr-3 font-normal">Erişim</th>
                     <th className="py-1 pr-3 font-normal">Gösterim</th>
@@ -83,7 +83,7 @@ export function EstimateCard({ planId, disabled, disabledReason, customEventType
                 </thead>
                 <tbody>
                   {result.curve.map((p, i) => (
-                    <tr key={i} className="border-b border-border/50">
+                    <tr key={i} className="border-b border-border-soft/50">
                       <td className="py-1 pr-3">{num(p.spend)}</td>
                       <td className="py-1 pr-3">{num(p.reach)}</td>
                       <td className="py-1 pr-3">{num(p.impressions)}</td>

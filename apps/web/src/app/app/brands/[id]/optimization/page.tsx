@@ -41,7 +41,7 @@ function ScoreBadge({ score }: { score: number }) {
       className={cn(
         "rounded-full border px-2.5 py-0.5 text-sm font-semibold tabular-nums",
         score >= 60 && "border-accent/40 text-accent",
-        score < 60 && score >= 40 && "border-border text-foreground",
+        score < 60 && score >= 40 && "border-border-soft text-foreground",
         score < 40 && "border-destructive/40 text-destructive",
       )}
     >
@@ -109,7 +109,7 @@ export default async function OptimizationPage({
   );
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-5xl">
       {hasActiveRun ? <ResearchPoller /> : null}
       <Link
         href={`/app/brands/${brand.id}`}
@@ -118,15 +118,15 @@ export default async function OptimizationPage({
         <ArrowLeft size={14} />
         {brand.name}
       </Link>
-      <h1 className="mt-3 font-display text-3xl">Optimizasyon</h1>
+      <h1 className="mt-3 text-xl font-semibold tracking-tight">Optimizasyon</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         AdScore, bir sonucun bu markanın KENDİ geçmişine göre göreli skorudur
-        (50 = marka medyanı) — sektör benchmark'ı değildir. Skorlar ve
+        (50 = marka medyanı) — sektör benchmark’ı değildir. Skorlar ve
         sinyaller koddan hesaplanır; AI yalnız yorumlar ve öneri sunar.
         Hiçbir öneri otomatik uygulanmaz.
       </p>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">AdScore — kampanya sonuçları</h2>
         {brand.campaignPlans.length === 0 ? (
           <p className="mt-2 text-sm text-muted-foreground">
@@ -143,7 +143,7 @@ export default async function OptimizationPage({
         {brand.campaignPlans.map((plan) => (
           <div
             key={plan.id}
-            className="mt-4 rounded-xl border border-border p-4"
+            className="mt-4 rounded-xl border border-border-soft p-4"
           >
             <div className="text-xs text-muted-foreground">
               {plan.goal} · {plan.budgetAmount.toString()} {plan.currency} (
@@ -155,7 +155,7 @@ export default async function OptimizationPage({
               return (
                 <div
                   key={r.id}
-                  className="mt-3 border-t border-border pt-3 first:mt-2"
+                  className="mt-3 border-t border-border-soft pt-3 first:mt-2"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-xs text-muted-foreground">
@@ -171,7 +171,7 @@ export default async function OptimizationPage({
                         {score.components.map((c) => (
                           <span
                             key={c.metric}
-                            className="rounded-md border border-border bg-muted/40 px-2 py-1 text-xs"
+                            className="rounded-md border border-border-soft bg-muted/40 px-2 py-1 text-xs"
                             title={`Marka medyanı: ${formatMetric(c.brandMedian)} (${c.comparisonCount} sonuç)`}
                           >
                             {SCORE_METRIC_LABELS[c.metric]}:{" "}
@@ -200,11 +200,11 @@ export default async function OptimizationPage({
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Gözlenen sinyaller</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Aynı kampanyanın ardışık iki dönem sonucu arasındaki gerçek
-          değişimler. Yorum değil gözlemdir; "neden" sorusu AI analizinde ele
+          değişimler. Yorum değil gözlemdir; “neden” sorusu AI analizinde ele
           alınır.
         </p>
         {!canDetectSignals ? (
@@ -220,7 +220,7 @@ export default async function OptimizationPage({
         ) : (
           <ul className="mt-3 space-y-3">
             {signals.map((s, i) => (
-              <li key={i} className="rounded-md border border-border p-3">
+              <li key={i} className="rounded-md border border-border-soft p-3">
                 <span className="text-sm font-medium">
                   {SIGNAL_LABELS[s.kind]}
                 </span>
@@ -234,10 +234,10 @@ export default async function OptimizationPage({
         )}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">AI optimizasyon analizi</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Skorlar, sinyaller ve marka öğrenmeleri AI'a verilir; teşhis + kanıtlı
+          Skorlar, sinyaller ve marka öğrenmeleri AI’a verilir; teşhis + kanıtlı
           öneriler + tek değişkenli sonraki test önerisi döner. Önerileri sen
           karara bağlarsın; kabul bile hiçbir şeyi otomatik değiştirmez.
         </p>
@@ -248,7 +248,7 @@ export default async function OptimizationPage({
           return (
             <div
               key={run.id}
-              className="mt-5 rounded-xl border border-border p-4"
+              className="mt-5 rounded-xl border border-border-soft p-4"
             >
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span
@@ -259,7 +259,7 @@ export default async function OptimizationPage({
                     run.status === "FAILED" &&
                       "border-destructive/40 text-destructive",
                     (run.status === "QUEUED" || run.status === "RUNNING") &&
-                      "animate-pulse border-border",
+                      "animate-pulse border-border-soft",
                   )}
                 >
                   {RUN_STATUS_LABELS[run.status]}
@@ -282,7 +282,7 @@ export default async function OptimizationPage({
                   {run.recommendations.map((rec) => (
                     <div
                       key={rec.id}
-                      className="rounded-md border border-border p-3"
+                      className="rounded-md border border-border-soft p-3"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="flex items-center gap-2">

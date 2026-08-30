@@ -36,7 +36,7 @@ export function PreviewTabs({
         <div
           role="tablist"
           aria-label="Yerleşim"
-          className="inline-flex rounded-full border border-border bg-card p-0.5"
+          className="inline-flex rounded-full border border-border-soft bg-panel p-0.5"
         >
           {PLACEMENTS.map((p) => (
             <button
@@ -73,7 +73,7 @@ export function PreviewTabs({
                   "rounded-full border px-2.5 py-1 transition-colors duration-300",
                   feedRatio === r
                     ? "border-accent/40 text-accent"
-                    : "border-border text-muted-foreground hover:text-foreground",
+                    : "border-border-soft text-muted-foreground hover:text-foreground",
                 )}
               >
                 {r === "1x1" ? "1:1" : "4:5"}

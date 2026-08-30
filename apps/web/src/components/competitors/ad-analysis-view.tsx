@@ -30,7 +30,7 @@ export function ConfidenceBadge({ level }: { level?: string }) {
         "shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide",
         level === "high"
           ? "border-accent/40 text-accent"
-          : "border-border text-muted-foreground",
+          : "border-border-soft text-muted-foreground",
       )}
     >
       {label}
@@ -59,7 +59,7 @@ export function AdAnalysisView({ analysis }: { analysis: AdAnalysis }) {
   });
 
   return (
-    <div className="mt-3 space-y-3 rounded-md border border-border bg-muted/40 p-3">
+    <div className="mt-3 space-y-3 rounded-md border border-border-soft bg-muted/40 p-3">
       <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-wide text-muted-foreground">
         {analysis.format ? (
           <span className="rounded-full bg-muted px-2 py-0.5">
@@ -83,7 +83,7 @@ export function AdAnalysisView({ analysis }: { analysis: AdAnalysis }) {
         ))}
       </dl>
       {analysis.audience_hypothesis?.hypothesis ? (
-        <div className="flex items-start justify-between gap-3 border-t border-border pt-2">
+        <div className="flex items-start justify-between gap-3 border-t border-border-soft pt-2">
           <span className="text-sm">
             <span className="text-xs uppercase tracking-wide text-muted-foreground">
               Kitle hipotezi:{" "}
@@ -94,7 +94,7 @@ export function AdAnalysisView({ analysis }: { analysis: AdAnalysis }) {
         </div>
       ) : null}
       {analysis.hypotheses?.length ? (
-        <ul className="space-y-1.5 border-t border-border pt-2">
+        <ul className="space-y-1.5 border-t border-border-soft pt-2">
           {analysis.hypotheses.map((h, i) => (
             <li key={i} className="flex items-start justify-between gap-3">
               <span className="text-sm">{h.hypothesis}</span>
@@ -104,7 +104,7 @@ export function AdAnalysisView({ analysis }: { analysis: AdAnalysis }) {
         </ul>
       ) : null}
       {analysis.data_gaps?.length ? (
-        <p className="border-t border-border pt-2 text-xs text-muted-foreground">
+        <p className="border-t border-border-soft pt-2 text-xs text-muted-foreground">
           Eksik veri: {analysis.data_gaps.join(" · ")}
         </p>
       ) : null}

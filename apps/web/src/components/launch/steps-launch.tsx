@@ -79,7 +79,7 @@ export async function ApprovalStep({ state, brand, wizardHref }: StepProps) {
         {visible.map((creative) => (
           <div
             key={creative.id}
-            className="rounded-xl border border-border p-4"
+            className="rounded-xl border border-border-soft p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -88,7 +88,7 @@ export async function ApprovalStep({ state, brand, wizardHref }: StepProps) {
                     "rounded-full border px-2 py-0.5 uppercase tracking-wide",
                     creative.approval === "APPROVED" &&
                       "border-accent/40 text-accent",
-                    creative.approval === "PENDING" && "border-border",
+                    creative.approval === "PENDING" && "border-border-soft",
                   )}
                 >
                   {APPROVAL_LABELS[creative.approval]}
@@ -115,7 +115,7 @@ export async function ApprovalStep({ state, brand, wizardHref }: StepProps) {
                   <input type="hidden" name="creativeId" value={creative.id} />
                   <button
                     type="submit"
-                    className="rounded-full border border-border px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-destructive"
+                    className="rounded-full border border-border-soft px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-destructive"
                   >
                     Reddet
                   </button>
@@ -125,7 +125,7 @@ export async function ApprovalStep({ state, brand, wizardHref }: StepProps) {
                     <input type="hidden" name="creativeId" value={creative.id} />
                     <button
                       type="submit"
-                      className="rounded-full border border-border px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                      className="rounded-full border border-border-soft px-3.5 py-1.5 text-xs text-muted-foreground transition-colors duration-300 hover:text-foreground"
                     >
                       Geri al
                     </button>
@@ -142,11 +142,11 @@ export async function ApprovalStep({ state, brand, wizardHref }: StepProps) {
                   </div>
                   <p className="mt-0.5">{creative.hook}</p>
                 </div>
-                <div className="rounded-md border border-border bg-muted/40 p-3">
+                <div className="rounded-md border border-border-soft bg-muted/40 p-3">
                   <p className="whitespace-pre-wrap leading-relaxed">
                     {creative.primaryText}
                   </p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-border pt-2">
+                  <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-border-soft pt-2">
                     <span className="font-medium">{creative.headline}</span>
                     {creative.description ? (
                       <span className="text-muted-foreground">
@@ -167,7 +167,7 @@ export async function ApprovalStep({ state, brand, wizardHref }: StepProps) {
                     <p>Teklif (kullanıcı girdisi): {creative.generation.offer}</p>
                   ) : null}
                 </div>
-                <div className="flex flex-wrap items-center gap-4 border-t border-border pt-3">
+                <div className="flex flex-wrap items-center gap-4 border-t border-border-soft pt-3">
                   <GenerateImageButton
                     creativeId={creative.id}
                     hasActive={
@@ -276,7 +276,7 @@ export async function PlanStep({ state, brand, wizardHref }: StepProps) {
               latestPlan.status === "COMPLETED" && "border-accent/40 text-accent",
               latestPlan.status === "FAILED" &&
                 "border-destructive/40 text-destructive",
-              hasActive && "animate-pulse border-border",
+              hasActive && "animate-pulse border-border-soft",
             )}
           >
             {PLAN_STATUS_LABELS[latestPlan.status]}
@@ -360,7 +360,7 @@ export async function KitStep({ state, brand, wizardHref }: StepProps) {
             </Link>
             <Link
               href={`/app/brands/${brand.id}/campaigns`}
-              className="rounded-full border border-border bg-card px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
+              className="rounded-full border border-border-soft bg-panel px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
             >
               Plan ve manuel kit →
             </Link>
@@ -436,16 +436,16 @@ export async function ResultsStep({ state, brand }: StepProps) {
           )}
           <ImportResultForm planId={plan.id} />
           <AddResultForm planId={plan.id} />
-          <div className="mt-5 flex flex-wrap gap-3 border-t border-border pt-4">
+          <div className="mt-5 flex flex-wrap gap-3 border-t border-border-soft pt-4">
             <Link
               href={`/app/brands/${brand.id}/campaigns`}
-              className="rounded-full border border-border bg-card px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
+              className="rounded-full border border-border-soft bg-panel px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
             >
               Analiz ve öğrenmeler →
             </Link>
             <Link
               href={`/app/brands/${brand.id}/optimization`}
-              className="rounded-full border border-border bg-card px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
+              className="rounded-full border border-border-soft bg-panel px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
             >
               Optimizasyon →
             </Link>

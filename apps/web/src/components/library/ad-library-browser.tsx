@@ -90,7 +90,7 @@ export function AdLibraryBrowser({
   return (
     <div className="space-y-6">
       {/* Kapsam notu — kalıcı, aramadan bağımsız */}
-      <div className="rounded-xl border border-border bg-muted/30 p-4 text-xs text-muted-foreground">
+      <div className="rounded-xl border border-border-soft bg-muted/30 p-4 text-xs text-muted-foreground">
         <p>{AD_LIBRARY_SCOPE_NOTE}</p>
         {!isEuCovered(activeCountry) ? <p className="mt-1">{NON_EU_SCOPE_WARNING}</p> : null}
         <p className="mt-1">
@@ -143,8 +143,8 @@ export function AdLibraryBrowser({
       </form>
 
       {browseState.blocked ? (
-        <div className="rounded-md border border-border bg-muted/40 p-3 text-xs">
-          <span className="mr-2 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide">
+        <div className="rounded-md border border-border-soft bg-muted/40 p-3 text-xs">
+          <span className="mr-2 rounded-full border border-border-soft px-2 py-0.5 text-[10px] uppercase tracking-wide">
             BLOCKED
           </span>
           {browseState.blocked}
@@ -170,7 +170,7 @@ export function AdLibraryBrowser({
       ) : null}
 
       {browseState.searched && cards.length === 0 && !browseState.blocked && !browseState.error ? (
-        <div className="rounded-xl border border-border p-5 text-sm text-muted-foreground">
+        <div className="rounded-xl border border-border-soft p-5 text-sm text-muted-foreground">
           Bu sorgu için Ad Library kapsamında sonuç dönmedi.{" "}
           <strong className="font-medium text-foreground">
             Bu, aranan markanın reklam vermediği anlamına gelmez.
@@ -193,7 +193,7 @@ export function AdLibraryBrowser({
 
           {groups.map((group) => (
             <section key={group.pageId ?? group.pageName}>
-              <div className="flex items-center justify-between gap-3 border-b border-border pb-2">
+              <div className="flex items-center justify-between gap-3 border-b border-border-soft pb-2">
                 <h3 className="text-sm font-medium">{group.pageName}</h3>
                 <span className="text-xs text-muted-foreground">
                   {group.cards.length} reklam
@@ -214,7 +214,7 @@ export function AdLibraryBrowser({
           ))}
 
           {/* Seçim → içe aktarma kutusu */}
-          <div className="sticky bottom-4 rounded-xl border border-border bg-card p-4 shadow-lg">
+          <div className="sticky bottom-4 rounded-xl border border-border-soft bg-panel p-4 shadow-lg">
             {selected.map((value) => (
               <input key={value} type="hidden" name="selection" value={value} />
             ))}
@@ -253,7 +253,7 @@ export function AdLibraryBrowser({
                   : `${selected.length} reklam içe aktarılacak → ${selected.length} AI analizi çalışacak.`}
             </p>
             {importState.blocked ? (
-              <p className="mt-2 rounded-md border border-border bg-muted/40 p-2 text-xs">
+              <p className="mt-2 rounded-md border border-border-soft bg-muted/40 p-2 text-xs">
                 BLOCKED — {importState.blocked}
               </p>
             ) : null}
@@ -294,7 +294,7 @@ function AdCard({
     <article
       className={cn(
         "flex flex-col rounded-xl border p-4 transition-colors duration-300",
-        checked ? "border-accent bg-accent/5" : "border-border bg-card",
+        checked ? "border-accent bg-accent/5" : "border-border-soft bg-panel",
       )}
     >
       <div className="flex items-start justify-between gap-3">
@@ -302,7 +302,7 @@ function AdCard({
           <span
             className={cn(
               "rounded-full border px-2 py-0.5",
-              card.active ? "border-accent/40 text-accent" : "border-border text-muted-foreground",
+              card.active ? "border-accent/40 text-accent" : "border-border-soft text-muted-foreground",
             )}
             title={
               card.active
@@ -313,7 +313,7 @@ function AdCard({
             {card.active ? "Bitiş tarihi yok" : "Durmuş"}
           </span>
           {card.platforms.slice(0, 3).map((p) => (
-            <span key={p} className="rounded-full border border-border px-2 py-0.5 text-muted-foreground">
+            <span key={p} className="rounded-full border border-border-soft px-2 py-0.5 text-muted-foreground">
               {p.toLowerCase()}
             </span>
           ))}

@@ -10,9 +10,9 @@ export default async function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="font-display text-3xl">Ayarlar</h1>
+      <h1 className="text-xl font-semibold tracking-tight">Ayarlar</h1>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Hesap</h2>
         <dl className="mt-3 space-y-2 text-sm">
           <div className="flex gap-2">
@@ -30,12 +30,12 @@ export default async function SettingsPage() {
         </dl>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Şifre değiştir</h2>
         <ChangePasswordForm />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border-soft bg-panel shadow-card p-6">
         <h2 className="text-sm font-medium">Meta bağlantısı</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Meta Business hesabın panel üzerinden, resmi OAuth akışıyla bağlanır;

@@ -40,7 +40,7 @@ export function ProfileStep({ state, brand, wizardHref }: StepProps) {
         submitLabel="Kaydet"
         successMessage="Kaydedildi."
       />
-      <div className="mt-6 border-t border-border pt-5">
+      <div className="mt-6 border-t border-border-soft pt-5">
         <BrandProfileSection brandId={brand.id} />
       </div>
     </StepPanel>
@@ -175,7 +175,7 @@ export function CompetitorsStep({ state, brand, wizardHref }: StepProps) {
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <Link
           href={`/app/brands/${brand.id}/competitors`}
-          className="rounded-full border border-border bg-card px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
+          className="rounded-full border border-border-soft bg-panel px-4 py-2 text-xs font-medium transition-colors duration-300 hover:bg-muted"
         >
           Rakip ve reklam ekle →
         </Link>
@@ -237,7 +237,7 @@ export function ArenaStep({ state, brand, wizardHref }: StepProps) {
         )}
       </div>
 
-      <details className="mt-5 rounded-md border border-dashed border-border p-3">
+      <details className="mt-5 rounded-md border border-dashed border-border-soft p-3">
         <summary className="cursor-pointer text-xs text-muted-foreground transition-colors duration-300 hover:text-foreground">
           Arena olmadan üret (Creative Studio, 3 varyant)
         </summary>
